@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum Role {
+  COORDINATOR
+  CONTRIBUTOR
+}
+
+enum ContentType {
+  FILM
+  GLOSSARY
+  ARTICLE
+  RESEARCH
+  TRANSLATION
+  VIRAL_ESCAPE_LINES
+  INTERVIEW
+  PODCAST
+  EVENT
+  OTHER
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         Role
+  active       Boolean   @default(true)
+  contents     Content[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Content {
+  id             String      @id @default(cuid())
+  title          String
+  description    String?     @db.Text
+  type           ContentType
+  researcherName String
+  fileUrl        String?
+  externalUrl    String?
+  metadata       Json?
+  published      Boolean     @default(false)
+  createdById    String
+  createdBy      User        @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([type, published])
+  @@index([researcherName])
+  @@index([createdById])
+}

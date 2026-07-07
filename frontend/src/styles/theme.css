@@ -1,0 +1,130 @@
+@import "@fontsource/inter";
+@import "@fontsource/cormorant-garamond";
+
+:root,
+:root[data-theme="dark"],
+:root.theme-dark {
+  color-scheme: dark;
+  --app-background: #090909;
+  --app-surface: #151515;
+  --app-card: #1f1f1f;
+  --app-primary: #d4af37;
+  --app-primary-fill: #d4af37;
+  --app-on-primary: #0d0b05;
+  --app-text: #fafafa;
+  --app-muted: #a1a1aa;
+  --app-border: #3f3f46;
+}
+
+:root[data-theme="light"],
+:root.theme-light {
+  color-scheme: light;
+  --app-background: #fffafa;
+  --app-surface: #f8e9e9;
+  --app-card: #ffffff;
+  --app-primary: #8f1d2c;
+  --app-primary-fill: #a61f30;
+  --app-on-primary: #ffffff;
+  --app-text: #291b1d;
+  --app-muted: #675457;
+  --app-border: #dec8cb;
+}
+
+@theme {
+  --color-background: var(--app-background);
+  --color-surface: var(--app-surface);
+  --color-card: var(--app-card);
+  --color-primary: var(--app-primary);
+  --color-primary-fill: var(--app-primary-fill);
+  --color-on-primary: var(--app-on-primary);
+  --color-text: var(--app-text);
+  --color-muted: var(--app-muted);
+  --color-border: var(--app-border);
+  --font-title: "Cormorant Garamond", serif;
+  --font-body: "Inter", sans-serif;
+  --radius-default: 16px;
+}
+
+html,
+body {
+  background: var(--app-background);
+  color: var(--app-text);
+}
+
+body {
+  margin: 0;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body,
+#root {
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+/* Regras explícitas garantem a troca completa mesmo após atualizações via HMR. */
+:root.theme-light body,
+:root.theme-light #root,
+:root.theme-light .bg-background {
+  background-color: #fffafa !important;
+  color: #291b1d;
+}
+
+:root.theme-light .bg-surface {
+  background-color: #f8e9e9 !important;
+}
+
+:root.theme-light .bg-card {
+  background-color: #ffffff !important;
+}
+
+:root.theme-light .text-text {
+  color: #291b1d !important;
+}
+
+:root.theme-light .text-muted {
+  color: #675457 !important;
+}
+
+:root.theme-light .border-border {
+  border-color: #dec8cb !important;
+}
+
+:root.theme-light header {
+  background-color: rgb(255 250 250 / 96%) !important;
+}
+
+:root.theme-dark body,
+:root.theme-dark #root,
+:root.theme-dark .bg-background {
+  background-color: #090909 !important;
+  color: #fafafa;
+}
+
+:root.theme-dark .bg-surface {
+  background-color: #151515 !important;
+}
+
+:root.theme-dark .bg-card {
+  background-color: #1f1f1f !important;
+}
+
+:root.theme-dark .text-text {
+  color: #fafafa !important;
+}
+
+:root.theme-dark .text-muted {
+  color: #a1a1aa !important;
+}
+
+:root.theme-dark .border-border {
+  border-color: #3f3f46 !important;
+}
+
+:root.theme-dark header {
+  background-color: rgb(9 9 9 / 96%) !important;
+}
