@@ -14,7 +14,6 @@ import MostraIV from "../pages/CinemaDitadura/MostraIV";
 import MostraV from "../pages/CinemaDitadura/MostraV";
 import MostraVI from "../pages/CinemaDitadura/MostraVI";
 import MostraVII from "../pages/CinemaDitadura/MostraVII";
-import MostraVIII from "../pages/CinemaDitadura/MostraVIII";
 
 // Produção Audiovisual
 import Entrevistas from "../pages/ProducaoAudiovisual/Entrevistas";
@@ -51,7 +50,6 @@ export default function AppRoutes() {
           <Route path="/cinema-e-ditadura/v-mostra" element={<MostraV />} />
           <Route path="/cinema-e-ditadura/vi-mostra" element={<MostraVI />} />
           <Route path="/cinema-e-ditadura/vii-mostra" element={<MostraVII />} />
-          <Route path="/cinema-e-ditadura/viii-mostra" element={<MostraVIII />} />
 
           {/* Produção Audiovisual */}
           <Route

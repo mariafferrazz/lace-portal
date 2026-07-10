@@ -5,7 +5,6 @@ export const menu = [
     children: [
       { title: "Filmes", path: "/cinema-e-ditadura/filmes" },
       { title: "Verbetes", path: "/cinema-e-ditadura/verbetes" },
-      { title: "VIII Mostra Cinema e Ditadura", path: "/cinema-e-ditadura/viii-mostra" },
       { title: "VII Mostra Cinema e Ditadura", path: "/cinema-e-ditadura/vii-mostra" },
       { title: "VI Mostra Cinema e Ditadura", path: "/cinema-e-ditadura/vi-mostra" },
       { title: "V Mostra Cinema e Ditadura", path: "/cinema-e-ditadura/v-mostra" },

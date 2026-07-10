@@ -9,3 +9,20 @@ body{
 overflow-x:hidden;
 
 }
+
+.animated-underline {
+  display: inline;
+  padding-bottom: 2px;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size 300ms ease;
+}
+
+.animated-underline:hover,
+.animated-underline:focus-visible,
+.group:hover .animated-underline,
+.group:focus-visible .animated-underline {
+  background-size: 100% 1px;
+}
