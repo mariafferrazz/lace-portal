@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, ExternalLink, Film, Play, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import api from "../../services/api";
+import { getStaticContents } from "../../data/staticContent";
 
 function limitWords(text, limit = 40) {
   const words = text.trim().split(/\s+/);
@@ -23,13 +24,18 @@ export default function Filmes() {
   const [selectedLetter, setSelectedLetter] = useState("A");
 
   useEffect(() => {
+    const applyFilms = (contents) => {
+      setFilms(contents);
+      const requestedFilm = new URLSearchParams(window.location.search).get("filme");
+      if (requestedFilm) setSelectedFilm(contents.find((film) => film.id === requestedFilm) || null);
+    };
+
     api.get("/contents", { params: { type: "FILM" } })
-      .then(({ data }) => {
-        setFilms(data.contents);
-        const requestedFilm = new URLSearchParams(window.location.search).get("filme");
-        if (requestedFilm) setSelectedFilm(data.contents.find((film) => film.id === requestedFilm) || null);
+      .then(({ data }) => applyFilms(data.contents))
+      .catch(() => {
+        applyFilms(getStaticContents("FILM"));
+        setFailed(false);
       })
-      .catch(() => setFailed(true))
       .finally(() => setLoading(false));
   }, []);
 

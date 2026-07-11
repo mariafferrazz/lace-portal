@@ -3,6 +3,7 @@ import { CalendarDays, ExternalLink, PlayCircle, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import Button from "../../components/ui/Button";
 import api from "../../services/api";
+import { getStaticContents } from "../../data/staticContent";
 
 const playlistUrl = "https://www.youtube.com/playlist?list=PLgImeU9gw981tOfL6Yu8AGdqwyd8qAuoZ";
 
@@ -97,7 +98,7 @@ export default function MostraIII() {
     api
       .get("/contents", { params: { type: "FILM" } })
       .then(({ data }) => setFilms(data.contents || []))
-      .catch(() => setFilms([]));
+      .catch(() => setFilms(getStaticContents("FILM")));
   }, []);
 
   useEffect(() => {

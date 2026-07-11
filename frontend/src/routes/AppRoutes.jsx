@@ -35,7 +35,7 @@ import SemanaAcademica2025 from "../pages/Eventos/SemanaAcademica2025";
 
 export default function AppRoutes() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route element={<MainLayout />}>
           {/* Home */}

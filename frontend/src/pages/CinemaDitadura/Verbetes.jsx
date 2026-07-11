@@ -4,6 +4,7 @@ import { ArrowRight, BookOpenText, ChevronLeft, ChevronRight, ExternalLink, X } 
 import { Link } from "react-router-dom";
 import Container from "../../components/ui/Container";
 import api from "../../services/api";
+import { getStaticContents } from "../../data/staticContent";
 
 const alphabet = ["#", ..."ABCDEFGHIJKLMNOPQRSTUVZ".split("")];
 const initialLetter = (title) => {
@@ -25,7 +26,10 @@ export default function Verbetes() {
   useEffect(() => {
     api.get("/contents", { params: { type: "GLOSSARY" } })
       .then(({ data }) => setEntries(data.contents))
-      .catch(() => setFailed(true))
+      .catch(() => {
+        setEntries(getStaticContents("GLOSSARY"));
+        setFailed(false);
+      })
       .finally(() => setLoading(false));
   }, []);
 

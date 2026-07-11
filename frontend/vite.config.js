@@ -5,6 +5,7 @@ import babel from '@rolldown/plugin-babel'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: process.env.VITE_BASE_PATH || "/",
   server: {
     port: 5174,
     strictPort: true,
