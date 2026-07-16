@@ -12,13 +12,22 @@ app.use((_req, res, next) => {
   res.setHeader("Referrer-Policy", "no-referrer");
   next();
 });
-const allowedOrigins = new Set([
+const frontendUrls = [
   process.env.FRONTEND_URL,
+  process.env.FRONTEND_URLS,
+]
+  .filter(Boolean)
+  .flatMap((value) => value.split(","))
+  .map((value) => value.trim())
+  .filter(Boolean);
+
+const allowedOrigins = new Set([
+  ...frontendUrls,
   "http://localhost:5173",
   "http://127.0.0.1:5173",
   "http://localhost:5174",
   "http://127.0.0.1:5174",
-].filter(Boolean));
+]);
 app.use(cors({
   origin(origin, callback) {
     callback(null, !origin || allowedOrigins.has(origin));

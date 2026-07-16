@@ -3,7 +3,7 @@ require("dotenv").config();
 const { PrismaClient } = require("@prisma/client");
 const { PrismaMariaDb } = require("@prisma/adapter-mariadb");
 
-const databaseUrl = new URL(process.env.DATABASE_URL);
+const databaseUrl = new URL(process.env.DATABASE_URL || process.env.MYSQL_URL);
 const adapter = new PrismaMariaDb({
   host: databaseUrl.hostname,
   port: Number(databaseUrl.port) || 3306,
