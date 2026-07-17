@@ -128,3 +128,23 @@ body,
 :root.theme-dark header {
   background-color: rgb(9 9 9 / 96%) !important;
 }
+
+.site-logo-image-dark {
+  display: none;
+}
+
+:root.theme-dark .site-logo-image-light {
+  display: none;
+}
+
+:root.theme-dark .site-logo-image-dark {
+  display: block;
+}
+
+:root.theme-light .site-logo-image-light {
+  display: block;
+}
+
+:root.theme-light .site-logo-image-dark {
+  display: none;
+}

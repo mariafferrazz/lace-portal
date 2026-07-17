@@ -9,7 +9,13 @@ export default function Logo() {
       <img
         src="/logo-lace-transparent.png"
         alt="LACE - Laboratório de Agenciamentos Cotidianos e Experiências"
-        className="h-12 w-auto object-contain md:h-14"
+        className="site-logo-image site-logo-image-light h-12 w-auto object-contain md:h-14"
+      />
+      <img
+        src="/logo-lace-transparent-dark.png"
+        alt=""
+        aria-hidden="true"
+        className="site-logo-image site-logo-image-dark h-12 w-auto object-contain md:h-14"
       />
     </HomeLink>
   );
