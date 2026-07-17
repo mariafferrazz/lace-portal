@@ -42,7 +42,6 @@ export default function AppRoutes() {
         <Route element={<MainLayout />}>
           {/* Home */}
           <Route path="/" element={<Home />} />
-          <Route path="/acesso" element={<AccessPage />} />
 
           {/* Cinema e Ditadura */}
           <Route path="/cinema-e-ditadura/filmes" element={<Filmes />} />
