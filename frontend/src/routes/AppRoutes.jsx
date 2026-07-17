@@ -37,6 +37,8 @@ export default function AppRoutes() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
+        <Route path="/admin" element={<AccessPage />} />
+
         <Route element={<MainLayout />}>
           {/* Home */}
           <Route path="/" element={<Home />} />
