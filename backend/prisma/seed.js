@@ -3,18 +3,19 @@ const bcrypt = require("bcrypt");
 const prisma = require("../src/db");
 
 const accounts = [
-  { prefix: "COORDINATOR_1", role: "COORDINATOR" },
-  { prefix: "COORDINATOR_2", role: "COORDINATOR" },
-  { prefix: "CONTRIBUTOR", role: "CONTRIBUTOR" },
+  { prefix: "COORDINATOR_1", role: "COORDINATOR", required: true },
+  { prefix: "COORDINATOR_2", role: "COORDINATOR", required: false },
+  { prefix: "CONTRIBUTOR", role: "CONTRIBUTOR", required: false },
 ];
 
 async function main() {
-  for (const { prefix, role } of accounts) {
+  for (const { prefix, role, required } of accounts) {
     const name = process.env[`${prefix}_NAME`];
     const email = process.env[`${prefix}_EMAIL`]?.trim().toLowerCase();
     const password = process.env[`${prefix}_PASSWORD`];
 
     if (!name || !email || !password) {
+      if (!required && !name && !email && !password) continue;
       throw new Error(`Configure ${prefix}_NAME, ${prefix}_EMAIL e ${prefix}_PASSWORD.`);
     }
     if (password.length < 12) {
