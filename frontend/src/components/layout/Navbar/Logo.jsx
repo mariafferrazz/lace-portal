@@ -3,16 +3,14 @@ import HomeLink from "./HomeLink";
 export default function Logo() {
   return (
     <HomeLink
-      aria-label="LACE — voltar ao início"
-      className="flex flex-col leading-none"
+      aria-label="LACE - Laboratório de Agenciamentos Cotidianos e Experiências - voltar ao início"
+      className="flex items-center"
     >
-      <span className="font-title text-3xl font-bold text-primary">
-        LACE
-      </span>
-
-      <span className="text-[10px] uppercase tracking-[0.25em] text-text">
-        Laboratório
-      </span>
+      <img
+        src="/logo-lace-transparent.png"
+        alt="LACE - Laboratório de Agenciamentos Cotidianos e Experiências"
+        className="h-12 w-auto object-contain md:h-14"
+      />
     </HomeLink>
   );
 }
