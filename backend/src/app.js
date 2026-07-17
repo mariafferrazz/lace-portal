@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth");
+const contactRoutes = require("./routes/contact");
 const contentRoutes = require("./routes/contents");
 
 const app = express();
@@ -39,6 +40,7 @@ app.use(cookieParser());
 
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 app.use("/api/auth", authRoutes);
+app.use("/api/contact", contactRoutes);
 app.use("/api/contents", contentRoutes);
 app.use((error, _req, res, _next) => {
   console.error(error);

@@ -1,23 +1,39 @@
+import { useState } from "react";
 import { Mail, Send } from "lucide-react";
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import Container from "../ui/Container";
 import SectionTitle from "../ui/SectionTitle";
 import Button from "../ui/Button";
+import api, { apiError } from "../../services/api";
 
 const fieldClass = "mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-text outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20";
 
 export default function ContactSection() {
-  function handleSubmit(event) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const name = data.get("name");
-    const email = data.get("email");
-    const message = data.get("message");
-    const subject = encodeURIComponent(`Contato pelo portal LACE — ${name}`);
-    const body = encodeURIComponent(`Nome: ${name}\nE-mail: ${email}\n\nMensagem:\n${message}`);
+  const [status, setStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-    window.location.href = `mailto:lab.lace.uff@gmail.com?subject=${subject}&body=${body}`;
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setLoading(true);
+    setStatus(null);
+
+    const form = event.currentTarget;
+    const data = new FormData(form);
+
+    try {
+      await api.post("/contact", {
+        name: data.get("name"),
+        email: data.get("email"),
+        message: data.get("message"),
+      });
+      form.reset();
+      setStatus({ ok: true, message: "Mensagem enviada. Obrigado pelo contato." });
+    } catch (error) {
+      setStatus({ ok: false, message: apiError(error) });
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -76,10 +92,15 @@ export default function ContactSection() {
               Mensagem
               <textarea className={`${fieldClass} min-h-40 resize-y`} name="message" placeholder="Como podemos ajudar?" required />
             </label>
-            <Button type="submit" variant="outline" className="mt-7 inline-flex items-center gap-2">
-              <Send size={18} aria-hidden="true" /> Enviar mensagem
+            <Button type="submit" variant="outline" className="mt-7 inline-flex items-center gap-2 disabled:cursor-wait disabled:opacity-60" disabled={loading}>
+              <Send size={18} aria-hidden="true" /> {loading ? "Enviando..." : "Enviar mensagem"}
             </Button>
-            <p className="mt-4 text-sm leading-6 text-muted">Ao enviar, seu aplicativo de e-mail será aberto com a mensagem preenchida.</p>
+            {status && (
+              <p className={status.ok ? "mt-4 text-sm font-semibold text-green-700 dark:text-green-300" : "mt-4 text-sm font-semibold text-red-700 dark:text-red-300"} role="status">
+                {status.message}
+              </p>
+            )}
+            <p className="mt-4 text-sm leading-6 text-muted">A mensagem será enviada para a caixa de entrada do LACE.</p>
           </form>
         </div>
       </Container>

@@ -59,6 +59,12 @@ JWT_SECRET=gere-um-segredo-longo-e-aleatorio
 FRONTEND_URL=https://www.lablace.com.br
 FRONTEND_URLS=https://lablace.com.br,https://www.lablace.com.br
 DATABASE_URL=${{MySQL.MYSQL_URL}}
+CONTACT_TO_EMAIL=lab.lace.uff@gmail.com
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=lab.lace.uff@gmail.com
+SMTP_PASS=senha-de-app-do-gmail
 ```
 
 Tambem configure as contas iniciais usadas pelo seed:
