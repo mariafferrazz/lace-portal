@@ -18,8 +18,8 @@ async function main() {
       if (!required && !name && !email && !password) continue;
       throw new Error(`Configure ${prefix}_NAME, ${prefix}_EMAIL e ${prefix}_PASSWORD.`);
     }
-    if (password.length < 12) {
-      throw new Error(`${prefix}_PASSWORD deve ter pelo menos 12 caracteres.`);
+    if (password.length < 8) {
+      throw new Error(`${prefix}_PASSWORD deve ter pelo menos 8 caracteres.`);
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
