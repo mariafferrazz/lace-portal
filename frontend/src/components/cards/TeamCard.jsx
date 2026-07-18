@@ -2,13 +2,21 @@ import { useId, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
+const slugify = (value) =>
+  value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
 export default function TeamCard({ name, role, bio }) {
   const [open, setOpen] = useState(false);
   const contentId = useId();
   const reduceMotion = useReducedMotion();
 
   return (
-    <article className="rounded-2xl border border-border bg-card p-6 transition hover:border-primary/60">
+    <article id={slugify(name)} className="scroll-mt-24 rounded-2xl border border-border bg-card p-6 transition hover:border-primary/60">
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}

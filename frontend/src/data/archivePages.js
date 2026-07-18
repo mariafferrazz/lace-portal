@@ -27,6 +27,6 @@ export const archivePages = {
   podcasts: {
     eyebrow: "Produção audiovisual",
     title: "Podcasts",
-    description: "Programas sonoros do LACE dedicados à memória, aos testemunhos e às experiências sociais.",
+    description: "",
   },
 };

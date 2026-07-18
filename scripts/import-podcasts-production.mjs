@@ -479,6 +479,30 @@ const podcasts = [
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000090-84fba84fbd/ep2.jpg?ph=3554c7d1fd",
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000094-a6996a6998/ep22-2.png?ph=3554c7d1fd",
     ],
+    researchers: [
+      { name: "Camila Antonio de Souza Nogueira", role: "Curso: Sociologia (Graduação)" },
+      { name: "Geraldiny Malaguti", role: "Curso: Doutoranda em Sociologia pelo PPGS-UFF" },
+      { name: "João Pedro Cavalcanti de Carvalho", role: "Curso: Sociologia (Graduação)" },
+      { name: "João Vitor Rodrigues", role: "Curso: Sociologia (Graduação). Bolsista PIBIC/CNPq/UFF" },
+      { name: "Joelma De Souza Silva", role: "Curso: Cinema e audiovisual (Graduação)" },
+      { name: "Jordana Silva Figueiredo", role: "Curso: Sociologia (Graduação)" },
+      { name: "Mariana Ribeiro Rangel", role: "Curso: Produção Cultural (Graduação)" },
+      { name: "Morena Vieira", role: "Curso: Ciências Sociais (Graduação)" },
+      { name: "Sofia Gianfelice Mendes", role: "Curso: Produção Cultural (Graduação)" },
+      { name: "Thaís Costa Reis dos Santos", role: "Curso: Sociologia (Graduação)" },
+      {
+        name: "Joana D'Arc Fernandes Ferraz",
+        role:
+          "Coordenadora do Projeto - Professora do Departamento de Sociologia e do Programa de Pós-Graduação em Sociologia (PPGS) da UFF",
+        url: "/#joana-darc-fernandes-ferraz",
+      },
+    ],
+    soundtrack: [
+      {
+        title: "\"Samba da Guanabara\", de João Pedro Sanson",
+        description: "Doutorando pelo Programa de Pós Graduação em Antropologia Social da Universidade Federal de São Carlos.",
+      },
+    ],
   },
 ];
 
@@ -526,6 +550,8 @@ for (const podcast of podcasts) {
       episodeReferences: podcast.episodeReferences,
       episodeImages: podcast.episodeImages,
       images: podcast.images,
+      researchers: podcast.researchers,
+      soundtrack: podcast.soundtrack,
     },
   };
 

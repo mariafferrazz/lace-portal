@@ -23,6 +23,8 @@ function mapContentToItem(content) {
     episodes: content.metadata?.episodes || [],
     episodeReferences: content.metadata?.episodeReferences || {},
     episodeImages: content.metadata?.episodeImages || {},
+    researchers: content.metadata?.researchers || [],
+    soundtrack: content.metadata?.soundtrack || [],
     platform: content.metadata?.platform,
   };
 }
@@ -120,15 +122,9 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
           <div className={`mt-14 grid gap-6 ${contentType === "PODCAST" ? "" : "md:grid-cols-2 lg:grid-cols-3"}`}>
             {visibleItems.map((item) => (
               contentType === "PODCAST" ? (
-                <button
-                  type="button"
+                <article
                   key={item.title}
-                  onClick={() => {
-                    setActivePodcast(item);
-                    setActiveEpisode(item.episodes[0] || null);
-                  }}
-                  className="group grid w-full cursor-pointer overflow-hidden rounded-3xl border border-primary/40 bg-card text-left text-text transition hover:-translate-y-1 hover:border-primary focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/30 lg:grid-cols-[0.95fr_1.05fr]"
-                  aria-label={`Abrir episódios de ${item.title}`}
+                  className="group grid w-full overflow-hidden rounded-3xl border border-primary/40 bg-card text-left text-text transition hover:-translate-y-1 hover:border-primary lg:grid-cols-[0.95fr_1.05fr]"
                 >
                   <span className="relative block h-full min-h-72">
                     {item.thumbnail ? (
@@ -153,11 +149,57 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                       {item.episodes.length} episódios
                     </span>
                     </span>
-                    <Button as="span" variant="outline" className="mt-8 inline-flex w-fit items-center gap-2">
-                      <PlayCircle size={18} aria-hidden="true" /> Abrir episódios
-                    </Button>
+                    <span className="mt-8 grid gap-6 xl:grid-cols-[auto_1fr] xl:items-start">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="inline-flex w-fit items-center gap-2"
+                        onClick={() => {
+                          setActivePodcast(item);
+                          setActiveEpisode(item.episodes[0] || null);
+                        }}
+                      >
+                        <PlayCircle size={18} aria-hidden="true" /> Abrir episódios
+                      </Button>
+                      {(item.researchers.length > 0 || item.soundtrack.length > 0) && (
+                        <span className="grid gap-5 text-sm leading-6 text-muted md:grid-cols-2">
+                          {item.researchers.length > 0 && (
+                            <span>
+                              <span className="block font-semibold uppercase tracking-[0.2em] text-primary">Pesquisadores</span>
+                              <span className="mt-3 grid gap-2">
+                                {item.researchers.map((researcher) => (
+                                  <span key={researcher.name} className="block">
+                                    {researcher.url ? (
+                                      <a className="font-semibold text-primary" href={researcher.url}>
+                                        <span className="animated-underline">{researcher.name}</span>
+                                      </a>
+                                    ) : (
+                                      <span className="font-semibold text-text">{researcher.name}</span>
+                                    )}
+                                    <span className="block">{researcher.role}</span>
+                                  </span>
+                                ))}
+                              </span>
+                            </span>
+                          )}
+                          {item.soundtrack.length > 0 && (
+                            <span>
+                              <span className="block font-semibold uppercase tracking-[0.2em] text-primary">Música e trilha sonora</span>
+                              <span className="mt-3 grid gap-2">
+                                {item.soundtrack.map((track) => (
+                                  <span key={track.title} className="block">
+                                    <span className="font-semibold text-text">{track.title}</span>
+                                    <span className="block">{track.description}</span>
+                                  </span>
+                                ))}
+                              </span>
+                            </span>
+                          )}
+                        </span>
+                      )}
+                    </span>
                   </span>
-                </button>
+                </article>
               ) : mediaCards && item.href ? (
                 <a
                   key={item.title}
@@ -268,6 +310,44 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                 <p className="mt-3 text-muted">
                   {activePodcast.episodes.length} episódios · por LACE
                 </p>
+                {(activePodcast.researchers.length > 0 || activePodcast.soundtrack.length > 0) && (
+                  <section className="mt-6 border-t border-border pt-6">
+                    <div className="grid gap-6 md:grid-cols-2">
+                      {activePodcast.researchers.length > 0 && (
+                        <div>
+                          <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Pesquisadores</h3>
+                          <ul className="mt-3 grid gap-2 text-sm leading-6 text-muted">
+                            {activePodcast.researchers.map((researcher) => (
+                              <li key={researcher.name}>
+                                {researcher.url ? (
+                                  <a className="font-semibold text-primary" href={researcher.url}>
+                                    <span className="animated-underline">{researcher.name}</span>
+                                  </a>
+                                ) : (
+                                  <span className="font-semibold text-text">{researcher.name}</span>
+                                )}
+                                <span className="block">{researcher.role}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {activePodcast.soundtrack.length > 0 && (
+                        <div>
+                          <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Música e trilha sonora</h3>
+                          <ul className="mt-3 grid gap-2 text-sm leading-6 text-muted">
+                            {activePodcast.soundtrack.map((track) => (
+                              <li key={track.title}>
+                                <span className="font-semibold text-text">{track.title}</span>
+                                <span className="block">{track.description}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </section>
+                )}
                 {activeEpisode && (
                   <section className="mt-6 border-t border-border pt-6">
                     <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">

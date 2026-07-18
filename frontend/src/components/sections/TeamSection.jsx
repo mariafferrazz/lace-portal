@@ -16,7 +16,7 @@ function TeamGroup({ title, people }) {
 
 export default function TeamSection() {
   return (
-    <section className="bg-surface py-24 lg:py-32">
+    <section id="equipe" className="scroll-mt-24 bg-surface py-24 lg:py-32">
       <Container>
         <SectionTitle subtitle="Pessoas" title="Equipe envolvida" />
         <TeamGroup title="Coordenação" people={coordinators} />
