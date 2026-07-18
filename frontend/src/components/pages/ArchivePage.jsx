@@ -26,6 +26,7 @@ function mapContentToItem(content) {
     researchers: content.metadata?.researchers || [],
     soundtrack: content.metadata?.soundtrack || [],
     platform: content.metadata?.platform,
+    authorBio: content.metadata?.authorBio,
   };
 }
 
@@ -255,6 +256,36 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                     </span>
                   </span>
                 </button>
+              ) : contentType === "VIRAL_ESCAPE_LINES" ? (
+                <article
+                  key={item.title}
+                  className="overflow-hidden rounded-3xl border border-border bg-card md:col-span-2 lg:col-span-3"
+                >
+                  <div className="grid gap-8 p-6 md:grid-cols-[0.75fr_1.25fr] md:p-8 lg:p-10">
+                    {item.thumbnail ? (
+                      <img
+                        className="aspect-[4/5] w-full rounded-2xl border border-border object-cover"
+                        src={item.thumbnail}
+                        alt=""
+                      />
+                    ) : (
+                      <span className="grid aspect-[4/5] place-items-center rounded-2xl bg-surface">
+                        <Library className="text-primary" aria-hidden="true" />
+                      </span>
+                    )}
+                    <div>
+                      {item.meta && <p className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</p>}
+                      <h2 className="mt-3 font-title text-4xl md:text-5xl">{item.title}</h2>
+                      <p className="mt-6 whitespace-pre-line leading-8 text-muted">{item.description}</p>
+                      {item.authorBio && (
+                        <div className="mt-8 rounded-2xl border border-border bg-surface/80 p-5">
+                          <h3 className="font-semibold text-text">{item.meta}</h3>
+                          <p className="mt-3 leading-7 text-muted">{item.authorBio}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </article>
               ) : mediaCards && item.href ? (
                 <a
                   key={item.title}
