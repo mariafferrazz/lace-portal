@@ -4,6 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#fffafa" />
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("lace-theme");
+          if (theme !== "dark" && theme !== "light") theme = "light";
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.classList.remove("theme-light", "theme-dark");
+          document.documentElement.classList.add("theme-" + theme);
+          document.documentElement.style.colorScheme = theme;
+        } catch (error) {
+          document.documentElement.dataset.theme = "light";
+          document.documentElement.classList.add("theme-light");
+          document.documentElement.style.colorScheme = "light";
+        }
+      })();
+    </script>
     <title>LACE - Laboratório de Agenciamentos Cotidianos e Experiências</title>
   </head>
   <body>

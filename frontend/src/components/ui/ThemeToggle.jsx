@@ -1,27 +1,9 @@
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
-
-function getInitialTheme() {
-  return localStorage.getItem("lace-theme") || "dark";
-}
-
-function applyTheme(theme) {
-  const root = document.documentElement;
-  const palette = theme === "light"
-    ? { background: "#fffafa", surface: "#f8e9e9", card: "#ffffff", primary: "#8f1d2c", "primary-fill": "#a61f30", "on-primary": "#ffffff", text: "#291b1d", muted: "#675457", border: "#dec8cb" }
-    : { background: "#090909", surface: "#151515", card: "#1f1f1f", primary: "#d4af37", "primary-fill": "#d4af37", "on-primary": "#0d0b05", text: "#fafafa", muted: "#a1a1aa", border: "#3f3f46" };
-
-  root.dataset.theme = theme;
-  root.classList.toggle("theme-light", theme === "light");
-  root.classList.toggle("theme-dark", theme === "dark");
-  Object.entries(palette).forEach(([name, value]) => root.style.setProperty(`--app-${name}`, value));
-  document.body.style.backgroundColor = palette.background;
-  document.body.style.color = palette.text;
-  localStorage.setItem("lace-theme", theme);
-}
+import { applyTheme, getStoredTheme } from "../../utils/theme";
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState(getInitialTheme);
+  const [theme, setTheme] = useState(getStoredTheme);
   const isDark = theme === "dark";
 
   useEffect(() => {
@@ -30,8 +12,7 @@ export default function ThemeToggle() {
 
   function toggleTheme() {
     const nextTheme = isDark ? "light" : "dark";
-    applyTheme(nextTheme);
-    setTheme(nextTheme);
+    setTheme(applyTheme(nextTheme));
   }
 
   return (
