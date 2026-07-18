@@ -18,7 +18,7 @@
 
 :root[data-theme="light"],
 :root.theme-light {
-  color-scheme: light;
+  color-scheme: only light;
   --app-background: #fffafa;
   --app-surface: #f8e9e9;
   --app-card: #ffffff;
@@ -49,6 +49,7 @@ html,
 body {
   background: var(--app-background);
   color: var(--app-text);
+  forced-color-adjust: none;
 }
 
 body {

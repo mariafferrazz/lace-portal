@@ -1,6 +1,6 @@
 export const THEME_STORAGE_KEY = "lace-theme";
 export const THEME_VERSION_KEY = "lace-theme-version";
-export const THEME_VERSION = "2";
+export const THEME_VERSION = "3";
 
 export const THEME_PALETTES = {
   light: {
@@ -53,7 +53,7 @@ export function applyTheme(theme, { persist = true } = {}) {
   root.dataset.theme = nextTheme;
   root.classList.remove("theme-light", "theme-dark");
   root.classList.add(`theme-${nextTheme}`);
-  root.style.colorScheme = nextTheme;
+  root.style.colorScheme = nextTheme === "light" ? "only light" : "dark";
 
   Object.entries(palette).forEach(([name, value]) => {
     root.style.setProperty(`--app-${name}`, value);
