@@ -39,20 +39,21 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
   const [activeEpisode, setActiveEpisode] = useState(null);
   const [activeResearchersPodcast, setActiveResearchersPodcast] = useState(null);
   const [activeInterview, setActiveInterview] = useState(null);
-  const [activeImageGallery, setActiveImageGallery] = useState(null);
+  const [activeViralItem, setActiveViralItem] = useState(null);
+  const [activeViralImageIndex, setActiveViralImageIndex] = useState(0);
   const visibleItems = contentType ? remoteItems : items;
   const mediaCards = contentType === "INTERVIEW" || contentType === "PODCAST";
   const isPodcastModalOpen = Boolean(activePodcast);
   const isResearchersModalOpen = Boolean(activeResearchersPodcast);
   const isInterviewModalOpen = Boolean(activeInterview);
-  const isImageGalleryOpen = Boolean(activeImageGallery);
+  const isViralModalOpen = Boolean(activeViralItem);
   const podcastEmbedUrl = getSpotifyEmbedUrl(activeEpisode?.url || activePodcast?.href);
   const activeEpisodeKey = activeEpisode?.number ? String(activeEpisode.number) : "";
   const activeEpisodeReferences = activePodcast?.episodeReferences?.[activeEpisodeKey];
   const activeEpisodeImages = activePodcast?.episodeImages?.[activeEpisodeKey] || [];
-  const activeGalleryImages = activeImageGallery?.images || [];
-  const activeGalleryIndex = activeImageGallery?.index || 0;
-  const activeGalleryImage = activeGalleryImages[activeGalleryIndex];
+  const activeViralImages = activeViralItem?.images || [];
+  const activeViralImage = activeViralImages[activeViralImageIndex];
+  const isAlineViralItem = activeViralItem?.meta === "Aline Ribeiro Nascimento";
   const referenceSections = activeEpisodeReferences
     ? [
         ["Referências bibliográficas", activeEpisodeReferences.bibliographic],
@@ -152,26 +153,22 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
   }, [isInterviewModalOpen]);
 
   useEffect(() => {
-    if (!isImageGalleryOpen) return undefined;
+    if (!isViralModalOpen) return undefined;
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
-        setActiveImageGallery(null);
+        setActiveViralItem(null);
         return;
       }
       if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
-      if (activeGalleryImages.length < 2) return;
+      if (activeViralImages.length < 2) return;
 
       event.preventDefault();
-      setActiveImageGallery((current) => {
-        if (!current) return current;
-        const nextIndex =
-          event.key === "ArrowRight"
-            ? (current.index + 1) % current.images.length
-            : (current.index - 1 + current.images.length) % current.images.length;
-
-        return { ...current, index: nextIndex };
-      });
+      setActiveViralImageIndex((current) =>
+        event.key === "ArrowRight"
+          ? (current + 1) % activeViralImages.length
+          : (current - 1 + activeViralImages.length) % activeViralImages.length
+      );
     };
 
     document.body.style.overflow = "hidden";
@@ -181,15 +178,23 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeGalleryImages.length, isImageGalleryOpen]);
+  }, [activeViralImages.length, isViralModalOpen]);
 
   return (
     <main className="py-20 lg:py-28">
       <Container>
-        <header className="max-w-4xl">
+        <header className={contentType === "VIRAL_ESCAPE_LINES" ? "max-w-none" : "max-w-4xl"}>
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-primary">{eyebrow}</p>
           <h1 className="mt-4 font-title text-5xl leading-tight md:text-7xl">{title}</h1>
-          {description && <p className="mt-6 max-w-3xl text-lg leading-8 text-muted">{description}</p>}
+          {description && (
+            <p
+              className={`mt-6 text-lg leading-8 text-muted ${
+                contentType === "VIRAL_ESCAPE_LINES" ? "max-w-none text-justify md:columns-2 md:gap-10 lg:columns-3" : "max-w-3xl"
+              }`}
+            >
+              {description}
+            </p>
+          )}
         </header>
 
         {loading ? (
@@ -298,49 +303,30 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
               ) : contentType === "VIRAL_ESCAPE_LINES" ? (
                 <article
                   key={item.title}
-                  className="overflow-hidden rounded-3xl border border-border bg-card md:col-span-2 lg:col-span-3"
+                  className="group overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-1 hover:border-primary"
                 >
-                  <div className="grid gap-8 p-6 md:grid-cols-[0.75fr_1.25fr] md:p-8 lg:p-10">
-                    {item.images.length > 0 ? (
-                      <div className={`grid gap-4 ${item.images.length > 1 ? "md:grid-cols-2" : ""}`}>
-                        {item.images.map((imageUrl, index) => (
-                          <button
-                            key={imageUrl}
-                            type="button"
-                            onClick={() => setActiveImageGallery({ title: item.title, images: item.images, index })}
-                            className="block cursor-pointer overflow-hidden rounded-2xl border border-border bg-surface text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                            aria-label={`Abrir imagem ${index + 1} de ${item.title}`}
-                          >
-                            <img className="aspect-[4/5] w-full object-cover transition hover:scale-[1.02]" src={imageUrl} alt="" />
-                          </button>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="grid aspect-[4/5] place-items-center rounded-2xl bg-surface">
-                        <Library className="text-primary" aria-hidden="true" />
-                      </span>
-                    )}
-                    <div>
-                      {item.meta && (
-                        <p className="text-xs font-semibold uppercase tracking-widest text-primary">
-                          {item.researcherUrl ? (
-                            <a href={item.researcherUrl} target="_blank" rel="noreferrer">
-                              <span className="animated-underline">{item.meta}</span>
-                            </a>
-                          ) : (
-                            item.meta
-                          )}
-                        </p>
-                      )}
-                      <h2 className="mt-3 font-title text-4xl md:text-5xl">{item.title}</h2>
-                      <p className="mt-6 whitespace-pre-line leading-8 text-muted">{item.description}</p>
-                      {item.authorBio && (
-                        <div className="mt-8 rounded-2xl border border-border bg-surface/80 p-5">
-                          <h3 className="font-semibold text-text">{item.meta}</h3>
-                          <p className="mt-3 leading-7 text-muted">{item.authorBio}</p>
-                        </div>
-                      )}
-                    </div>
+                  {item.thumbnail ? (
+                    <img className="aspect-[4/3] w-full object-cover" src={item.thumbnail} alt="" />
+                  ) : (
+                    <span className="grid aspect-[4/3] place-items-center bg-surface">
+                      <Library className="text-primary" aria-hidden="true" />
+                    </span>
+                  )}
+                  <div className="p-6">
+                    {item.meta && <p className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</p>}
+                    <button
+                      type="button"
+                      className="mt-3 block cursor-pointer text-left font-title text-3xl text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      onClick={() => {
+                        setActiveViralItem(item);
+                        setActiveViralImageIndex(0);
+                      }}
+                    >
+                      <span className="animated-underline">{item.title}</span>
+                    </button>
+                    <p className="mt-5 text-sm leading-6 text-muted">
+                      {item.images.length > 1 ? `${item.images.length} imagens` : "Abrir obra"}
+                    </p>
                   </div>
                 </article>
               ) : mediaCards && item.href ? (
@@ -406,67 +392,95 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
         )}
       </Container>
 
-      {activeImageGallery && activeGalleryImage && (
+      {activeViralItem && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm md:p-8"
           role="dialog"
           aria-modal="true"
-          aria-labelledby="image-gallery-title"
+          aria-labelledby="viral-modal-title"
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setActiveImageGallery(null);
+            if (event.target === event.currentTarget) setActiveViralItem(null);
           }}
         >
-          <div className="relative flex max-h-[94vh] w-full max-w-6xl flex-col rounded-3xl border border-white/20 bg-background p-4 shadow-2xl md:p-6">
+          <div className="relative max-h-[94vh] w-full max-w-7xl overflow-y-auto rounded-3xl border border-white/20 bg-background p-5 shadow-2xl md:p-8">
             <button
               type="button"
-              onClick={() => setActiveImageGallery(null)}
+              onClick={() => setActiveViralItem(null)}
               className="absolute right-4 top-4 z-20 rounded-full bg-black/70 p-3 text-white transition hover:bg-black focus:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
-              aria-label="Fechar imagem"
+              aria-label="Fechar obra"
             >
               <X size={24} aria-hidden="true" />
             </button>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 pr-14">
-              <h2 id="image-gallery-title" className="font-title text-3xl md:text-4xl">{activeImageGallery.title}</h2>
-              {activeGalleryImages.length > 1 && (
-                <p className="text-sm font-semibold text-primary">
-                  {activeGalleryIndex + 1} / {activeGalleryImages.length}
+            <div className="pr-14">
+              {activeViralItem.meta && (
+                <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">
+                  {activeViralItem.researcherUrl ? (
+                    <a href={activeViralItem.researcherUrl} target="_blank" rel="noreferrer">
+                      <span className="animated-underline">{activeViralItem.meta}</span>
+                    </a>
+                  ) : (
+                    activeViralItem.meta
+                  )}
                 </p>
               )}
+              <h2 id="viral-modal-title" className="mt-3 font-title text-4xl md:text-6xl">{activeViralItem.title}</h2>
             </div>
 
-            <div className="mt-5 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-2xl border border-border bg-black">
-              <img className="max-h-[72vh] w-auto max-w-full object-contain" src={activeGalleryImage} alt="" />
-            </div>
-
-            {activeGalleryImages.length > 1 && (
-              <div className="mt-4 flex justify-center gap-3">
-                <button
-                  type="button"
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                  onClick={() =>
-                    setActiveImageGallery((current) => current && {
-                      ...current,
-                      index: (current.index - 1 + current.images.length) % current.images.length,
-                    })
-                  }
-                >
-                  <ArrowLeft size={18} aria-hidden="true" /> Anterior
-                </button>
-                <button
-                  type="button"
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                  onClick={() =>
-                    setActiveImageGallery((current) => current && {
-                      ...current,
-                      index: (current.index + 1) % current.images.length,
-                    })
-                  }
-                >
-                  Próxima <ArrowRight size={18} aria-hidden="true" />
-                </button>
-              </div>
+            {isAlineViralItem ? (
+              <section className="mt-8">
+                {activeViralImage && (
+                  <div className="flex items-center justify-center rounded-2xl border border-border bg-black p-2 md:p-4">
+                    <img className="max-h-[78vh] w-auto max-w-full object-contain" src={activeViralImage} alt="" />
+                  </div>
+                )}
+                {activeViralImages.length > 1 && (
+                  <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                    <button
+                      type="button"
+                      className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      onClick={() => setActiveViralImageIndex((current) => (current - 1 + activeViralImages.length) % activeViralImages.length)}
+                    >
+                      <ArrowLeft size={18} aria-hidden="true" /> Anterior
+                    </button>
+                    <span className="text-sm font-semibold text-primary">
+                      {activeViralImageIndex + 1} / {activeViralImages.length}
+                    </span>
+                    <button
+                      type="button"
+                      className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      onClick={() => setActiveViralImageIndex((current) => (current + 1) % activeViralImages.length)}
+                    >
+                      Próxima <ArrowRight size={18} aria-hidden="true" />
+                    </button>
+                  </div>
+                )}
+              </section>
+            ) : (
+              <section className="mt-8 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+                {activeViralImage ? (
+                  <div className="rounded-2xl border border-border bg-surface p-2">
+                    <img className="max-h-[72vh] w-full rounded-xl object-contain" src={activeViralImage} alt="" />
+                  </div>
+                ) : (
+                  <span className="grid aspect-[4/5] place-items-center rounded-2xl bg-surface">
+                    <Library className="text-primary" aria-hidden="true" />
+                  </span>
+                )}
+                <div className="rounded-2xl border border-border bg-card p-6 md:p-8">
+                  <p className="whitespace-pre-line font-title text-3xl leading-relaxed text-text md:text-4xl">
+                    {activeViralItem.description}
+                  </p>
+                </div>
+              </section>
             )}
+
+            <section className="mt-8 rounded-2xl border border-border bg-surface/80 p-5">
+              <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Referência bibliográfica</h3>
+              <p className="mt-3 leading-7 text-muted">
+                {isAlineViralItem ? activeViralItem.description : activeViralItem.authorBio}
+              </p>
+            </section>
           </div>
         </div>
       )}
