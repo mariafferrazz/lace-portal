@@ -28,10 +28,13 @@ export default function MobileMenu() {
     <div className="lg:hidden">
       {/* BOTÃO HAMBÚRGUER */}
       <button
+        type="button"
         onClick={toggleMenu}
-        className="text-text transition hover:text-primary"
+        aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
+        aria-expanded={isOpen}
+        className="grid size-11 place-items-center rounded-md border border-border bg-card text-text shadow-lg shadow-black/20 transition hover:border-primary hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        {isOpen ? <X size={28} /> : <Menu size={28} />}
+        {isOpen ? <X size={24} strokeWidth={2.4} /> : <Menu size={24} strokeWidth={2.4} />}
       </button>
 
       {/* OVERLAY + MENU */}
@@ -53,7 +56,8 @@ export default function MobileMenu() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3 }}
-              className="fixed right-0 top-0 z-50 h-full w-80 border-l border-border bg-card p-6 text-text shadow-2xl"
+              style={{ backgroundColor: "var(--app-background)" }}
+              className="mobile-menu-panel fixed bottom-0 right-0 top-0 z-50 flex w-full max-w-sm flex-col overflow-y-auto border-l border-border p-6 text-text shadow-2xl"
             >
               {/* HEADER */}
               <div className="mb-8 flex items-center justify-between">
@@ -61,13 +65,18 @@ export default function MobileMenu() {
                   Menu
                 </h2>
 
-                <button onClick={closeMenu}>
+                <button
+                  type="button"
+                  onClick={closeMenu}
+                  aria-label="Fechar menu"
+                  className="grid size-10 place-items-center rounded-md border border-border bg-background text-text transition hover:border-primary hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
                   <X size={24} />
                 </button>
               </div>
 
               {/* MENU ITEMS */}
-              <ul className="flex flex-col gap-4 uppercase tracking-wide">
+              <ul className="mobile-menu-list flex flex-col gap-2 uppercase tracking-wide">
                 {menu.map((item, index) => (
                   <li key={index}>
                     {/* ITEM COM SUBMENU */}
@@ -75,7 +84,7 @@ export default function MobileMenu() {
                       <>
                         <button
                           onClick={() => toggleSubmenu(index)}
-                          className="flex w-full items-center justify-between text-left text-text hover:text-primary"
+                          className="flex min-h-12 w-full items-center justify-between rounded-md border border-border bg-card px-4 py-3 text-left font-semibold text-text transition hover:border-primary hover:text-primary"
                         >
                           {item.title}
                           <ChevronDown
@@ -93,14 +102,14 @@ export default function MobileMenu() {
                               initial={{ height: 0, opacity: 0 }}
                               animate={{ height: "auto", opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
-                              className="ml-4 mt-2 flex flex-col gap-2 overflow-hidden border-l border-border pl-4"
+                              className="mt-2 flex flex-col gap-2 overflow-hidden rounded-md border border-border bg-card p-2"
                             >
                               {item.children.map((sub, i) => (
                                 <li key={i}>
                                   <Link
                                     to={sub.path}
                                     onClick={closeMenu}
-                                    className="text-sm text-muted hover:text-primary"
+                                    className="block rounded-md bg-background px-4 py-3 text-sm font-medium text-text transition hover:text-primary"
                                   >
                                     {sub.title}
                                   </Link>
@@ -113,7 +122,7 @@ export default function MobileMenu() {
                     ) : item.path === "/" ? (
                       <HomeLink
                         onClick={closeMenu}
-                        className="block text-text hover:text-primary"
+                        className="block min-h-12 rounded-md border border-border bg-card px-4 py-3 font-semibold text-text transition hover:border-primary hover:text-primary"
                       >
                         {item.title}
                       </HomeLink>
@@ -121,7 +130,7 @@ export default function MobileMenu() {
                       <Link
                         to={item.path}
                         onClick={closeMenu}
-                        className="block text-text hover:text-primary"
+                        className="block min-h-12 rounded-md border border-border bg-card px-4 py-3 font-semibold text-text transition hover:border-primary hover:text-primary"
                       >
                         {item.title}
                       </Link>

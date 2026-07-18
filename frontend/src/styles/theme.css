@@ -148,3 +148,18 @@ body,
 :root.theme-light .site-logo-image-dark {
   display: none;
 }
+
+.mobile-menu-panel {
+  min-height: 100vh;
+  background-color: var(--app-background) !important;
+}
+
+.mobile-menu-list {
+  border-radius: 8px;
+  background-color: var(--app-background) !important;
+}
+
+.mobile-menu-panel a,
+.mobile-menu-panel button {
+  backdrop-filter: none;
+}
