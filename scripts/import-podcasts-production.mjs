@@ -1,0 +1,145 @@
+const API_BASE = process.env.API_BASE || "https://api.lablace.com.br/api";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+
+if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
+  throw new Error("Configure ADMIN_EMAIL e ADMIN_PASSWORD para importar podcasts.");
+}
+
+const podcasts = [
+  {
+    title: "No Convés da Repressão e Resistência",
+    description:
+      "Este podcast, composto de sete episódios, narrará a luta e a resistência dos operários navais do estado do Rio de Janeiro, durante a ditadura empresarial-militar brasileira, a partir de seus depoimentos, de suas memórias e de suas ações políticas. Lembrar o passado é um modo de impedir sua repetição. Este trabalho está sendo produzido pelas e pelos pesquisadoras e pesquisadores do Laboratório de Agenciamentos Cotidianos e Experiências (LACE) da Universidade Federal Fluminense (UFF). Agradecemos o incentivo da UFF, da CAPES e do CNPq no fomento ao projeto de pesquisa: \"A participação das empresas de construção naval do Rio de Janeiro e de Niterói no golpe empresarial-militar brasileiro (1964-1985)\".",
+    coverUrl:
+      "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000100-2671326716/450/NoConv%C3%A9s-3.webp?ph=3554c7d1fd",
+    externalUrl:
+      "https://open.spotify.com/episode/6MV8TsiWC1Wf1LpxDEUXz1?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=7cbf828ef0aa48ba",
+    episodes: [
+      {
+        number: 1,
+        title: "Os operários navais: lutas e resistências no pré-golpe de 1964",
+        url:
+          "https://open.spotify.com/episode/6MV8TsiWC1Wf1LpxDEUXz1?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=7cbf828ef0aa48ba",
+      },
+    ],
+    references: {
+      bibliographic: [
+        "BANDEIRA, Moniz. Presença dos Estados Unidos no Brasil: (dois séculos de história). Civilização Brasileira, 1973.",
+        "BRASIL. Relatório Final da Comissão Nacional da Verdade (Volumes I, II e III). Brasília: CNV, 2014.",
+        "CAMPOS, Pedro H. P. Transversos: Revista de História. Rio de Janeiro, n. 08, dez. 2016. Tese de doutorado apresentada ao Programa de Pós-Graduação de História Social-PPGHS. Instituto de Ciências Humanas e Filosofia Departamento de História da Universidade Federal Fluminense - UFF. 2012. Niterói.",
+        "DREIFUSS, Renè. A Conquista do Estado. Terceira Edição. Petrópolis: Vozes, 1981.",
+        "PESSANHA, E. e MOREL, R. \"Gerações operárias: rupturas e continuidades na experiência de metalúrgicos do Rio de Janeiro\". Revista Brasileira de Ciências Sociais, Rio de Janeiro: Anpocs/Relume Dumará, 1991.",
+        "PESSANHA, Elina Gonçalves da Fonte. Operários navais: trabalho, sindicalismo e política na indústria naval do Rio de Janeiro. Rio de Janeiro: Editora 7Letras, 2013.",
+        "PESSANHA, Elina Gonçalves da Fonte. Os operários navais do Rio de Janeiro sob a ditadura do pós1964: repressão e resistência. Revista Mundos do Trabalho, vol. 6, n. 11, 2014, p. 11-23.",
+        "RELATÓRIO/Comissão da Verdade do Rio. Rio de Janeiro: CEV-Rio, 2015.",
+        "RELATÓRIO/Comissão Municipal da Verdade de Niterói, 2015.",
+        "SILVA, Célia Pereira da. O Sindicato dos Operários Navais e o PCB no Contexto Pré-Golpe de 1964: Faces da Mesma Moeda. Rio de Janeiro, 2016.",
+        "SILVA, Célia Pereira da. Os Operários Navais e suas Memórias Indeléveis: Sindicalismo e Comunismo no Contexto do Golpe de 1964; 2015; Monografia; Universidade Federal Fluminense.",
+      ],
+      sites: [
+        {
+          title: "BOMENY, Helena. Instituto João Goulart. 2010.",
+          url: "https://historico.institutojoaogoulart.org.br/noticia.php?id=1365",
+        },
+        {
+          title: "John F. Kennedy Presidential Library and Museum - Meetings: Tape 114/A50.",
+          url: "https://www.jfklibrary.org/asset-viewer/archives/JFKPOF/MTG/JFKPOF-MTG-114-A50c/JFKPOF-MTG-114-A50c",
+        },
+        {
+          title: "LAMARÃO, Sérgio. A conjuntura de radicalização ideológica e o golpe militar - Comício das Reformas. CPDOC.",
+          url: "https://web.archive.org/web/20220121194300/https://cpdoc.fgv.br/producao/dossies/Jango/artigos/AConjunturaRadicalizacao/Comicio_das_reformas",
+        },
+      ],
+      films: ["TAVARES, Camilo (Diretor). O dia que durou 21 anos. Brasil. Pequi Filmes. 2013."],
+      interviews: [
+        "Jayme Navas da Costa",
+        "José Carlos Teodoro de Almeida",
+        "Ivan Duarte",
+        "Manuel Francisco Spindola",
+        "Benedito Joaquim dos Santos",
+        "Oswaldo Garcia Veloso",
+      ],
+      newspapers: [
+        "Tribuna da Imprensa, 14/03/1964.",
+        "Jornal Última Hora, 17/03/1964.",
+        "Jornal Correio da Manhã. Rio de Janeiro, 1960-1964.",
+        "Jornal O Fluminense. Niterói, 1960-1964.",
+        "Jornal O Semanário. Rio de Janeiro, 1956-1963.",
+        "Jornal Última Hora. Rio de Janeiro, 1960-1964.",
+      ],
+      documents: [
+        "Manifesto dos Coronéis, 1952.",
+        "Carta de demissão de João Goulart.",
+      ],
+    },
+    images: [
+      "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000085-5cae85caeb/unnamed%20%282%29.jpg?ph=3554c7d1fd",
+      "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000087-d3dc4d3dc7/unnamed%20%281%29.jpg?ph=3554c7d1fd",
+      "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000089-2de742de76/Manifesto%20Coron%C3%A9is.jfif?ph=3554c7d1fd",
+      "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000096-173f7173fa/demissaojango.jfif?ph=3554c7d1fd",
+    ],
+  },
+];
+
+async function request(path, options = {}) {
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      cookie: request.cookie || "",
+      ...(options.headers || {}),
+    },
+  });
+
+  const setCookie = response.headers.get("set-cookie");
+  if (setCookie) request.cookie = setCookie.split(";")[0];
+
+  if (!response.ok) {
+    throw new Error(`${options.method || "GET"} ${path} falhou: ${response.status} ${await response.text()}`);
+  }
+
+  if (response.status === 204) return null;
+  return response.json();
+}
+
+await request("/auth/login", {
+  method: "POST",
+  body: JSON.stringify({ email: ADMIN_EMAIL, password: ADMIN_PASSWORD }),
+});
+
+const managed = await request("/contents/manage");
+
+for (const podcast of podcasts) {
+  const body = {
+    title: podcast.title,
+    description: podcast.description,
+    type: "PODCAST",
+    researcherName: "Equipe LACE",
+    externalUrl: podcast.externalUrl,
+    fileUrl: podcast.coverUrl,
+    metadata: {
+      thumbnail: podcast.coverUrl,
+      platform: "Spotify",
+      episodes: podcast.episodes,
+      references: podcast.references,
+      images: podcast.images,
+    },
+  };
+
+  const existing = managed.contents.find((content) => (
+    content.type === "PODCAST" &&
+    (content.title === podcast.title || content.externalUrl === podcast.externalUrl)
+  ));
+
+  if (existing) {
+    await request(`/contents/${existing.id}`, { method: "PATCH", body: JSON.stringify(body) });
+    await request(`/contents/${existing.id}`, { method: "PATCH", body: JSON.stringify({ published: true }) });
+  } else {
+    const created = await request("/contents", { method: "POST", body: JSON.stringify(body) });
+    await request(`/contents/${created.content.id}`, { method: "PATCH", body: JSON.stringify({ published: true }) });
+  }
+}
+
+const publicContents = await request("/contents?type=PODCAST");
+console.log(`${publicContents.contents.length} podcasts publicados.`);

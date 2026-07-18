@@ -21,7 +21,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
   const [remoteItems, setRemoteItems] = useState([]);
   const [loading, setLoading] = useState(Boolean(contentType));
   const visibleItems = contentType ? remoteItems : items;
-  const mediaCards = contentType === "INTERVIEW";
+  const mediaCards = contentType === "INTERVIEW" || contentType === "PODCAST";
 
   useEffect(() => {
     if (!contentType) return undefined;

@@ -1,7 +1,6 @@
+import ArchivePage from "../../components/pages/ArchivePage";
+import { archivePages } from "../../data/archivePages";
+
 export default function Podcasts() {
-  return (
-    <section className="py-20">
-      <h1 className="text-4xl font-bold">Podcasts</h1>
-    </section>
-  );
+  return <ArchivePage {...archivePages.podcasts} contentType="PODCAST" />;
 }
