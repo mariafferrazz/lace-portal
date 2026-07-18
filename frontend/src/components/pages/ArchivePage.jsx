@@ -325,9 +325,6 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                     <span className="mt-3 block font-title text-3xl text-text">
                       <span className="animated-underline">{item.title}</span>
                     </span>
-                    <p className="mt-5 text-sm leading-6 text-muted">
-                      {item.images.length > 1 ? `${item.images.length} imagens` : "Abrir obra"}
-                    </p>
                   </div>
                 </button>
               ) : mediaCards && item.href ? (
@@ -466,9 +463,9 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                 )}
               </section>
             ) : (
-              <section className="mt-8 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+              <section className="mt-8 grid items-start gap-8 lg:grid-cols-[0.8fr_1.2fr]">
                 {activeViralImage ? (
-                  <div className="rounded-2xl border border-border bg-surface p-2">
+                  <div className="self-start rounded-2xl border border-border bg-surface p-2">
                     <img className="max-h-[72vh] w-full rounded-xl object-contain" src={activeViralImage} alt="" />
                   </div>
                 ) : (
@@ -477,7 +474,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                   </span>
                 )}
                 <div className="rounded-2xl border border-border bg-card p-6 md:p-8">
-                  <p className="whitespace-pre-line font-title text-3xl leading-relaxed text-text md:text-4xl">
+                  <p className="whitespace-pre-line font-title text-2xl leading-relaxed text-text md:text-3xl">
                     {activeViralItem.description}
                   </p>
                 </div>
