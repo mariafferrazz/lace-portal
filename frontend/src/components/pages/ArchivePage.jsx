@@ -14,6 +14,7 @@ function mapContentToItem(content) {
   const youtubeId = content.metadata?.youtubeId;
 
   return {
+    id: content.id,
     title: content.title,
     description: content.description || "Conteúdo disponível no acervo do LACE.",
     meta: content.researcherName,
@@ -40,8 +41,8 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
   const [activeResearchersPodcast, setActiveResearchersPodcast] = useState(null);
   const [activeInterview, setActiveInterview] = useState(null);
   const [activeViralItem, setActiveViralItem] = useState(null);
-  const [activeViralImageIndex, setActiveViralImageIndex] = useState(0);
   const visibleItems = contentType ? remoteItems : items;
+  const viralItems = contentType === "VIRAL_ESCAPE_LINES" ? visibleItems : [];
   const mediaCards = contentType === "INTERVIEW" || contentType === "PODCAST";
   const isPodcastModalOpen = Boolean(activePodcast);
   const isResearchersModalOpen = Boolean(activeResearchersPodcast);
@@ -52,8 +53,11 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
   const activeEpisodeReferences = activePodcast?.episodeReferences?.[activeEpisodeKey];
   const activeEpisodeImages = activePodcast?.episodeImages?.[activeEpisodeKey] || [];
   const activeViralImages = activeViralItem?.images || [];
-  const activeViralImage = activeViralImages[activeViralImageIndex];
+  const activeViralImage = activeViralImages[0];
+  const activeViralItemIndex = viralItems.findIndex((item) => item.id === activeViralItem?.id || item.title === activeViralItem?.title);
   const isAlineViralItem = activeViralItem?.meta === "Aline Ribeiro Nascimento";
+  const authorAboutLabel = isAlineViralItem ? "Sobre a autora" : "Sobre o autor";
+  const hasMultipleViralItems = viralItems.length > 1;
   const referenceSections = activeEpisodeReferences
     ? [
         ["Referências bibliográficas", activeEpisodeReferences.bibliographic],
@@ -161,14 +165,15 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
         return;
       }
       if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
-      if (activeViralImages.length < 2) return;
+      if (!hasMultipleViralItems) return;
 
       event.preventDefault();
-      setActiveViralImageIndex((current) =>
+      const fallbackIndex = activeViralItemIndex === -1 ? 0 : activeViralItemIndex;
+      const nextIndex =
         event.key === "ArrowRight"
-          ? (current + 1) % activeViralImages.length
-          : (current - 1 + activeViralImages.length) % activeViralImages.length
-      );
+          ? (fallbackIndex + 1) % viralItems.length
+          : (fallbackIndex - 1 + viralItems.length) % viralItems.length;
+      setActiveViralItem(viralItems[nextIndex]);
     };
 
     document.body.style.overflow = "hidden";
@@ -178,7 +183,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeViralImages.length, isViralModalOpen]);
+  }, [activeViralItemIndex, hasMultipleViralItems, isViralModalOpen, viralItems]);
 
   return (
     <main className="py-20 lg:py-28">
@@ -301,9 +306,12 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                   </span>
                 </button>
               ) : contentType === "VIRAL_ESCAPE_LINES" ? (
-                <article
+                <button
                   key={item.title}
-                  className="group overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-1 hover:border-primary"
+                  type="button"
+                  onClick={() => setActiveViralItem(item)}
+                  className="group cursor-pointer overflow-hidden rounded-2xl border border-border bg-card text-left transition hover:-translate-y-1 hover:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  aria-label={`Abrir ${item.title}`}
                 >
                   {item.thumbnail ? (
                     <img className="aspect-[4/3] w-full object-cover" src={item.thumbnail} alt="" />
@@ -314,21 +322,14 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                   )}
                   <div className="p-6">
                     {item.meta && <p className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</p>}
-                    <button
-                      type="button"
-                      className="mt-3 block cursor-pointer text-left font-title text-3xl text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                      onClick={() => {
-                        setActiveViralItem(item);
-                        setActiveViralImageIndex(0);
-                      }}
-                    >
+                    <span className="mt-3 block font-title text-3xl text-text">
                       <span className="animated-underline">{item.title}</span>
-                    </button>
+                    </span>
                     <p className="mt-5 text-sm leading-6 text-muted">
                       {item.images.length > 1 ? `${item.images.length} imagens` : "Abrir obra"}
                     </p>
                   </div>
-                </article>
+                </button>
               ) : mediaCards && item.href ? (
                 <a
                   key={item.title}
@@ -427,32 +428,40 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
               <h2 id="viral-modal-title" className="mt-3 font-title text-4xl md:text-6xl">{activeViralItem.title}</h2>
             </div>
 
+            {hasMultipleViralItems && (
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  onClick={() => {
+                    const fallbackIndex = activeViralItemIndex === -1 ? 0 : activeViralItemIndex;
+                    setActiveViralItem(viralItems[(fallbackIndex - 1 + viralItems.length) % viralItems.length]);
+                  }}
+                >
+                  <ArrowLeft size={18} aria-hidden="true" /> Poema anterior
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  onClick={() => {
+                    const fallbackIndex = activeViralItemIndex === -1 ? 0 : activeViralItemIndex;
+                    setActiveViralItem(viralItems[(fallbackIndex + 1) % viralItems.length]);
+                  }}
+                >
+                  Próximo poema <ArrowRight size={18} aria-hidden="true" />
+                </button>
+              </div>
+            )}
+
             {isAlineViralItem ? (
               <section className="mt-8">
-                {activeViralImage && (
-                  <div className="flex items-center justify-center rounded-2xl border border-border bg-black p-2 md:p-4">
-                    <img className="max-h-[78vh] w-auto max-w-full object-contain" src={activeViralImage} alt="" />
-                  </div>
-                )}
-                {activeViralImages.length > 1 && (
-                  <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-                    <button
-                      type="button"
-                      className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                      onClick={() => setActiveViralImageIndex((current) => (current - 1 + activeViralImages.length) % activeViralImages.length)}
-                    >
-                      <ArrowLeft size={18} aria-hidden="true" /> Anterior
-                    </button>
-                    <span className="text-sm font-semibold text-primary">
-                      {activeViralImageIndex + 1} / {activeViralImages.length}
-                    </span>
-                    <button
-                      type="button"
-                      className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                      onClick={() => setActiveViralImageIndex((current) => (current + 1) % activeViralImages.length)}
-                    >
-                      Próxima <ArrowRight size={18} aria-hidden="true" />
-                    </button>
+                {activeViralImages.length > 0 && (
+                  <div className={`grid gap-4 ${activeViralImages.length > 1 ? "lg:grid-cols-2" : ""}`}>
+                    {activeViralImages.map((imageUrl, index) => (
+                      <div key={imageUrl} className="flex items-center justify-center rounded-2xl border border-border bg-black p-2 md:p-4">
+                        <img className="max-h-[78vh] w-auto max-w-full object-contain" src={imageUrl} alt={`Página ${index + 1} de ${activeViralItem.title}`} />
+                      </div>
+                    ))}
                   </div>
                 )}
               </section>
@@ -476,7 +485,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
             )}
 
             <section className="mt-8 rounded-2xl border border-border bg-surface/80 p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">Referência bibliográfica</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">{authorAboutLabel}</h3>
               <p className="mt-3 leading-7 text-muted">
                 {isAlineViralItem ? activeViralItem.description : activeViralItem.authorBio}
               </p>
