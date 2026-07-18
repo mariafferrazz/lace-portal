@@ -258,9 +258,6 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                       Episódio {activeEpisode.number}
                     </p>
                     <h3 className="mt-3 font-title text-3xl text-text md:text-4xl">{activeEpisode.title}</h3>
-                    {activeEpisode.description && (
-                      <p className="mt-4 leading-8 text-muted">{activeEpisode.description}</p>
-                    )}
                   </section>
                 )}
 

@@ -19,8 +19,6 @@ const podcasts = [
       {
         number: 1,
         title: "Os operários navais: lutas e resistências no pré-golpe de 1964",
-        description:
-          "Episódio dedicado às lutas e resistências dos operários navais no período anterior ao golpe empresarial-militar de 1964.",
         url:
           "https://open.spotify.com/episode/6MV8TsiWC1Wf1LpxDEUXz1?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=7cbf828ef0aa48ba",
       },
@@ -28,8 +26,6 @@ const podcasts = [
         number: 2,
         title:
           "A conspiração: cumplicidades entre os militares, o governo dos EUA e os empresários ligados ao capital internacional",
-        description:
-          "Episódio sobre as cumplicidades entre militares, governo dos Estados Unidos e empresários vinculados ao capital internacional na preparação do golpe de 1964.",
         url:
           "https://open.spotify.com/episode/7H9HEQDNmYTikVxerD1HsI?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=75b2bf0443524797",
       },
@@ -37,8 +33,6 @@ const podcasts = [
         number: 3,
         title:
           "As relações entre o PCB e o sindicato dos operários navais do Rio de Janeiro nas décadas de 1950 e 1960",
-        description:
-          "Episódio sobre as relações entre o PCB e o sindicato dos operários navais do Rio de Janeiro nas décadas de 1950 e 1960.",
         url:
           "https://open.spotify.com/episode/2Ql5ZZpNY8vGFxjLP4Kve1?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=938b9693297e4b6d",
       },
