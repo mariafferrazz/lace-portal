@@ -1,8 +1,45 @@
-import { ArrowRight, Library } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, ExternalLink, Library } from "lucide-react";
 import { Link } from "react-router-dom";
 import Container from "../ui/Container";
+import api from "../../services/api";
 
-export default function ArchivePage({ eyebrow, title, description, items = [], emptyMessage }) {
+function mapContentToItem(content) {
+  return {
+    title: content.title,
+    description: content.description || "Conteúdo disponível no acervo do LACE.",
+    meta: content.researcherName,
+    href: content.externalUrl || content.fileUrl,
+  };
+}
+
+export default function ArchivePage({ eyebrow, title, description, items = [], emptyMessage, contentType }) {
+  const [remoteItems, setRemoteItems] = useState([]);
+  const [loading, setLoading] = useState(Boolean(contentType));
+  const visibleItems = contentType ? remoteItems : items;
+
+  useEffect(() => {
+    if (!contentType) return undefined;
+
+    let active = true;
+    setLoading(true);
+    api
+      .get("/contents", { params: { type: contentType } })
+      .then(({ data }) => {
+        if (active) setRemoteItems((data.contents || []).map(mapContentToItem));
+      })
+      .catch(() => {
+        if (active) setRemoteItems([]);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [contentType]);
+
   return (
     <main className="py-20 lg:py-28">
       <Container>
@@ -12,9 +49,11 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
           <p className="mt-6 max-w-3xl text-lg leading-8 text-muted">{description}</p>
         </header>
 
-        {items.length > 0 ? (
+        {loading ? (
+          <p className="mt-14 text-muted">Carregando acervo...</p>
+        ) : visibleItems.length > 0 ? (
           <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {items.map((item) => (
+            {visibleItems.map((item) => (
               <article key={item.title} className="flex flex-col rounded-2xl border border-border bg-card p-7">
                 {item.meta && <p className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</p>}
                 <h2 className="mt-3 font-title text-3xl">{item.title}</h2>
@@ -23,6 +62,11 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                   <Link className="mt-6 inline-flex items-center gap-2 font-semibold text-primary" to={item.to}>
                     Acessar <ArrowRight size={16} aria-hidden="true" />
                   </Link>
+                )}
+                {item.href && (
+                  <a className="mt-6 inline-flex items-center gap-2 font-semibold text-primary" href={item.href} target="_blank" rel="noreferrer">
+                    Acessar <ExternalLink size={16} aria-hidden="true" />
+                  </a>
                 )}
               </article>
             ))}
