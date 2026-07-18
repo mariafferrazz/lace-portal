@@ -189,7 +189,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
           {description && (
             <p
               className={`mt-6 text-lg leading-8 text-muted ${
-                contentType === "VIRAL_ESCAPE_LINES" ? "max-w-none text-justify md:columns-2 md:gap-10 lg:columns-3" : "max-w-3xl"
+                contentType === "VIRAL_ESCAPE_LINES" ? "max-w-none text-justify" : "max-w-3xl"
               }`}
             >
               {description}
