@@ -5,9 +5,9 @@ import { FaXTwitter } from "react-icons/fa6";
 import Container from "../ui/Container";
 import SectionTitle from "../ui/SectionTitle";
 import Button from "../ui/Button";
-import api, { apiError } from "../../services/api";
 
 const fieldClass = "mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-text outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20";
+const contactEndpoint = import.meta.env.VITE_CONTACT_ENDPOINT;
 
 export default function ContactSection() {
   const [status, setStatus] = useState(null);
@@ -21,16 +21,29 @@ export default function ContactSection() {
     const form = event.currentTarget;
     const data = new FormData(form);
 
+    if (!contactEndpoint) {
+      setLoading(false);
+      setStatus({ ok: false, message: "Envio de mensagens ainda não configurado." });
+      return;
+    }
+
     try {
-      await api.post("/contact", {
-        name: data.get("name"),
-        email: data.get("email"),
-        message: data.get("message"),
+      await fetch(contactEndpoint, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          email: data.get("email"),
+          message: data.get("message"),
+          source: "lablace.com.br",
+        }),
       });
+
       form.reset();
       setStatus({ ok: true, message: "Mensagem enviada. Obrigado pelo contato." });
-    } catch (error) {
-      setStatus({ ok: false, message: apiError(error) });
+    } catch {
+      setStatus({ ok: false, message: "Não foi possível enviar agora. Tente novamente em instantes." });
     } finally {
       setLoading(false);
     }

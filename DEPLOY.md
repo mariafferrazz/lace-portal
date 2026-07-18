@@ -30,6 +30,7 @@ Variavel de ambiente de producao:
 
 ```env
 VITE_API_URL=https://api.lablace.com.br/api
+VITE_CONTACT_ENDPOINT=https://script.google.com/macros/s/SEU_DEPLOY_ID/exec
 ```
 
 Dominios:
