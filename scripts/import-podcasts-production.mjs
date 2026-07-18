@@ -57,6 +57,13 @@ const podcasts = [
         url:
           "https://open.spotify.com/episode/2qaKSJVozkEb0m054AIiAD?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=d1717f43c33f4851",
       },
+      {
+        number: 7,
+        title:
+          "Legado da luta: em memória aos operários perseguidos pelo regime ditatorial e as lições dos sobreviventes",
+        url:
+          "https://open.spotify.com/episode/6xJE9lwqHIf4UpvM0EWo4R?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=1cc780ce40ff42d2",
+      },
     ],
     episodeReferences: {
       1: {
@@ -302,6 +309,52 @@ const podcasts = [
           {
             title: "Lei nº 12.528, de 18 de novembro de 2011.",
             url: "https://www.planalto.gov.br/ccivil_03/_Ato2011-2014/2011/Lei/L12528.htm",
+          },
+          {
+            title: "Relatórios da Comissão Nacional da Verdade.",
+            url: "http://cnv.memoriasreveladas.gov.br/index.php",
+          },
+          {
+            title:
+              "Testemunhos da repressão ao Sindicato dos Operários Navais (RJ). Comissão Nacional da Verdade. YouTube, 24 de fevereiro de 2015.",
+            url: "https://youtube.com/playlist?list=PL9n0M0Ixl2jemE-nOoo40iLGMFcse9v7h",
+          },
+        ],
+        interviews: [
+          "Jayme Navas da Costa",
+          "José Carlos Teodoro de Almeida",
+          "Ivan Duarte",
+          "Manuel Francisco Spindola",
+          "Benedito Joaquim dos Santos",
+          "Oswaldo Garcia Veloso",
+          "Vera Regina Assis da Costa",
+        ],
+      },
+      7: {
+        bibliographic: [
+          "BRASIL. Relatório Final da Comissão Nacional da Verdade (Volumes I, II e III). Brasília: CNV, 2014.",
+          "CAMPOS, Lucas Pacheco. A prática de silenciar lembrando: uma análise da administração política da memória na Comissão Nacional da Verdade. Dissertação de Mestrado. Programa de Pós-Graduação em Administração, 2016.",
+          "ROUSSEFF, Dilma. Discurso da Presidente Dilma Rousseff em 10 de dezembro de 2014. Ocasião da cerimônia de entrega do relatório final da CNV.",
+          "GOMES, Angela Castro (org.). A Época dos Operários Navais. Niterói: Produção do Departamento de História, Laboratório de História Oral e Iconografia da UFF, 1999.",
+          "MONTALVÃO, Sérgio de Sousa. O tempo de antes, um tempo de reivindicações e conquistas (1953-1964): memória e identidade dos operários navais do Rio de Janeiro. Análise Social, n. 238, p. 162-183, 2021.",
+          "PESSANHA, Elina. Operários Navais - Trabalho, Sindicalismo e Política na Indústria Naval do Rio de Janeiro. Rio de Janeiro: 7 Letras, 2012.",
+          "PESSANHA, Elina. Os Operários Navais do Rio de Janeiro sob a Ditadura do pós-1964: repressão e resistência. Revista Mundos do Trabalho, vol. 6, nº 11, p. 11-23, jan./jun., 2014.",
+          "PESSANHA, Elina e MOREL, Regina. Gerações operárias: rupturas e continuidades na experiência de metalúrgicos no Rio de Janeiro. Revista Brasileira de Ciências Sociais (RBCS). v. 6, n. 17, Rio de Janeiro, outubro, 1991.",
+          "Programa Nacional de Direitos Humanos (PNDH-3) / Secretaria de Direitos Humanos da Presidência da República. Brasília: SDH/PR, 2010.",
+          "RELATÓRIO/Comissão da Verdade do Rio. Rio de Janeiro: CEV-Rio, 2015.",
+          "RELATÓRIO/Comissão Municipal da Verdade de Niterói, 2015.",
+          "SILVA, Célia Pereira da. O Sindicato dos Operários Navais e o PCB no Contexto Pré-Golpe de 1964: Faces da Mesma Moeda. Rio de Janeiro, 2016.",
+          "SILVA, Célia Pereira da. Os Operários Navais e suas Memórias Indeléveis: Sindicalismo e Comunismo no Contexto do Golpe de 1964; 2015; Monografia; Universidade Federal Fluminense.",
+          "TELES, Edson e SAFATLE, Vladimir (org.). O que resta da ditadura. São Paulo: Boitempo, 2010.",
+        ],
+        sites: [
+          {
+            title: "Discurso da Presidente Dilma Rousseff durante entrega do relatório final da Comissão Nacional da Verdade.",
+            url: "https://www2.planalto.gov.br/acompanhe-o-planalto/discursos/discursos-dapresidenta/discurso-da-presidenta-da-republica-dilma-rousseff-durante-entrega-dorelatorio-final-da-comissao-nacional-da-verdade-brasilia-df",
+          },
+          {
+            title: "Acervo Jornal GTNM/RJ. Grupo Tortura Nunca Mais, Rio de Janeiro.",
+            url: "http://www.torturanuncamais-rj.org.br/noticias/acervo-jornal-gtnmrj/",
           },
           {
             title: "Relatórios da Comissão Nacional da Verdade.",
