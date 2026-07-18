@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, ExternalLink, Library, Play } from "lucide-react";
+import { ArrowRight, ExternalLink, Library, Play, PlayCircle, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import Container from "../ui/Container";
+import Button from "../ui/Button";
 import api from "../../services/api";
+
+function getSpotifyEmbedUrl(url) {
+  const match = url?.match(/open\.spotify\.com\/episode\/([^?]+)/);
+  return match ? `https://open.spotify.com/embed/episode/${match[1]}` : null;
+}
 
 function mapContentToItem(content) {
   const youtubeId = content.metadata?.youtubeId;
@@ -15,14 +21,19 @@ function mapContentToItem(content) {
     thumbnail: content.metadata?.thumbnail || (youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : null),
     youtubeId,
     episodes: content.metadata?.episodes || [],
+    platform: content.metadata?.platform,
   };
 }
 
 export default function ArchivePage({ eyebrow, title, description, items = [], emptyMessage, contentType }) {
   const [remoteItems, setRemoteItems] = useState([]);
   const [loading, setLoading] = useState(Boolean(contentType));
+  const [activePodcast, setActivePodcast] = useState(null);
+  const [activeEpisode, setActiveEpisode] = useState(null);
   const visibleItems = contentType ? remoteItems : items;
   const mediaCards = contentType === "INTERVIEW" || contentType === "PODCAST";
+  const isPodcastModalOpen = Boolean(activePodcast);
+  const podcastEmbedUrl = getSpotifyEmbedUrl(activeEpisode?.url || activePodcast?.href);
 
   useEffect(() => {
     if (!contentType) return undefined;
@@ -46,6 +57,22 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
     };
   }, [contentType]);
 
+  useEffect(() => {
+    if (!isPodcastModalOpen) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") setActivePodcast(null);
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isPodcastModalOpen]);
+
   return (
     <main className="py-20 lg:py-28">
       <Container>
@@ -58,18 +85,24 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
         {loading ? (
           <p className="mt-14 text-muted">Carregando acervo...</p>
         ) : visibleItems.length > 0 ? (
-          <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className={`mt-14 grid gap-6 ${contentType === "PODCAST" ? "" : "md:grid-cols-2 lg:grid-cols-3"}`}>
             {visibleItems.map((item) => (
               contentType === "PODCAST" ? (
-                <article
+                <button
+                  type="button"
                   key={item.title}
-                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card text-text transition hover:-translate-y-1 hover:border-primary"
+                  onClick={() => {
+                    setActivePodcast(item);
+                    setActiveEpisode(item.episodes[0] || null);
+                  }}
+                  className="group grid w-full cursor-pointer overflow-hidden rounded-3xl border border-primary/40 bg-card text-left text-text transition hover:-translate-y-1 hover:border-primary focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/30 lg:grid-cols-[0.95fr_1.05fr]"
+                  aria-label={`Abrir episódios de ${item.title}`}
                 >
-                  <span className="relative block">
+                  <span className="relative block h-full min-h-72">
                     {item.thumbnail ? (
-                      <img className="aspect-video w-full object-cover" src={item.thumbnail} alt="" />
+                      <img className="h-full min-h-72 w-full object-cover" src={item.thumbnail} alt="" />
                     ) : (
-                      <span className="grid aspect-video place-items-center bg-surface">
+                      <span className="grid h-full min-h-72 place-items-center bg-surface">
                         <Library className="text-primary" aria-hidden="true" />
                       </span>
                     )}
@@ -79,33 +112,20 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                       </span>
                     </span>
                   </span>
-                  <span className="flex flex-1 flex-col p-6">
+                  <span className="flex min-h-72 flex-col justify-between p-7 md:p-10">
+                    <span>
                     {item.meta && <span className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</span>}
-                    <span className="mt-3 block font-title text-3xl">{item.title}</span>
-                    <span className="mt-4 leading-7 text-muted">{item.description}</span>
-                    {item.episodes.length > 0 ? (
-                      <span className="mt-6 flex flex-col gap-3">
-                        {item.episodes.map((episode) => (
-                          <a
-                            key={`${item.title}-${episode.number}`}
-                            className="rounded-xl border border-border bg-surface p-4 text-sm leading-6 text-text transition hover:border-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                            href={episode.url}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <span className="block font-semibold text-primary">Episódio {episode.number}</span>
-                            <span className="animated-underline mt-1 inline">{episode.title}</span>
-                          </a>
-                        ))}
-                      </span>
-                    ) : item.href ? (
-                      <a className="mt-6 inline-flex items-center gap-2 self-start font-semibold text-primary" href={item.href} target="_blank" rel="noreferrer">
-                        <span className="animated-underline">Acessar</span>
-                        <ExternalLink size={16} aria-hidden="true" />
-                      </a>
-                    ) : null}
+                    <span className="mt-3 block font-title text-4xl md:text-5xl">{item.title}</span>
+                    <span className="mt-5 block max-w-3xl leading-8 text-muted">{item.description}</span>
+                    <span className="mt-5 block text-sm font-semibold uppercase tracking-[0.25em] text-primary">
+                      {item.episodes.length} episódios
+                    </span>
+                    </span>
+                    <Button as="span" variant="outline" className="mt-8 inline-flex w-fit items-center gap-2">
+                      <PlayCircle size={18} aria-hidden="true" /> Abrir episódios
+                    </Button>
                   </span>
-                </article>
+                </button>
               ) : mediaCards && item.href ? (
                 <a
                   key={item.title}
@@ -168,6 +188,99 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
           </div>
         )}
       </Container>
+
+      {activePodcast && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-8"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="podcast-modal-title"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setActivePodcast(null);
+          }}
+        >
+          <div className="relative max-h-[94vh] w-full max-w-7xl overflow-y-auto rounded-3xl border border-white/20 bg-background p-5 shadow-2xl md:p-8">
+            <button
+              type="button"
+              onClick={() => setActivePodcast(null)}
+              className="absolute right-4 top-4 z-10 rounded-full bg-black/70 p-3 text-white transition hover:bg-black focus:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
+              aria-label="Fechar episódios"
+            >
+              <X size={24} aria-hidden="true" />
+            </button>
+
+            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+              <section className="rounded-3xl border border-border bg-card p-5">
+                {podcastEmbedUrl ? (
+                  <iframe
+                    className="h-40 w-full rounded-2xl bg-black"
+                    src={podcastEmbedUrl}
+                    title={activeEpisode?.title || activePodcast.title}
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy"
+                  />
+                ) : activePodcast.thumbnail ? (
+                  <img className="aspect-video w-full rounded-2xl object-cover" src={activePodcast.thumbnail} alt="" />
+                ) : (
+                  <span className="grid aspect-video place-items-center rounded-2xl bg-surface">
+                    <Library className="text-primary" aria-hidden="true" />
+                  </span>
+                )}
+
+                <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-primary">
+                  {activePodcast.platform || "Podcast"}
+                </p>
+                <h2 id="podcast-modal-title" className="mt-3 font-title text-4xl md:text-5xl">
+                  {activePodcast.title}
+                </h2>
+                <p className="mt-3 text-muted">
+                  {activePodcast.episodes.length} episódios · por LACE
+                </p>
+                <p className="mt-5 leading-8 text-muted">{activePodcast.description}</p>
+                {(activeEpisode?.url || activePodcast.href) && (
+                  <a
+                    className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 font-semibold text-black transition hover:bg-primary-fill hover:text-on-primary"
+                    href={activeEpisode?.url || activePodcast.href}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <PlayCircle size={18} aria-hidden="true" /> Reproduzir episódio
+                  </a>
+                )}
+              </section>
+
+              <section className="pt-2">
+                <h3 className="font-title text-3xl text-text md:text-4xl">Episódios</h3>
+                <div className="mt-6 grid gap-5">
+                  {activePodcast.episodes.map((episode) => {
+                    const active = activeEpisode?.number === episode.number;
+                    return (
+                      <button
+                        key={`${activePodcast.title}-${episode.number}`}
+                        type="button"
+                        onClick={() => setActiveEpisode(episode)}
+                        className={`grid cursor-pointer grid-cols-[70px_1fr] gap-4 rounded-2xl p-3 text-left transition hover:bg-card ${active ? "bg-card ring-1 ring-primary/60" : ""}`}
+                      >
+                        <span className="grid aspect-square place-items-center rounded-xl border border-primary/40 bg-primary/10 font-title text-3xl text-primary">
+                          {episode.number}
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block font-semibold leading-6 text-text">{episode.title}</span>
+                          <span className="mt-2 block text-sm text-muted">LACE</span>
+                          <span className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                            <span className="animated-underline">Selecionar episódio</span>
+                            <PlayCircle size={16} aria-hidden="true" />
+                          </span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
