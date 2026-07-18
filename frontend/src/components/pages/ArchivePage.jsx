@@ -28,6 +28,7 @@ function mapContentToItem(content) {
     platform: content.metadata?.platform,
     authorBio: content.metadata?.authorBio,
     researcherUrl: content.metadata?.researcherUrl,
+    images: content.metadata?.images || (content.metadata?.thumbnail ? [content.metadata.thumbnail] : []),
   };
 }
 
@@ -263,12 +264,21 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                   className="overflow-hidden rounded-3xl border border-border bg-card md:col-span-2 lg:col-span-3"
                 >
                   <div className="grid gap-8 p-6 md:grid-cols-[0.75fr_1.25fr] md:p-8 lg:p-10">
-                    {item.thumbnail ? (
-                      <img
-                        className="aspect-[4/5] w-full rounded-2xl border border-border object-cover"
-                        src={item.thumbnail}
-                        alt=""
-                      />
+                    {item.images.length > 0 ? (
+                      <div className={`grid gap-4 ${item.images.length > 1 ? "md:grid-cols-2" : ""}`}>
+                        {item.images.map((imageUrl, index) => (
+                          <a
+                            key={imageUrl}
+                            href={imageUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="block overflow-hidden rounded-2xl border border-border bg-surface"
+                            aria-label={`Abrir imagem ${index + 1} de ${item.title}`}
+                          >
+                            <img className="aspect-[4/5] w-full object-cover transition hover:scale-[1.02]" src={imageUrl} alt="" />
+                          </a>
+                        ))}
+                      </div>
                     ) : (
                       <span className="grid aspect-[4/5] place-items-center rounded-2xl bg-surface">
                         <Library className="text-primary" aria-hidden="true" />
