@@ -19,6 +19,8 @@ const podcasts = [
       {
         number: 1,
         title: "Os operários navais: lutas e resistências no pré-golpe de 1964",
+        description:
+          "Neste episódio, você conhecerá um pouco da situação da indústria naval brasileira, dos sindicatos com suas lutas políticas e, também, da história e do cotidiano de alguns operários navais no período antecedente ao golpe empresarial-militar de 1964.",
         url:
           "https://open.spotify.com/episode/6MV8TsiWC1Wf1LpxDEUXz1?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=7cbf828ef0aa48ba",
       },
@@ -26,6 +28,8 @@ const podcasts = [
         number: 2,
         title:
           "A conspiração: cumplicidades entre os militares, o governo dos EUA e os empresários ligados ao capital internacional",
+        description:
+          "Neste episódio falaremos sobre uma mobilização silenciosa, ocorrida por meio de um jogo muito bem arquitetado no campo político, militar, empresarial e midiático que levou ao golpe empresarial-militar de 1964. Essa articulação está diretamente vinculada ao alinhamento do país ao modelo capitalista de produção, por meio de uma conspiração envolvendo o governo dos EUA, os militares e o empresariado nacional e internacional, aparelhados dentro do complexo IPES/IBAD.",
         url:
           "https://open.spotify.com/episode/7H9HEQDNmYTikVxerD1HsI?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=75b2bf0443524797",
       },
@@ -33,6 +37,8 @@ const podcasts = [
         number: 3,
         title:
           "As relações entre o PCB e o sindicato dos operários navais do Rio de Janeiro nas décadas de 1950 e 1960",
+        description:
+          "Neste episódio, falaremos sobre o sindicato dos operários navais antes do golpe empresarial-militar brasileiro de 1964. Como os operários se organizavam dentro do Sindicato e como foi a participação do Partido Comunista nas lutas da Categoria.",
         url:
           "https://open.spotify.com/episode/2Ql5ZZpNY8vGFxjLP4Kve1?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=938b9693297e4b6d",
       },
@@ -40,6 +46,8 @@ const podcasts = [
         number: 4,
         title:
           "O golpe empresarial-militar brasileiro e as violências vividas pelos operários navais do Rio de Janeiro",
+        description:
+          "Neste episódio, falaremos sobre as diferentes formas de violências vividas pelos operários navais do Rio de Janeiro no período da ditadura empresarial militar brasileira. Você saberá como os operários navais vivenciaram o golpe de 1964. As inúmeras violências que sofreram e como resistiram ao terror imposto pelo Estado ditatorial.",
         url:
           "https://open.spotify.com/episode/6WrVhXy9az02uNZugAlGfK?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=3ce6422d9fab4281",
       },
@@ -47,6 +55,8 @@ const podcasts = [
         number: 5,
         title:
           "Locais de prisão dos operários navais durante a ditadura empresarial-militar e os relatos das torturas",
+        description:
+          "Neste episódio, vamos relatar um pouco sobre o que aconteceu com os operários navais logo depois do golpe empresarial-militar de 1964, como suas prisões e torturas que sofreram. Falaremos também sobre os diversos lugares em que foram aprisionados, sequestrados e confinados na cidade de Niterói e do Rio de Janeiro.",
         url:
           "https://open.spotify.com/episode/4mw51kXMWcIkl9oIFbgSyc?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=3f4b5f6caebf4d4b",
       },
@@ -54,6 +64,8 @@ const podcasts = [
         number: 6,
         title:
           "O fim da ditadura empresarial-militar brasileira de 1964 e a luta dos operários navais durante esse período",
+        description:
+          "Nesse episódio, falaremos sobre o fim da ditadura empresarial-militar brasileira de 1964, a Lei de Anistia e a luta dos operários navais durante esse período.",
         url:
           "https://open.spotify.com/episode/2qaKSJVozkEb0m054AIiAD?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=d1717f43c33f4851",
       },
@@ -61,6 +73,8 @@ const podcasts = [
         number: 7,
         title:
           "Legado da luta: em memória aos operários perseguidos pelo regime ditatorial e as lições dos sobreviventes",
+        description:
+          "Neste episódio, o último da série do podcast, falaremos sobre o legado das lutas e das resistências dos operários navais atingidos pela ditadura empresarial-militar brasileira.",
         url:
           "https://open.spotify.com/episode/6xJE9lwqHIf4UpvM0EWo4R?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=1cc780ce40ff42d2",
       },
