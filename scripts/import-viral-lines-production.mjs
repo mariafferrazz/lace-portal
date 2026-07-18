@@ -93,6 +93,52 @@ Coltrane`,
     authorBio:
       'Lançado ao abismo em 4 de julho de 1966, é carioca da Zêene. Nascido e criado no Méier - no "subúrbio dos melhores dias", onde nunca deixará de estar no coração, mas o corpo já se espalha pelo mundo. Antiautor de dois livros de versos: "Poesia, a essa altura do Championship..." e "Malditos Processos", publicados pela Amazon. Professor de teatro, filho e pai coruja...',
   },
+  {
+    title: "Gatos",
+    researcherName: "Jose Ricardo Novaes",
+    imageUrl: "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000111-0159a0159d/gatos-2.webp?ph=3554c7d1fd",
+    description: `Os gatos
+
+Dormem
+
+O sono injusto
+
+No calor
+
+Dantesco
+
+Do fervereiro
+
+Nessa
+
+São Sebastião
+
+Esquecidos
+
+De ser
+
+Na tarde
+
+Esquecida
+
+De frescor
+
+Mortalha
+
+Cobrindo
+
+As cabeças
+
+Insones
+
+Das gentes
+
+Sonâmbulas
+
+Na existência`,
+    authorBio:
+      'Lançado ao abismo em 4 de julho de 1966, é carioca da Zêene. Nascido e criado no Méier - no "subúrbio dos melhores dias", onde nunca deixará de estar no coração, mas o corpo já se espalha pelo mundo. Antiautor de dois livros de versos: "Poesia, a essa altura do Championship..." e "Malditos Processos", publicados pela Amazon. Professor de teatro, filho e pai coruja...',
+  },
 ];
 
 async function request(path, options = {}) {
