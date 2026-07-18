@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, ExternalLink, Library, Play, PlayCircle, Users, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, ExternalLink, Library, Play, PlayCircle, Users, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import Container from "../ui/Container";
 import Button from "../ui/Button";
@@ -39,15 +39,20 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
   const [activeEpisode, setActiveEpisode] = useState(null);
   const [activeResearchersPodcast, setActiveResearchersPodcast] = useState(null);
   const [activeInterview, setActiveInterview] = useState(null);
+  const [activeImageGallery, setActiveImageGallery] = useState(null);
   const visibleItems = contentType ? remoteItems : items;
   const mediaCards = contentType === "INTERVIEW" || contentType === "PODCAST";
   const isPodcastModalOpen = Boolean(activePodcast);
   const isResearchersModalOpen = Boolean(activeResearchersPodcast);
   const isInterviewModalOpen = Boolean(activeInterview);
+  const isImageGalleryOpen = Boolean(activeImageGallery);
   const podcastEmbedUrl = getSpotifyEmbedUrl(activeEpisode?.url || activePodcast?.href);
   const activeEpisodeKey = activeEpisode?.number ? String(activeEpisode.number) : "";
   const activeEpisodeReferences = activePodcast?.episodeReferences?.[activeEpisodeKey];
   const activeEpisodeImages = activePodcast?.episodeImages?.[activeEpisodeKey] || [];
+  const activeGalleryImages = activeImageGallery?.images || [];
+  const activeGalleryIndex = activeImageGallery?.index || 0;
+  const activeGalleryImage = activeGalleryImages[activeGalleryIndex];
   const referenceSections = activeEpisodeReferences
     ? [
         ["Referências bibliográficas", activeEpisodeReferences.bibliographic],
@@ -145,6 +150,38 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isInterviewModalOpen]);
+
+  useEffect(() => {
+    if (!isImageGalleryOpen) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setActiveImageGallery(null);
+        return;
+      }
+      if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+      if (activeGalleryImages.length < 2) return;
+
+      event.preventDefault();
+      setActiveImageGallery((current) => {
+        if (!current) return current;
+        const nextIndex =
+          event.key === "ArrowRight"
+            ? (current.index + 1) % current.images.length
+            : (current.index - 1 + current.images.length) % current.images.length;
+
+        return { ...current, index: nextIndex };
+      });
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [activeGalleryImages.length, isImageGalleryOpen]);
 
   return (
     <main className="py-20 lg:py-28">
@@ -267,16 +304,15 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                     {item.images.length > 0 ? (
                       <div className={`grid gap-4 ${item.images.length > 1 ? "md:grid-cols-2" : ""}`}>
                         {item.images.map((imageUrl, index) => (
-                          <a
+                          <button
                             key={imageUrl}
-                            href={imageUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="block overflow-hidden rounded-2xl border border-border bg-surface"
+                            type="button"
+                            onClick={() => setActiveImageGallery({ title: item.title, images: item.images, index })}
+                            className="block cursor-pointer overflow-hidden rounded-2xl border border-border bg-surface text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                             aria-label={`Abrir imagem ${index + 1} de ${item.title}`}
                           >
                             <img className="aspect-[4/5] w-full object-cover transition hover:scale-[1.02]" src={imageUrl} alt="" />
-                          </a>
+                          </button>
                         ))}
                       </div>
                     ) : (
@@ -369,6 +405,71 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
           </div>
         )}
       </Container>
+
+      {activeImageGallery && activeGalleryImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm md:p-8"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="image-gallery-title"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setActiveImageGallery(null);
+          }}
+        >
+          <div className="relative flex max-h-[94vh] w-full max-w-6xl flex-col rounded-3xl border border-white/20 bg-background p-4 shadow-2xl md:p-6">
+            <button
+              type="button"
+              onClick={() => setActiveImageGallery(null)}
+              className="absolute right-4 top-4 z-20 rounded-full bg-black/70 p-3 text-white transition hover:bg-black focus:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
+              aria-label="Fechar imagem"
+            >
+              <X size={24} aria-hidden="true" />
+            </button>
+
+            <div className="flex flex-wrap items-center justify-between gap-3 pr-14">
+              <h2 id="image-gallery-title" className="font-title text-3xl md:text-4xl">{activeImageGallery.title}</h2>
+              {activeGalleryImages.length > 1 && (
+                <p className="text-sm font-semibold text-primary">
+                  {activeGalleryIndex + 1} / {activeGalleryImages.length}
+                </p>
+              )}
+            </div>
+
+            <div className="mt-5 flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-2xl border border-border bg-black">
+              <img className="max-h-[72vh] w-auto max-w-full object-contain" src={activeGalleryImage} alt="" />
+            </div>
+
+            {activeGalleryImages.length > 1 && (
+              <div className="mt-4 flex justify-center gap-3">
+                <button
+                  type="button"
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  onClick={() =>
+                    setActiveImageGallery((current) => current && {
+                      ...current,
+                      index: (current.index - 1 + current.images.length) % current.images.length,
+                    })
+                  }
+                >
+                  <ArrowLeft size={18} aria-hidden="true" /> Anterior
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  onClick={() =>
+                    setActiveImageGallery((current) => current && {
+                      ...current,
+                      index: (current.index + 1) % current.images.length,
+                    })
+                  }
+                >
+                  Próxima <ArrowRight size={18} aria-hidden="true" />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {activeInterview && (
         <div
