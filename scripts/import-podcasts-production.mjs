@@ -22,7 +22,56 @@ const podcasts = [
         url:
           "https://open.spotify.com/episode/6MV8TsiWC1Wf1LpxDEUXz1?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=7cbf828ef0aa48ba",
       },
+      {
+        number: 2,
+        title:
+          "A conspiração: cumplicidades entre os militares, o governo dos EUA e os empresários ligados ao capital internacional",
+        url:
+          "https://open.spotify.com/episode/7H9HEQDNmYTikVxerD1HsI?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=75b2bf0443524797",
+      },
     ],
+    episodeReferences: {
+      2: {
+        bibliographic: [
+          "BANDEIRA, Moniz. O governo João Goulart: as lutas sociais no Brasil 1961-1964. Ed. Civilização Brasileira. 4 edição. 1978. Rio de Janeiro.",
+          "CAMPOS, Pedro H. P. Transversos: Revista de História. Rio de Janeiro, n. 08, dez. 2016. Tese de doutorado apresentada ao Programa de Pós-Graduação de História Social-PPGHS. Instituto de Ciências Humanas e Filosofia Departamento de História da Universidade Federal Fluminense - UFF. 2012. Niterói.",
+          "DREIFUSS, Renè. A Conquista do Estado. Terceira Edição. Petrópolis: Vozes, 1981.",
+          "FERRAZ, Joana D'Arc. O DIA QUE DUROU 21 ANOS: AS SIMBIOSES ENTRE O PASSADO E O PRESENTE PELAS LENTES DO CINEMA. Transversos: Revista de História. Rio de Janeiro, n. 08, dez. 2016.",
+          "IANNI, Octavio. A Ditadura do Grande Capital. São Paulo. Expressão Popular, 2019. 356p.",
+          "MELO, Demian Bezerra. O Comício da Central: o Rio e as reformas de Jango. Cadernos de História, Belo Horizonte, v. 15, n. 22, 1º sem. 2014.",
+          "PEREIRA, Tulio Augusto de Paiva. As tramas, as conspirações, os golpes e os acontecimentos que prenunciaram 1964 no Brasil: o governo João Goulart. Revista Científica Multidisciplinar Núcleo do Conhecimento. Ano 06, Ed. 02, Vol. 03, pp. 112-152. Fevereiro de 2021.",
+          "SILVA, Célia Pereira da. O Sindicato dos Operários Navais e o PCB no Contexto Pré-Golpe de 1964: Faces da Mesma Moeda. Rio de Janeiro, 2016.",
+          "SILVA, Célia Pereira da. Os Operários Navais e suas Memórias Indeléveis: Sindicalismo e Comunismo no Contexto do Golpe de 1964; 2015; Monografia; Universidade Federal Fluminense.",
+        ],
+        sites: [
+          {
+            title: "WESTIN, Ricardo. Há 60 anos, Congresso aceitou renúncia e abortou golpe de Jânio Quadros. Agência Senado. 2021.",
+            url: "https://www12.senado.leg.br/noticias/especiais/arquivo-s/ha-60-anos-congresso-aceitou-renuncia-e-abortou-golpe-de-janio-quadros",
+          },
+          {
+            title: "Testemunhos no RJ contam história da repressão ao Sindicato dos Operários Navais. CNV Memórias Reveladas. 2013.",
+            url: "https://cnv.memoriasreveladas.gov.br/outros-destaques/346-testemunhos-contam-historia-da-repressao-ao-sindicato-dos-operarios-navais-de-niteroi-e-sao-goncalo.html",
+          },
+          {
+            title: "LAMARÃO, Sérgio. Instituto Brasileiro de Ação Democrática (IBAD). CPDOC.",
+            url: "https://www.fgv.br/cpdoc/acervo/dicionarios/verbete-tematico/instituto-brasileiro-de-acao-democratica-ibad",
+          },
+          {
+            title: "Resultado geral do referendo de 1963. Seção de Arquivo do Tribunal Superior Eleitoral.",
+            url: "https://www.justicaeleitoral.jus.br/arquivos/referendo-de-1963/rybena_pdf?file=https://www.justicaeleitoral.jus.br/arquivos/referendo-de-1963/at_download/file",
+          },
+        ],
+        films: ["TAVARES, Camilo (Diretor). O dia que durou 21 anos. Brasil. Pequi Filmes. 2013."],
+        interviews: [
+          "Jayme Navas da Costa",
+          "José Carlos Teodoro de Almeida",
+          "Ivan Duarte",
+          "Manuel Francisco Spindola",
+          "Benedito Joaquim dos Santos",
+          "Oswaldo Garcia Veloso",
+        ],
+      },
+    },
     references: {
       bibliographic: [
         "BANDEIRA, Moniz. Presença dos Estados Unidos no Brasil: (dois séculos de história). Civilização Brasileira, 1973.",
@@ -78,6 +127,8 @@ const podcasts = [
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000087-d3dc4d3dc7/unnamed%20%281%29.jpg?ph=3554c7d1fd",
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000089-2de742de76/Manifesto%20Coron%C3%A9is.jfif?ph=3554c7d1fd",
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000096-173f7173fa/demissaojango.jfif?ph=3554c7d1fd",
+      "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000090-84fba84fbd/ep2.jpg?ph=3554c7d1fd",
+      "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000094-a6996a6998/ep22-2.png?ph=3554c7d1fd",
     ],
   },
 ];
@@ -123,6 +174,7 @@ for (const podcast of podcasts) {
       platform: "Spotify",
       episodes: podcast.episodes,
       references: podcast.references,
+      episodeReferences: podcast.episodeReferences,
       images: podcast.images,
     },
   };

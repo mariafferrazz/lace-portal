@@ -14,6 +14,7 @@ function mapContentToItem(content) {
     href: content.externalUrl || content.fileUrl,
     thumbnail: content.metadata?.thumbnail || (youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : null),
     youtubeId,
+    episodes: content.metadata?.episodes || [],
   };
 }
 
@@ -59,7 +60,53 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
         ) : visibleItems.length > 0 ? (
           <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {visibleItems.map((item) => (
-              mediaCards && item.href ? (
+              contentType === "PODCAST" ? (
+                <article
+                  key={item.title}
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card text-text transition hover:-translate-y-1 hover:border-primary"
+                >
+                  <span className="relative block">
+                    {item.thumbnail ? (
+                      <img className="aspect-video w-full object-cover" src={item.thumbnail} alt="" />
+                    ) : (
+                      <span className="grid aspect-video place-items-center bg-surface">
+                        <Library className="text-primary" aria-hidden="true" />
+                      </span>
+                    )}
+                    <span className="absolute inset-0 grid place-items-center bg-black/20 transition group-hover:bg-black/40">
+                      <span className="grid size-14 place-items-center rounded-full bg-primary-fill text-on-primary shadow-xl">
+                        <Play fill="currentColor" aria-hidden="true" />
+                      </span>
+                    </span>
+                  </span>
+                  <span className="flex flex-1 flex-col p-6">
+                    {item.meta && <span className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</span>}
+                    <span className="mt-3 block font-title text-3xl">{item.title}</span>
+                    <span className="mt-4 leading-7 text-muted">{item.description}</span>
+                    {item.episodes.length > 0 ? (
+                      <span className="mt-6 flex flex-col gap-3">
+                        {item.episodes.map((episode) => (
+                          <a
+                            key={`${item.title}-${episode.number}`}
+                            className="rounded-xl border border-border bg-surface p-4 text-sm leading-6 text-text transition hover:border-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                            href={episode.url}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <span className="block font-semibold text-primary">Episódio {episode.number}</span>
+                            <span className="animated-underline mt-1 inline">{episode.title}</span>
+                          </a>
+                        ))}
+                      </span>
+                    ) : item.href ? (
+                      <a className="mt-6 inline-flex items-center gap-2 self-start font-semibold text-primary" href={item.href} target="_blank" rel="noreferrer">
+                        <span className="animated-underline">Acessar</span>
+                        <ExternalLink size={16} aria-hidden="true" />
+                      </a>
+                    ) : null}
+                  </span>
+                </article>
+              ) : mediaCards && item.href ? (
                 <a
                   key={item.title}
                   className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card text-text transition hover:-translate-y-1 hover:border-primary focus-visible:-translate-y-1 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
