@@ -1,6 +1,7 @@
 const API_BASE = process.env.API_BASE || "https://api.lablace.com.br/api";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const ALINE_RESEARCHER_URL = "http://buscatextual.cnpq.br/buscatextual/visualizacv.do?id=K4767764Y6";
 
 if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
   throw new Error("Configure ADMIN_EMAIL e ADMIN_PASSWORD para importar Linhas de Fugas Virais.");
@@ -142,7 +143,7 @@ Na existência`,
   {
     title: "Governo de Si em tempos Pandêmicos",
     researcherName: "Aline Ribeiro Nascimento",
-    researcherUrl: "http://buscatextual.cnpq.br/buscatextual/visualizacv.do",
+    researcherUrl: ALINE_RESEARCHER_URL,
     imageUrl: "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000112-6f6f26f6f6/90bdf9f9bdb246bf87a775b663811065-0001-1.webp?ph=3554c7d1fd",
     description:
       'Possui graduação em Psicologia pela Universidade Federal Fluminense (1996); mestrado em Psicologia pela Universidade Federal Fluminense (2006) com o trabalho "O que é a psicologia para Nietzsche?"; doutorado em Memória Social pela Universidade Federal do Estado do Rio de Janeiro/ Centro de Ciências Humanas e Sociais/ PPGMS (2011), com auxílio da Capes, com o trabalho "Os Desafios da memória em direção às forças de criação"; concluiu, em 2014, estágio de pós-doutoramento em Psicologia Social - com auxílio do CNPq- na Universidade do Estado do Rio de Janeiro (UERJ) desenvolvendo o projeto "Ressonâncias de Nietzsche em Foucault: o encontro criativo da flecha do pensamento" em que buscou mostrar as implicações do encontro de Foucault com Nietzsche e os efeitos desse encontro nos trabalhos de pesquisadores das ciências humanas e sociais. Atualmente está fazendo um novo doutorado em Psicologia, na UFF. tendo como norte o tema do nojo na obra nietzschiana e sua articulação intempestiva com as forças do presente, o título provisório do trabalho é: Desafios da travessia do niilismo no contemporâneo : como produzir um corpo liberto do nojo?',
@@ -150,13 +151,25 @@ Na existência`,
   {
     title: "O Presente Inominável",
     researcherName: "Aline Ribeiro Nascimento",
-    researcherUrl: "http://buscatextual.cnpq.br/buscatextual/visualizacv.do",
+    researcherUrl: ALINE_RESEARCHER_URL,
     imageUrl: "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000113-10aad10ab0/10a3c4181c6c471f97c1d0867ee38fb2-0001-4.webp?ph=3554c7d1fd",
     images: [
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000113-10aad10ab0/10a3c4181c6c471f97c1d0867ee38fb2-0001-4.webp?ph=3554c7d1fd",
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000114-6cab36cab7/10a3c4181c6c471f97c1d0867ee38fb2-0002-1.webp?ph=3554c7d1fd",
     ],
     externalUrl: "https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Flab-lace.webnode.page%2Fl%2Fo-presente-inominavel%2F",
+    description:
+      'Possui graduação em Psicologia pela Universidade Federal Fluminense (1996); mestrado em Psicologia pela Universidade Federal Fluminense (2006) com o trabalho "O que é a psicologia para Nietzsche?"; doutorado em Memória Social pela Universidade Federal do Estado do Rio de Janeiro/ Centro de Ciências Humanas e Sociais/ PPGMS (2011), com auxílio da Capes, com o trabalho "Os Desafios da memória em direção às forças de criação"; concluiu, em 2014, estágio de pós-doutoramento em Psicologia Social - com auxílio do CNPq- na Universidade do Estado do Rio de Janeiro (UERJ) desenvolvendo o projeto "Ressonâncias de Nietzsche em Foucault: o encontro criativo da flecha do pensamento" em que buscou mostrar as implicações do encontro de Foucault com Nietzsche e os efeitos desse encontro nos trabalhos de pesquisadores das ciências humanas e sociais. Atualmente está fazendo um novo doutorado em Psicologia, na UFF. tendo como norte o tema do nojo na obra nietzschiana e sua articulação intempestiva com as forças do presente, o título provisório do trabalho é: Desafios da travessia do niilismo no contemporâneo : como produzir um corpo liberto do nojo?',
+  },
+  {
+    title: "A Lua Gradeada",
+    researcherName: "Aline Ribeiro Nascimento",
+    researcherUrl: ALINE_RESEARCHER_URL,
+    imageUrl: "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000115-ec2edec2ef/5d3c505ddd7c4fb2b91c4c814ebe3095-0001.webp?ph=3554c7d1fd",
+    images: [
+      "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000115-ec2edec2ef/5d3c505ddd7c4fb2b91c4c814ebe3095-0001.webp?ph=3554c7d1fd",
+      "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000116-940ff94102/5d3c505ddd7c4fb2b91c4c814ebe3095-0002.webp?ph=3554c7d1fd",
+    ],
     description:
       'Possui graduação em Psicologia pela Universidade Federal Fluminense (1996); mestrado em Psicologia pela Universidade Federal Fluminense (2006) com o trabalho "O que é a psicologia para Nietzsche?"; doutorado em Memória Social pela Universidade Federal do Estado do Rio de Janeiro/ Centro de Ciências Humanas e Sociais/ PPGMS (2011), com auxílio da Capes, com o trabalho "Os Desafios da memória em direção às forças de criação"; concluiu, em 2014, estágio de pós-doutoramento em Psicologia Social - com auxílio do CNPq- na Universidade do Estado do Rio de Janeiro (UERJ) desenvolvendo o projeto "Ressonâncias de Nietzsche em Foucault: o encontro criativo da flecha do pensamento" em que buscou mostrar as implicações do encontro de Foucault com Nietzsche e os efeitos desse encontro nos trabalhos de pesquisadores das ciências humanas e sociais. Atualmente está fazendo um novo doutorado em Psicologia, na UFF. tendo como norte o tema do nojo na obra nietzschiana e sua articulação intempestiva com as forças do presente, o título provisório do trabalho é: Desafios da travessia do niilismo no contemporâneo : como produzir um corpo liberto do nojo?',
   },
