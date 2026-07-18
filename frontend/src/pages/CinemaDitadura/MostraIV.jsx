@@ -184,30 +184,28 @@ export default function MostraIV() {
             <CalendarDays aria-hidden="true" />
             <h2 className="font-title text-4xl text-text md:text-5xl">Calendário 2022</h2>
           </div>
-          <div className="mt-8 grid gap-6 md:grid-cols-2" style={{ gridAutoRows: "196px" }}>
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
             {playlistVideos.map((video) => {
               const film = findFilmByTitle(films, video.shortTitle);
 
               return (
                 <article
                   key={`${video.date}-${video.id}`}
-                  className="grid h-full min-h-0 w-full gap-6 rounded-2xl border border-border bg-card p-5 transition hover:-translate-y-1 hover:border-primary"
-                  style={{ gridTemplateColumns: "190px minmax(0, 1fr)" }}
+                  className="grid w-full gap-5 rounded-2xl border border-border bg-card p-5 transition hover:-translate-y-1 hover:border-primary sm:grid-cols-[160px_minmax(0,1fr)] sm:gap-6 lg:grid-cols-[190px_minmax(0,1fr)]"
                 >
                   <time
-                    className="flex h-full shrink-0 items-center justify-center rounded-2xl border border-primary/60 bg-primary/15 px-4 text-center text-white"
+                    className="flex min-h-20 w-full shrink-0 items-center justify-center rounded-2xl border border-primary/60 bg-primary/15 px-4 text-center text-text sm:min-h-full"
                     dateTime={video.date.split("/").reverse().join("-")}
-                    style={{ width: "190px" }}
                   >
                     <span className="whitespace-nowrap font-title leading-none" style={{ fontSize: "2.35rem", letterSpacing: "-0.03em" }}>
                       {video.date}
                     </span>
                   </time>
 
-                  <div className="flex min-h-0 min-w-0 flex-col justify-between overflow-hidden py-1">
+                  <div className="flex min-w-0 flex-col justify-between py-1">
                     <div>
                       <h3
-                        className="max-w-[18rem] font-title"
+                        className="font-title"
                         style={{ fontSize: video.titleFontSize, lineHeight: 1.08 }}
                       >
                         {video.shortTitle}
