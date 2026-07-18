@@ -35,10 +35,12 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
   const [activePodcast, setActivePodcast] = useState(null);
   const [activeEpisode, setActiveEpisode] = useState(null);
   const [activeResearchersPodcast, setActiveResearchersPodcast] = useState(null);
+  const [activeInterview, setActiveInterview] = useState(null);
   const visibleItems = contentType ? remoteItems : items;
   const mediaCards = contentType === "INTERVIEW" || contentType === "PODCAST";
   const isPodcastModalOpen = Boolean(activePodcast);
   const isResearchersModalOpen = Boolean(activeResearchersPodcast);
+  const isInterviewModalOpen = Boolean(activeInterview);
   const podcastEmbedUrl = getSpotifyEmbedUrl(activeEpisode?.url || activePodcast?.href);
   const activeEpisodeKey = activeEpisode?.number ? String(activeEpisode.number) : "";
   const activeEpisodeReferences = activePodcast?.episodeReferences?.[activeEpisodeKey];
@@ -125,6 +127,22 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
     };
   }, [isResearchersModalOpen]);
 
+  useEffect(() => {
+    if (!isInterviewModalOpen) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") setActiveInterview(null);
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isInterviewModalOpen]);
+
   return (
     <main className="py-20 lg:py-28">
       <Container>
@@ -205,6 +223,38 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                     </span>
                   </span>
                 </article>
+              ) : contentType === "INTERVIEW" && item.youtubeId ? (
+                <button
+                  key={item.title}
+                  type="button"
+                  className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-border bg-card text-left text-text transition hover:-translate-y-1 hover:border-primary focus-visible:-translate-y-1 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  onClick={() => setActiveInterview(item)}
+                  aria-label={`Assistir ${item.title}`}
+                >
+                  <span className="relative block">
+                    {item.thumbnail ? (
+                      <img className="aspect-video w-full object-cover" src={item.thumbnail} alt="" />
+                    ) : (
+                      <span className="grid aspect-video place-items-center bg-surface">
+                        <Library className="text-primary" aria-hidden="true" />
+                      </span>
+                    )}
+                    <span className="absolute inset-0 grid place-items-center bg-black/20 transition group-hover:bg-black/40">
+                      <span className="grid size-14 place-items-center rounded-full bg-primary-fill text-on-primary shadow-xl">
+                        <Play fill="currentColor" aria-hidden="true" />
+                      </span>
+                    </span>
+                  </span>
+                  <span className="flex flex-1 flex-col p-6">
+                    {item.meta && <span className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</span>}
+                    <span className="mt-3 block font-title text-3xl">{item.title}</span>
+                    <span className="mt-4 flex-1 leading-7 text-muted">{item.description}</span>
+                    <span className="mt-6 inline-flex items-center gap-2 self-start font-semibold text-primary">
+                      <span className="animated-underline">Acessar</span>
+                      <PlayCircle size={16} aria-hidden="true" />
+                    </span>
+                  </span>
+                </button>
               ) : mediaCards && item.href ? (
                 <a
                   key={item.title}
@@ -267,6 +317,59 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
           </div>
         )}
       </Container>
+
+      {activeInterview && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-8"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="interview-modal-title"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setActiveInterview(null);
+          }}
+        >
+          <div className="relative max-h-[94vh] w-full max-w-5xl overflow-y-auto rounded-3xl border border-white/20 bg-background p-5 shadow-2xl md:p-8">
+            <button
+              type="button"
+              onClick={() => setActiveInterview(null)}
+              className="absolute right-4 top-4 z-10 rounded-full bg-black/70 p-3 text-white transition hover:bg-black focus:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
+              aria-label="Fechar entrevista"
+            >
+              <X size={24} aria-hidden="true" />
+            </button>
+
+            <div className="overflow-hidden rounded-2xl border border-border bg-black">
+              <iframe
+                className="aspect-video w-full"
+                src={`https://www.youtube.com/embed/${activeInterview.youtubeId}?wmode=opaque&autoplay=1`}
+                title={activeInterview.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+
+            {activeInterview.meta && (
+              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-primary">{activeInterview.meta}</p>
+            )}
+            <h2 id="interview-modal-title" className="mt-3 pr-12 font-title text-4xl md:text-5xl">
+              {activeInterview.title}
+            </h2>
+            <p className="mt-4 max-w-3xl leading-8 text-muted">{activeInterview.description}</p>
+
+            {activeInterview.href && (
+              <a
+                className="mt-6 inline-flex items-center gap-2 font-semibold text-primary"
+                href={activeInterview.href}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span className="animated-underline">Abrir no YouTube</span>
+                <ExternalLink size={16} aria-hidden="true" />
+              </a>
+            )}
+          </div>
+        </div>
+      )}
 
       {activePodcast && (
         <div
