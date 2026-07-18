@@ -27,6 +27,7 @@ function mapContentToItem(content) {
     soundtrack: content.metadata?.soundtrack || [],
     platform: content.metadata?.platform,
     authorBio: content.metadata?.authorBio,
+    researcherUrl: content.metadata?.researcherUrl,
   };
 }
 
@@ -274,7 +275,17 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                       </span>
                     )}
                     <div>
-                      {item.meta && <p className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</p>}
+                      {item.meta && (
+                        <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+                          {item.researcherUrl ? (
+                            <a href={item.researcherUrl} target="_blank" rel="noreferrer">
+                              <span className="animated-underline">{item.meta}</span>
+                            </a>
+                          ) : (
+                            item.meta
+                          )}
+                        </p>
+                      )}
                       <h2 className="mt-3 font-title text-4xl md:text-5xl">{item.title}</h2>
                       <p className="mt-6 whitespace-pre-line leading-8 text-muted">{item.description}</p>
                       {item.authorBio && (
