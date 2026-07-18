@@ -1,4 +1,6 @@
 export const THEME_STORAGE_KEY = "lace-theme";
+export const THEME_VERSION_KEY = "lace-theme-version";
+export const THEME_VERSION = "2";
 
 export const THEME_PALETTES = {
   light: {
@@ -31,6 +33,12 @@ export function normalizeTheme(theme) {
 
 export function getStoredTheme() {
   try {
+    if (localStorage.getItem(THEME_VERSION_KEY) !== THEME_VERSION) {
+      localStorage.setItem(THEME_STORAGE_KEY, "light");
+      localStorage.setItem(THEME_VERSION_KEY, THEME_VERSION);
+      return "light";
+    }
+
     return normalizeTheme(localStorage.getItem(THEME_STORAGE_KEY));
   } catch {
     return "light";
@@ -64,6 +72,7 @@ export function applyTheme(theme, { persist = true } = {}) {
   if (persist) {
     try {
       localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      localStorage.setItem(THEME_VERSION_KEY, THEME_VERSION);
     } catch {
       // Navegadores em modo privado podem bloquear localStorage.
     }

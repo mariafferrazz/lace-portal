@@ -9,7 +9,13 @@
     <script>
       (function () {
         try {
+          var themeVersion = "2";
           var theme = localStorage.getItem("lace-theme");
+          if (localStorage.getItem("lace-theme-version") !== themeVersion) {
+            theme = "light";
+            localStorage.setItem("lace-theme", theme);
+            localStorage.setItem("lace-theme-version", themeVersion);
+          }
           if (theme !== "dark" && theme !== "light") theme = "light";
           document.documentElement.dataset.theme = theme;
           document.documentElement.classList.remove("theme-light", "theme-dark");
