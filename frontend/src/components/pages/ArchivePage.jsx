@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, ExternalLink, Library } from "lucide-react";
+import { ArrowRight, ExternalLink, Library, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import Container from "../ui/Container";
 import api from "../../services/api";
 
 function mapContentToItem(content) {
+  const youtubeId = content.metadata?.youtubeId;
+
   return {
     title: content.title,
     description: content.description || "Conteúdo disponível no acervo do LACE.",
     meta: content.researcherName,
     href: content.externalUrl || content.fileUrl,
+    thumbnail: content.metadata?.thumbnail || (youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : null),
+    youtubeId,
   };
 }
 
@@ -17,6 +21,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
   const [remoteItems, setRemoteItems] = useState([]);
   const [loading, setLoading] = useState(Boolean(contentType));
   const visibleItems = contentType ? remoteItems : items;
+  const mediaCards = contentType === "INTERVIEW";
 
   useEffect(() => {
     if (!contentType) return undefined;
@@ -54,21 +59,56 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
         ) : visibleItems.length > 0 ? (
           <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {visibleItems.map((item) => (
-              <article key={item.title} className="flex flex-col rounded-2xl border border-border bg-card p-7">
-                {item.meta && <p className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</p>}
-                <h2 className="mt-3 font-title text-3xl">{item.title}</h2>
-                <p className="mt-4 flex-1 leading-7 text-muted">{item.description}</p>
-                {item.to && (
-                  <Link className="mt-6 inline-flex items-center gap-2 font-semibold text-primary" to={item.to}>
-                    Acessar <ArrowRight size={16} aria-hidden="true" />
-                  </Link>
-                )}
-                {item.href && (
-                  <a className="mt-6 inline-flex items-center gap-2 font-semibold text-primary" href={item.href} target="_blank" rel="noreferrer">
-                    Acessar <ExternalLink size={16} aria-hidden="true" />
-                  </a>
-                )}
-              </article>
+              mediaCards && item.href ? (
+                <a
+                  key={item.title}
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card text-text transition hover:-translate-y-1 hover:border-primary focus-visible:-translate-y-1 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`Acessar ${item.title}`}
+                >
+                  <span className="relative block">
+                    {item.thumbnail ? (
+                      <img className="aspect-video w-full object-cover" src={item.thumbnail} alt="" />
+                    ) : (
+                      <span className="grid aspect-video place-items-center bg-surface">
+                        <Library className="text-primary" aria-hidden="true" />
+                      </span>
+                    )}
+                    <span className="absolute inset-0 grid place-items-center bg-black/20 transition group-hover:bg-black/40">
+                      <span className="grid size-14 place-items-center rounded-full bg-primary-fill text-on-primary shadow-xl">
+                        <Play fill="currentColor" aria-hidden="true" />
+                      </span>
+                    </span>
+                  </span>
+                  <span className="flex flex-1 flex-col p-6">
+                    {item.meta && <span className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</span>}
+                    <span className="mt-3 block font-title text-3xl">{item.title}</span>
+                    <span className="mt-4 flex-1 leading-7 text-muted">{item.description}</span>
+                    <span className="mt-6 inline-flex items-center gap-2 self-start font-semibold text-primary">
+                      <span className="animated-underline">Acessar</span>
+                      <ExternalLink size={16} aria-hidden="true" />
+                    </span>
+                  </span>
+                </a>
+              ) : (
+                <article key={item.title} className="flex flex-col rounded-2xl border border-border bg-card p-7">
+                  {item.meta && <p className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</p>}
+                  <h2 className="mt-3 font-title text-3xl">{item.title}</h2>
+                  <p className="mt-4 flex-1 leading-7 text-muted">{item.description}</p>
+                  {item.to && (
+                    <Link className="mt-6 inline-flex items-center gap-2 font-semibold text-primary" to={item.to}>
+                      Acessar <ArrowRight size={16} aria-hidden="true" />
+                    </Link>
+                  )}
+                  {item.href && (
+                    <a className="mt-6 inline-flex items-center gap-2 font-semibold text-primary" href={item.href} target="_blank" rel="noreferrer">
+                      Acessar <ExternalLink size={16} aria-hidden="true" />
+                    </a>
+                  )}
+                </article>
+              )
             ))}
           </div>
         ) : (
