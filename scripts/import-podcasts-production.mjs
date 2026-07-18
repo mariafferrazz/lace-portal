@@ -29,6 +29,13 @@ const podcasts = [
         url:
           "https://open.spotify.com/episode/7H9HEQDNmYTikVxerD1HsI?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=75b2bf0443524797",
       },
+      {
+        number: 3,
+        title:
+          "As relações entre o PCB e o sindicato dos operários navais do Rio de Janeiro nas décadas de 1950 e 1960",
+        url:
+          "https://open.spotify.com/episode/2Ql5ZZpNY8vGFxjLP4Kve1?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=938b9693297e4b6d",
+      },
     ],
     episodeReferences: {
       2: {
@@ -69,6 +76,48 @@ const podcasts = [
           "Manuel Francisco Spindola",
           "Benedito Joaquim dos Santos",
           "Oswaldo Garcia Veloso",
+        ],
+      },
+      3: {
+        bibliographic: [
+          "CAMPOS, Lucas Pacheco. A prática de silenciar lembrando: uma análise da administração política da memória na Comissão Nacional da Verdade. Dissertação de Mestrado. Programa de Pós-Graduação em Administração, 2016.",
+          "GOMES, Angela Castro (org.). A Época dos Operários Navais. Niterói: Produção do Departamento de História, Laboratório de História Oral e Iconografia da UFF, 1999.",
+          "MATTOS, Marcelo Badaró. Trabalhadores e sindicatos na conjuntura do pré-64: a experiência carioca. Lutas Sociais, nº 5, 1998, pp. 25-33.",
+          "MATTOS, Marcelo Badaró. Greves, sindicatos e repressão policial no Rio de Janeiro (1954-1964). Revista Brasileira de História. São Paulo, v. 24, nº 47, p. 241-270, 2004.",
+          "MONTALVÃO, Sérgio de Sousa; FERRAZ, Joana D'Arc Fernandes. Uma greve em dois tempos: o movimento nacional dos marítimos de 1953 no Rio de Janeiro e os impasses da historiografia política. Izquierdas, 49, agosto 2020: 1230-1242.",
+          "PESSANHA, Elina. Operários Navais - Trabalho, Sindicalismo e Política na Indústria Naval do Rio de Janeiro. Rio de Janeiro: 7 Letras, 2012.",
+          "PESSANHA, Elina. Os Operários Navais do Rio de Janeiro sob a Ditadura do pós-1964: repressão e resistência. Revista Mundos do Trabalho, vol. 6, nº 11, p. 11-23, jan./jun., 2014.",
+          "PESSANHA, Elina e MOREL, Regina. Gerações operárias: rupturas e continuidades na experiência de metalúrgicos no Rio de Janeiro. Revista Brasileira de Ciências Sociais (RBCS). v. 6, n. 17, Rio de Janeiro, outubro, 1991.",
+          "RELATÓRIO/Comissão da Verdade do Rio. Rio de Janeiro: CEV-Rio, 2015.",
+          "RELATÓRIO/Comissão Municipal da Verdade de Niterói, 2015.",
+          "SILVA, Célia Pereira da. O Sindicato dos Operários Navais e o PCB no Contexto Pré-Golpe de 1964: Faces da Mesma Moeda. Rio de Janeiro, 2016.",
+          "SILVA, Célia Pereira da. Os Operários Navais e suas Memórias Indeléveis: Sindicalismo e Comunismo no Contexto do Golpe de 1964; 2015; Monografia; Universidade Federal Fluminense.",
+        ],
+        sites: [
+          {
+            title: "Breve Histórico do PCB. Portal PCB.",
+            url: "https://pcb.org.br/portal/docs/historia.html",
+          },
+          {
+            title: "Cuba não está só. StB no Brasil. 2016.",
+            url: "https://stbnobrasil.com/pt/cuba-nao-esta-so",
+          },
+          {
+            title: "Congresso de Solidariedade a Cuba. Museu da Pessoa.",
+            url: "https://acervo.museudapessoa.org/pt/conteudo/imagem/congresso-de-solidariedade-a-cuba-4482",
+          },
+        ],
+        interviews: [
+          "Jayme Navas da Costa",
+          "José Carlos Teodoro de Almeida",
+          "Ivan Duarte",
+          "Manuel Francisco Spindola",
+          "Benedito Joaquim dos Santos",
+          "Oswaldo Garcia Veloso",
+          "Ricardo Costa",
+        ],
+        archives: [
+          "Arquivo de História Oral do Laboratório de História Oral e Imagem do Departamento de História da Universidade Federal Fluminense (LABHOI-UFF).",
         ],
       },
     },
