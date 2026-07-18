@@ -17,6 +17,9 @@ function getTransporter() {
     port,
     secure: process.env.SMTP_SECURE === "true" || port === 465,
     auth: { user, pass },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
   });
 }
 
@@ -38,15 +41,20 @@ router.post("/", async (req, res) => {
     return res.status(503).json({ error: "Envio de e-mail ainda não configurado." });
   }
 
-  await transporter.sendMail({
-    from: `"Portal LACE" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
-    replyTo: `${name} <${email}>`,
-    to: recipientEmail,
-    subject: `Contato pelo portal LACE - ${name}`,
-    text: `Nome: ${name}\nE-mail: ${email}\n\nMensagem:\n${message}`,
-  });
+  try {
+    await transporter.sendMail({
+      from: `"Portal LACE" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+      replyTo: `${name} <${email}>`,
+      to: recipientEmail,
+      subject: `Contato pelo portal LACE - ${name}`,
+      text: `Nome: ${name}\nE-mail: ${email}\n\nMensagem:\n${message}`,
+    });
 
-  res.status(204).end();
+    res.status(204).end();
+  } catch (error) {
+    console.error("Erro ao enviar contato:", error);
+    res.status(502).json({ error: "Não foi possível enviar o e-mail. Confira as variáveis SMTP no Railway." });
+  }
 });
 
 module.exports = router;
