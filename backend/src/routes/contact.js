@@ -15,6 +15,7 @@ function getTransporter() {
   return nodemailer.createTransport({
     host,
     port,
+    family: Number(process.env.SMTP_FAMILY || 4),
     secure: process.env.SMTP_SECURE === "true" || port === 465,
     auth: { user, pass },
     connectionTimeout: 10000,

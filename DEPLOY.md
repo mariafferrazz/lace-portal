@@ -62,6 +62,7 @@ DATABASE_URL=${{MySQL.MYSQL_URL}}
 CONTACT_TO_EMAIL=lab.lace.uff@gmail.com
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
+SMTP_FAMILY=4
 SMTP_SECURE=true
 SMTP_USER=lab.lace.uff@gmail.com
 SMTP_PASS=senha-de-app-do-gmail
