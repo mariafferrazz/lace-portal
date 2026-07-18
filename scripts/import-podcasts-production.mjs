@@ -43,6 +43,13 @@ const podcasts = [
         url:
           "https://open.spotify.com/episode/6WrVhXy9az02uNZugAlGfK?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=3ce6422d9fab4281",
       },
+      {
+        number: 5,
+        title:
+          "Locais de prisão dos operários navais durante a ditadura empresarial-militar e os relatos das torturas",
+        url:
+          "https://open.spotify.com/episode/4mw51kXMWcIkl9oIFbgSyc?go=1&sp_cid=40578d9a667f37b17594a6d5222085b3&nd=1&dlsi=3f4b5f6caebf4d4b",
+      },
     ],
     episodeReferences: {
       1: {
@@ -199,6 +206,51 @@ const podcasts = [
           "Manuel Francisco Spindola",
           "Benedito Joaquim dos Santos",
           "Oswaldo Garcia Veloso",
+        ],
+      },
+      5: {
+        bibliographic: [
+          "CAMPOS, Lucas Pacheco. A prática de silenciar lembrando: uma análise da administração política da memória na Comissão Nacional da Verdade. Dissertação de Mestrado. Programa de Pós-Graduação em Administração, 2016.",
+          "GOMES, Angela Castro (org.). A Época dos Operários Navais. Niterói: Produção do Departamento de História, Laboratório de História Oral e Iconografia da UFF, 1999.",
+          "MONTALVÃO, Sérgio de Sousa. O tempo de antes, um tempo de reivindicações e conquistas (1953-1964): memória e identidade dos operários navais do Rio de Janeiro. Análise Social, n. 238, p. 162-183, 2021.",
+          "PESSANHA, Elina. Operários Navais - Trabalho, Sindicalismo e Política na Indústria Naval do Rio de Janeiro. Rio de Janeiro: 7 Letras, 2012.",
+          "PESSANHA, Elina. Os Operários Navais do Rio de Janeiro sob a Ditadura do pós-1964: repressão e resistência. Revista Mundos do Trabalho, vol. 6, nº 11, p. 11-23, jan./jun., 2014.",
+          "PESSANHA, Elina e MOREL, Regina. Gerações operárias: rupturas e continuidades na experiência de metalúrgicos no Rio de Janeiro. Revista Brasileira de Ciências Sociais (RBCS). v. 6, n. 17, Rio de Janeiro, outubro, 1991.",
+          "RELATÓRIO/Comissão da Verdade do Rio. Rio de Janeiro: CEV-Rio, 2015.",
+          "RELATÓRIO/Comissão Municipal da Verdade de Niterói, 2015.",
+          "SILVA, Célia Pereira da. O Sindicato dos Operários Navais e o PCB no Contexto Pré-Golpe de 1964: Faces da Mesma Moeda. Rio de Janeiro, 2016.",
+          "SILVA, Célia Pereira da. Os Operários Navais e suas Memórias Indeléveis: Sindicalismo e Comunismo no Contexto do Golpe de 1964; 2015; Monografia; Universidade Federal Fluminense.",
+        ],
+        sites: [
+          {
+            title:
+              "LOPES, Ari; SOARES, Sérgio; AGUIAR, Gustavo. 1964, o ano em que a bola não rolou no Caio Martins. O São Gonçalo. 30 de julho de 2015.",
+            url: "https://www.osaogoncalo.com.br/esportes/7697/1964-o-ano-em-que-a-bola-nao-rolou-no-caio-martins",
+          },
+          {
+            title:
+              "GONTIJO, Gabriel. Caio Martins 80 anos. Um estádio como presídio no coração de Icaraí. A Tribuna. 20 de julho de 2021.",
+            url: "https://www.atribunarj.com.br/caio-martins-80-anos-um-estadio-como-presidio-no-coracao-de-icarai/",
+          },
+          {
+            title:
+              "ANTHUNES, Thiago. Estádio Caio Martins teve 38 presos na ditadura militar: Estudo da Comissão da Verdade também aponta envolvimento de empresas. O Dia. 19 de dezembro de 2013.",
+            url: "https://odia.ig.com.br/noticia/rio-de-janeiro/2013-12-19/estadio-caio-martins-teve-38-presos-na-ditadura-militar.html",
+          },
+          {
+            title:
+              "Onze advogados contaram sobre as dificuldades para atuar em defesa de presos políticos durante o regime militar. CNV Memórias Reveladas.",
+            url: "https://cnv.memoriasreveladas.gov.br/m/outros-destaques/151-campo-de-concentracao-tortura-mutilacao-e-solidariedade-nos-depoimentos-de-advogados-a-comissao-da-verdade.html",
+          },
+        ],
+        interviews: [
+          "Jayme Navas da Costa",
+          "José Carlos Teodoro de Almeida",
+          "Ivan Duarte",
+          "Manuel Francisco Spindola",
+          "Benedito Joaquim dos Santos",
+          "Oswaldo Garcia Veloso",
+          "Vera Regina Assis da Costa",
         ],
       },
     },
