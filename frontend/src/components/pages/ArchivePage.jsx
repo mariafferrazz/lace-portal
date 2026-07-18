@@ -21,6 +21,8 @@ function mapContentToItem(content) {
     thumbnail: content.metadata?.thumbnail || (youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : null),
     youtubeId,
     episodes: content.metadata?.episodes || [],
+    episodeReferences: content.metadata?.episodeReferences || {},
+    episodeImages: content.metadata?.episodeImages || {},
     platform: content.metadata?.platform,
   };
 }
@@ -34,6 +36,20 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
   const mediaCards = contentType === "INTERVIEW" || contentType === "PODCAST";
   const isPodcastModalOpen = Boolean(activePodcast);
   const podcastEmbedUrl = getSpotifyEmbedUrl(activeEpisode?.url || activePodcast?.href);
+  const activeEpisodeKey = activeEpisode?.number ? String(activeEpisode.number) : "";
+  const activeEpisodeReferences = activePodcast?.episodeReferences?.[activeEpisodeKey];
+  const activeEpisodeImages = activePodcast?.episodeImages?.[activeEpisodeKey] || [];
+  const referenceSections = activeEpisodeReferences
+    ? [
+        ["Referências bibliográficas", activeEpisodeReferences.bibliographic],
+        ["Sites", activeEpisodeReferences.sites],
+        ["Filmes", activeEpisodeReferences.films],
+        ["Entrevistas", activeEpisodeReferences.interviews],
+        ["Jornais", activeEpisodeReferences.newspapers],
+        ["Documentos", activeEpisodeReferences.documents],
+        ["Arquivos", activeEpisodeReferences.archives],
+      ].filter(([, entries]) => entries?.length)
+    : [];
 
   useEffect(() => {
     if (!contentType) return undefined;
@@ -236,16 +252,71 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                 <p className="mt-3 text-muted">
                   {activePodcast.episodes.length} episódios · por LACE
                 </p>
-                <p className="mt-5 leading-8 text-muted">{activePodcast.description}</p>
-                {(activeEpisode?.url || activePodcast.href) && (
-                  <a
-                    className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 font-semibold text-black transition hover:bg-primary-fill hover:text-on-primary"
-                    href={activeEpisode?.url || activePodcast.href}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <PlayCircle size={18} aria-hidden="true" /> Reproduzir episódio
-                  </a>
+                {activeEpisode && (
+                  <section className="mt-6 border-t border-border pt-6">
+                    <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">
+                      Episódio {activeEpisode.number}
+                    </p>
+                    <h3 className="mt-3 font-title text-3xl text-text md:text-4xl">{activeEpisode.title}</h3>
+                    {activeEpisode.description && (
+                      <p className="mt-4 leading-8 text-muted">{activeEpisode.description}</p>
+                    )}
+                  </section>
+                )}
+
+                <div className="mt-6 flex flex-wrap items-center gap-3">
+                  {(activeEpisode?.url || activePodcast.href) && (
+                    <a
+                      className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 font-semibold text-black transition hover:bg-primary-fill hover:text-on-primary"
+                      href={activeEpisode?.url || activePodcast.href}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <PlayCircle size={18} aria-hidden="true" /> Reproduzir episódio
+                    </a>
+                  )}
+                  {activeEpisodeImages.map((image, index) => {
+                    const imageUrl = typeof image === "string" ? image : image.url;
+                    const imageTitle = typeof image === "string" ? `Imagem ${index + 1}` : image.title;
+
+                    return (
+                      <a
+                        key={imageUrl}
+                        className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 text-sm font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
+                        href={imageUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <ExternalLink size={16} aria-hidden="true" /> {imageTitle}
+                      </a>
+                    );
+                  })}
+                </div>
+
+                {referenceSections.length > 0 && (
+                  <section className="mt-8 border-t border-border pt-6">
+                    <h3 className="font-title text-3xl text-text">Referências</h3>
+                    <div className="mt-5 grid gap-6">
+                      {referenceSections.map(([sectionTitle, entries]) => (
+                        <div key={sectionTitle}>
+                          <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">{sectionTitle}</h4>
+                          <ul className="mt-3 grid gap-3 text-sm leading-6 text-muted">
+                            {entries.map((entry, index) => (
+                              <li key={`${sectionTitle}-${index}`}>
+                                {typeof entry === "string" ? (
+                                  entry
+                                ) : (
+                                  <a className="text-primary" href={entry.url} target="_blank" rel="noreferrer">
+                                    <span className="animated-underline">{entry.title}</span>
+                                  </a>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
                 )}
               </section>
 
