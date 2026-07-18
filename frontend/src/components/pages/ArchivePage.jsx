@@ -78,6 +78,22 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") setActivePodcast(null);
+      if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+
+      const episodes = activePodcast?.episodes || [];
+      if (episodes.length < 2) return;
+
+      event.preventDefault();
+      setActiveEpisode((currentEpisode) => {
+        const currentIndex = episodes.findIndex((episode) => episode.number === currentEpisode?.number);
+        const fallbackIndex = currentIndex === -1 ? 0 : currentIndex;
+        const nextIndex =
+          event.key === "ArrowRight"
+            ? (fallbackIndex + 1) % episodes.length
+            : (fallbackIndex - 1 + episodes.length) % episodes.length;
+
+        return episodes[nextIndex];
+      });
     };
 
     document.body.style.overflow = "hidden";
@@ -87,7 +103,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isPodcastModalOpen]);
+  }, [activePodcast, isPodcastModalOpen]);
 
   return (
     <main className="py-20 lg:py-28">
