@@ -176,10 +176,10 @@ export default function MostraIII() {
                   className="grid w-full gap-5 rounded-2xl border border-border bg-card p-5 transition hover:-translate-y-1 hover:border-primary sm:grid-cols-[160px_minmax(0,1fr)] sm:gap-6 lg:grid-cols-[190px_minmax(0,1fr)]"
                 >
                   <time
-                    className="flex min-h-20 w-full shrink-0 items-center justify-center rounded-2xl border border-primary/60 bg-primary/15 px-4 text-center text-text sm:min-h-full"
+                    className="flex min-h-20 w-full shrink-0 items-center justify-center rounded-2xl border border-primary/60 bg-primary/15 px-4 text-center text-primary sm:min-h-full"
                     dateTime={video.date.split("/").reverse().join("-")}
                   >
-                    <span className="whitespace-nowrap font-title leading-none" style={{ fontSize: "2.35rem", letterSpacing: "-0.03em" }}>
+                    <span className="whitespace-nowrap font-title font-semibold leading-none" style={{ fontSize: "2.35rem", letterSpacing: "-0.03em" }}>
                       {video.date}
                     </span>
                   </time>
