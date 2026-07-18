@@ -51,7 +51,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
         <header className="max-w-4xl">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-primary">{eyebrow}</p>
           <h1 className="mt-4 font-title text-5xl leading-tight md:text-7xl">{title}</h1>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-muted">{description}</p>
+          {description && <p className="mt-6 max-w-3xl text-lg leading-8 text-muted">{description}</p>}
         </header>
 
         {loading ? (

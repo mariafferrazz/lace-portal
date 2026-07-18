@@ -22,7 +22,7 @@ export const archivePages = {
   entrevistas: {
     eyebrow: "Produção audiovisual",
     title: "Entrevistas",
-    description: "Conversas com pesquisadoras, pesquisadores e participantes de iniciativas ligadas ao laboratório.",
+    description: "",
   },
   podcasts: {
     eyebrow: "Produção audiovisual",
