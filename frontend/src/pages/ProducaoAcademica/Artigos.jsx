@@ -138,7 +138,33 @@ const authors = [
       },
     ],
   },
-  { name: "Flávia Mendes Ferreira", articles: [] },
+  {
+    name: "Flávia Mendes Ferreira",
+    articles: [
+      {
+        title: "Não era depressão, era capitalismo",
+        url: "https://dialogosdofimdomundo.blogspot.com/2021/07/nao-era-depressao-era-capitalismo.html",
+      },
+      {
+        title: 'Torto Arado e "a luta que pode ser a vida todos os dias"',
+        url: "https://dialogosdofimdomundo.blogspot.com/2021/04/torto-arado-e-luta-que-pode-ser-vida.html",
+      },
+      {
+        title: "Liberal na economia e conservador nos costumes: o casamento entre Paulo Guedes e Damares Alves que são mais parecidos do que imaginamos",
+        url: "https://dialogosdofimdomundo.blogspot.com/2020/09/liberal-na-economia-e-conservador-nos.html",
+      },
+      {
+        title: "NEOCONSERVADORISMO, GÊNERO E SOCIOLOGIA NA BASE NACIONAL COMUM CURRICULAR",
+        url: "https://editorarealize.com.br/artigo/visualizar/75748",
+        summary:
+          'NOS ÚLTIMOS ANOS, NÃO APENAS NO BRASIL HOUVE UM CRESCIMENTO SIGNIFICATIVO DO QUE TEM SIDO CHAMADO DE NEOCONSERVADORISMO. UMA AGENDA CONSERVADORA, REACIONÁRIA E AUTORITÁRIA TEM SIDO APRESENTADA E EM DIVERSOS PAÍSES POLÍTICOS COM ESSES DISCURSOS FORAM ELEITOS. UM DOS TEMAS MAIS ATACADOS PELO NEOCONSERVADORISMO DIZ RESPEITO ÀS QUESTÕES DE GÊNERO E SEXUALIDADE, UM EXEMPLO É O FATO DO BRASIL TER RETIRADO OS TERMOS "GÊNERO" E "ORIENTAÇÃO SEXUAL" DO PLANO NACIONAL DE EDUCAÇÃO EM 2014. VALE CONSIDERAR QUE A BASE NACIONAL COMUM CURRICULAR - BNCC- FOI APROVADA EM 2017 E, ESTE TRABALHO É PARTE DE UMA PESQUISA SOBRE GÊNERO NA ESCOLA QUE AQUI ANALISA ALGUMAS MUDANÇAS APROVADAS NA BNCC, SOBRETUDO AQUELAS QUE AFETARAM DIRETAMENTE A DISCIPLINA DE SOCIOLOGIA E A POSSIBILIDADE DE DESENVOLVER COM OS ALUNOS OS CONTEÚDOS DE GÊNERO E SEXUALIDADE. A PESQUISA É DESENVOLVIDA A PARTIR DE UMA BASE TEÓRICO-METODOLÓGICA DAS CIÊNCIAS SOCIAIS E DA ÁREA DE EDUCAÇÃO QUE COMPREENDE QUE ABORDAR QUESTÕES DE GÊNERO E SEXUALIDADE NA ESCOLA É PARTE DA CONSOLIDAÇÃO DE UMA ESCOLA MAIS PLURAL, INCLUSIVA E DEMOCRÁTICA.',
+      },
+      {
+        title: "Controle, disciplinamento e técnicas jurídico-penais em escolas públicas militarizadas",
+        url: "https://www.sbs2021.sbsociologia.com.br/atividade/view?q=YToyOntzOjY6InBhcmFtcyI7czozNToiYToxOntzOjEyOiJJRF9BVElWSURBREUiO3M6MjoiMzMiO30iO3M6MToiaCI7czozMjoiYjVlN2E2NWNjMzk4N2ZlNDJmOWVkMDQ0MGFjMmEzYTYiO30%3D&ID_ATIVIDADE=33_",
+      },
+    ],
+  },
   { name: "Carlos Contente", articles: [] },
 ];
 
