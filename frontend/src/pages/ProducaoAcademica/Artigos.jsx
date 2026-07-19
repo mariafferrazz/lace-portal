@@ -165,7 +165,57 @@ const authors = [
       },
     ],
   },
-  { name: "Carlos Contente", articles: [] },
+  {
+    name: "Carlos Contente",
+    website: "https://www.carloscontente.com.br/arquivoscontente",
+    articles: [
+      {
+        title: "Sobre a Estética da Comicidade",
+        url: "https://www.e-publicacoes.uerj.br/index.php/concinnitas/article/view/39896/27961",
+      },
+      {
+        title: "A artista na tensão entre a terra e o asfalto",
+        url: "https://www.pressenza.com/pt-pt/2020/08/a-artista-na-tensao-entre-a-terra-e-o-asfalto-conversa-com-regina-de-paula/",
+        note: "Conversa com Regina de Paula",
+      },
+      {
+        title: "Um livro de inatividades contra os jogos políticos autoritários",
+        url: "https://www.pressenza.com/pt-pt/2020/05/um-livro-de-inatividades-contra-os-jogos-politicos-autoritarios/",
+      },
+      {
+        title: "A revolta como enigma",
+        url: "https://www.pressenza.com/pt-pt/2020/06/a-revolta-como-enigma-conversa-com-camila-jourdan/",
+        note: "Conversa com Camila Jourdan",
+      },
+      {
+        title: '"A arte nunca foi tão necessária"',
+        url: "https://www.pressenza.com/pt-pt/2020/05/a-arte-nunca-foi-tao-necessaria/",
+        note: "Conversa com Thiago Fernandes, historiador da arte e designer gráfico",
+      },
+      {
+        title: "Mastro ereto e um olhar de fome: retratos quase pornográficos de Paulo Jorge Gonçalves",
+        url: "https://www.pressenza.com/pt-pt/2020/09/mastro-ereto-e-um-olhar-de-fome-retratos-quase-pornograficos-de-paulo-jorge-goncalves/",
+      },
+      {
+        title: "Agrade Camiz, (a)grade entre o corpo e a cidade",
+        url: "https://www.pressenza.com/pt-pt/2020/11/agrade-camiz-agrade-entre-o-corpo-e-a-cidade/",
+        note: "Entrevista com a artista visual Camila Cristina",
+      },
+      {
+        title: "Uma conversa com aquele pessoal dos direitos humanos: Glaucia Marinho",
+        url: "https://www.pressenza.com/pt-pt/2020/07/uma-conversa-com-aquele-pessoal-dos-direitos-humanos-glaucia-marinho/",
+      },
+      {
+        title: 'Dica de leitura: "Militarização e censura - a luta por liberdade de expressão na favela da Maré"',
+        url: "https://www.pressenza.com/pt-pt/2021/01/dica-de-leitura-militarizacao-e-censura-a-luta-por-liberdade-de-expressao-na-favela-da-mare/",
+      },
+      {
+        title: "Educação para a autonomia na Mangueira",
+        url: "https://www.pressenza.com/pt-pt/2020/06/educacao-para-a-autonomia-na-mangueira-conversa-com-kassio-motta/",
+        note: "Conversa com Kassio Motta",
+      },
+    ],
+  },
 ];
 
 export default function Artigos() {
@@ -243,6 +293,16 @@ function AuthorModal({ author, onClose }) {
         <h2 id="author-articles-title" className="mt-3 pr-12 font-title text-4xl md:text-5xl">
           {author.name}
         </h2>
+        {author.website && (
+          <a
+            className="mt-6 inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
+            href={author.website}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Site do autor <ExternalLink size={16} aria-hidden="true" />
+          </a>
+        )}
 
         {author.articles.length > 0 ? (
           <div className="mt-8 grid gap-5">
