@@ -79,7 +79,65 @@ const authors = [
       },
     ],
   },
-  { name: "Aline Ribeiro Nascimento", articles: [] },
+  {
+    name: "Aline Ribeiro Nascimento",
+    articles: [
+      {
+        title: "O que é a psicologia para Nietzsche?",
+        url: "https://app.uff.br/slab/uploads/2006_d_Aline_Nascimento.pdf",
+        note: "Dissertação - Pós Graduação em Psicologia",
+        summary:
+          "Este trabalho tem como objetivo buscar uma compreensão do que é a psicologia para Nietzsche tendo em vista que, em diversos momentos da sua obra, a palavra psicologia aparece e aponta caminhos que se entrecruzam com uma crítica à filosofia, à moral, à religião e à ciência. Para tanto, o filósofo utiliza, como critério de avaliação, os conceitos de força e fraqueza, saúde e doença e busca, como psicólogo, investigar e diagnosticar a saúde de uma cultura a partir dessa base, pautado na arte de interpretação dos sintomas manifestos na vida. Neste sentido, após caracterizarmos a força do povo helênico através da tragédia grega e seu declínio, com a introdução da metafísica socrática como opositora à vida, buscamos compreender os efeitos desta oposição no modo de ser do homem ocidental. Posteriormente discutimos os desdobramentos da metafísica no plano da moralidade, onde a psicologia surge como reprodutora deste ideal, isto é, presa a temores e preconceitos morais. Seguimos, então, a proposta de uma nova psicologia, pautada em outros valores, mais próximos da vida, em sua forma plena, ou seja, entendida como vontade de potência. Para tanto, o método que nos guia neste percurso é a genealogia, que, ao indagar as condições e circunstâncias nas quais os valores surgem, aponta para a vida como avaliadora, tendo o homem como instrumento de avaliação da mesma. Ao psicólogo cabe avaliar e interpretar a vida estampada na visão do homem, e, portanto, na cultura surgida através dele. Neste novo percurso, busca afirmar o trágico como condição de uma existência saudável, não mais pautada no bem e no mal, mas para além do bem e do mal.",
+      },
+      {
+        title: "Quando a transparência nos assombra",
+        url: "https://www.e-publicacoes.uerj.br/mnemosine/article/view/41694/pdf_305",
+        summary:
+          "O presente artigo tem por objetivo contribuir com discussões contemporâneas sobre os assombros cotidianos ligados, sobretudo, às práticas golpistas em curso no cenário brasileiro, culminando, até o momento, fevereiro de 2018, na criação de um Decreto federal que trata da intervenção militar na segurança pública no RJ e que comporta muitos perigos. Para tanto, servindo-se de conceitos nietzschianos como niilismo, genealogia, meio dia, dentre outros, buscará aproximar esses conceitos do modo de subjetivação em curso e da herança, em nós e na sociedade, de práticas silenciadoras da potência de diferir, bem como percorrerá os movimentos que apontam para a possibilidade de sua reversão.",
+      },
+      {
+        title: "Ferramenta e ferrugem: apontamentos sobre o conceito de representação social",
+        url: "https://www.e-publicacoes.uerj.br/index.php/mnemosine/article/view/41530/28799",
+        summary:
+          "Tomando como ponto de partida formulações de Moscovici acerca da representação social, o presente artigo se propõe a analisar: as condições de emergência desse conceito; sua mobilidade em relação ao conceito de representação coletiva de Durkheim; os instrumentos metodológicos fornecidos pelo autor para a pesquisa em psicologia social; a repercussão no Brasil dos anos 1970 e1980, bem como as implicações ético-políticas do conceito de representação social no campo da psicologia social na atualidade. O convite que se faz ao leitor é o de percorrer a genealogia de nossas práticas para problematizar a função social desse método de pesquisa.",
+      },
+      {
+        title: "Filosofia e experimentação: exercícios espirituais em Nietzsche e Foucault",
+        url: "http://www.fermentario.fhuce.edu.uy/index.php/fermentario/article/view/166/217",
+      },
+      {
+        title: "Da invenção da memória às memórias inventadas",
+        url: "https://www.e-publicacoes.uerj.br/index.php/mnemosine/article/view/41577/28846",
+        summary:
+          "O presente ensaio pretende ser um convite para pensarmos em novas possibilidades de construção de narrativas acerca da memória. Os protagonistas desse convite serão Fernando Pessoa e Friedrich Nietzsche. Eles nos conduzirão num passeio no universo das sensações e da potência de variação que podem ser extraídas delas, em suas obras e fora delas, pois têm a capacidade ímpar de nos atingir e desviar nosso olhar do modo tradicional de pensarmos a relação entre história e memória. A flecha que sai de seus escritos se chama diferença. Veremos que esses autores podem trazer valiosas contribuições para pesquisas relacionadas aos modos de construção e de escrita da História, estando, talvez, mais próximos de alguns trabalhos desenvolvidos na história oral.",
+      },
+      {
+        title: "Exame criminológico: uma questão ética para a psicologia e para os psicólogos",
+        url: "https://www.e-publicacoes.uerj.br/index.php/mnemosine/article/view/41486/28755",
+        note: "BANDEIRA, BADARÓ, Maria Márcia; CAMURI, CLAUDIA; NASCIMENTO, Aline Ribeiro",
+        summary:
+          "Este artigo foi concebido pelas autoras a partir da suspensão dos efeitos da Resolução n° 09/2010, do Conselho Federal de Psicologia (CFP), que Regulamenta a atuação do psicólogo no sistema prisional. Esta suspensão é um acontecimento que denuncia o jogo de forças presente no campo da execução penal, especialmente, no que tange à prática do psicólogo e à realização ou não do exame criminológico. Portanto, nosso objetivo é discutir as condições e circunstâncias em que o exame criminológico emerge e se estabelece em nosso país e também contar um pouco da história das lutas que os psicólogos vêm travando nesse campo desde a promulgação da Lei de Execução Penal (LEP) n°7.210/1984 que institui o exame criminológico.",
+      },
+      {
+        title: "Os desafios da memória em direção às forças de criação",
+        url: "https://www.e-publicacoes.uerj.br/index.php/mnemosine/article/view/41478/28747",
+        summary: "Apresentação oral na defesa da tese de doutorado Os desafios da memória em direção as forças de criação, UNIRIO/PPGMS, 2011.",
+      },
+      {
+        title: "De Auschwitz a Tropa de Elite: modulações do estado de exceção?",
+        url: "https://www.e-publicacoes.uerj.br/index.php/mnemosine/article/view/41450/28719",
+        summary:
+          "Este trabalho pretende aproximar o filme La tregua, baseado na obra de Primo Levi, e os efeitos do filme Tropa de Elite no cenário brasileiro, visando problematizar uma curiosa semelhança: a permissão para a violência. Para tanto, buscaremos dialogar com autores como Zygmunt Bauman, Hannah Arendt, Cecília Coimbra e Giorgio Agamben, dentre outros, sendo que, a partir deste último, nos serviremos do conceito de Estado de Exceção e apontaremos suas modulações. Uma delas se materializa na naturalização de assassinatos que não têm penalidade jurídica, fomentada, por sua vez, pela produção da imagem de estado de guerra que lhe serve de base. Se a estrutura da exceção é entendida como um mecanismo jurídico que se organiza na suspensão dos direitos em nome da necessidade da ordem e esta possibilitou o nascimento dos campos de concentração, observamos que ela ressurge, de maneira sutil, na relação entre pobreza = criminalidade = repressão da violência = naturalização de assassinatos.",
+      },
+      {
+        title: "Da cultura platônico-judaico-cristã à cultura capitalística: modulações do niilismo na construção da memória",
+        url: "http://www.seer.unirio.br/morpheus/article/view/4814/4304",
+        note: "NASCIMENTO, Aline Ribeiro; Peixoto, Maria Ignês",
+        summary:
+          "Neste artigo será discutida a relação entre niilismo e memória, tendo em vista que, na concepção nietzschiana, o niilismo é um acontecimento que se encontra na base de nossa cultura e a memória, como produção social, se modula junto a ele. Portanto, o niilismo não é um acontecimento recente, mas uma doença que percorre a história do nosso pensamento de tal maneira que se alastra em diversos campos: político, econômico, social, artístico etc. e com isso, atravessa e compõe modos de existência. A aposta que faremos é problematizar as forças que estão em jogo tanto na base de nossa cultura quanto nos seus desdobramentos até atingirmos o chamado apogeu do niilismo e assim, costurarmos uma discussão com o modelo de sociedade atual, chamada por Deleuze e Guatarri, de capitalística. E, ao fazermos este percurso, pretendemos pensar as condições e circunstâncias nas quais a memória social emerge e se modula junto a essas forças.",
+      },
+    ],
+  },
   { name: "Flávia Mendes Ferreira", articles: [] },
   { name: "Carlos Contente", articles: [] },
 ];
