@@ -1,5 +1,4 @@
 import { useId } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { BookOpen, ChevronDown } from "lucide-react";
 import Container from "../ui/Container";
 import SectionTitle from "../ui/SectionTitle";
@@ -21,7 +20,6 @@ const institutionalText = [
 
 export default function AboutSection({ isOpen, onToggle }) {
   const contentId = useId();
-  const reduceMotion = useReducedMotion();
 
   return (
     <section id="sobre" className="scroll-mt-24 bg-surface py-24 lg:py-32">
@@ -43,28 +41,17 @@ export default function AboutSection({ isOpen, onToggle }) {
               className="mt-8 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-primary px-5 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
             >
               {isOpen ? "Recolher apresentação" : "Ler apresentação completa"}
-              <ChevronDown aria-hidden="true" size={18} className={`transition ${isOpen ? "rotate-180" : ""}`} />
+              <ChevronDown aria-hidden="true" size={18} className={isOpen ? "rotate-180" : ""} />
             </button>
           </div>
 
-          <AnimatePresence initial={false}>
-            {isOpen && (
-              <motion.div
-                id={contentId}
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: reduceMotion ? 0 : 0.35 }}
-                className="overflow-hidden"
-              >
-                <div className="border-t border-border px-8 py-10 lg:px-12">
-                  <div className="max-w-4xl space-y-6 text-base leading-8 text-muted md:text-lg">
-                    {institutionalText.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {isOpen && (
+            <div id={contentId} className="border-t border-border px-8 py-10 lg:px-12">
+              <div className="max-w-4xl space-y-6 text-base leading-8 text-muted md:text-lg">
+                {institutionalText.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              </div>
+            </div>
+          )}
         </article>
 
       </Container>
