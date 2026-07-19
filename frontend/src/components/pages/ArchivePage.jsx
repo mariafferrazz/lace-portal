@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, ExternalLink, Library, Play, PlayCircle, Users, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import Container from "../ui/Container";
@@ -41,8 +41,11 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
   const [activeResearchersPodcast, setActiveResearchersPodcast] = useState(null);
   const [activeInterview, setActiveInterview] = useState(null);
   const [activeViralItem, setActiveViralItem] = useState(null);
-  const visibleItems = contentType ? remoteItems : items;
-  const viralItems = contentType === "VIRAL_ESCAPE_LINES" ? visibleItems : [];
+  const visibleItems = useMemo(() => (contentType ? remoteItems : items), [contentType, items, remoteItems]);
+  const viralItems = useMemo(
+    () => (contentType === "VIRAL_ESCAPE_LINES" ? visibleItems : []),
+    [contentType, visibleItems],
+  );
   const mediaCards = contentType === "INTERVIEW" || contentType === "PODCAST";
   const isPodcastModalOpen = Boolean(activePodcast);
   const isResearchersModalOpen = Boolean(activeResearchersPodcast);
@@ -54,12 +57,16 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
   const activeEpisodeImages = activePodcast?.episodeImages?.[activeEpisodeKey] || [];
   const activeViralImages = activeViralItem?.images || [];
   const activeViralImage = activeViralImages[0];
-  const activeViralItemIndex = viralItems.findIndex((item) => item.id === activeViralItem?.id || item.title === activeViralItem?.title);
+  const activeViralItemIndex = useMemo(
+    () => viralItems.findIndex((item) => item.id === activeViralItem?.id || item.title === activeViralItem?.title),
+    [activeViralItem?.id, activeViralItem?.title, viralItems],
+  );
   const isAlineViralItem = activeViralItem?.meta === "Aline Ribeiro Nascimento";
   const authorAboutLabel = isAlineViralItem ? "Sobre a autora" : "Sobre o autor";
   const hasMultipleViralItems = viralItems.length > 1;
-  const referenceSections = activeEpisodeReferences
-    ? [
+  const referenceSections = useMemo(
+    () => activeEpisodeReferences
+      ? [
         ["Referências bibliográficas", activeEpisodeReferences.bibliographic],
         ["Sites", activeEpisodeReferences.sites],
         ["Filmes", activeEpisodeReferences.films],
@@ -68,7 +75,9 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
         ["Documentos", activeEpisodeReferences.documents],
         ["Arquivos", activeEpisodeReferences.archives],
       ].filter(([, entries]) => entries?.length)
-    : [];
+      : [],
+    [activeEpisodeReferences],
+  );
 
   useEffect(() => {
     if (!contentType) return undefined;
@@ -210,11 +219,11 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
               contentType === "PODCAST" ? (
                 <article
                   key={item.title}
-                  className="group grid w-full overflow-hidden rounded-3xl border border-primary/40 bg-card text-left text-text transition hover:-translate-y-1 hover:border-primary lg:grid-cols-[0.95fr_1.05fr]"
+                  className="group grid w-full overflow-hidden rounded-3xl border border-primary/40 bg-card text-left text-text transition hover:border-primary lg:grid-cols-[0.95fr_1.05fr]"
                 >
                   <span className="relative block h-full min-h-72">
                     {item.thumbnail ? (
-                      <img className="h-full min-h-72 w-full object-cover" src={item.thumbnail} alt="" />
+                      <img className="h-full min-h-72 w-full object-cover" src={item.thumbnail} alt="" loading="lazy" decoding="async" />
                     ) : (
                       <span className="grid h-full min-h-72 place-items-center bg-surface">
                         <Library className="text-primary" aria-hidden="true" />
@@ -277,13 +286,13 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                 <button
                   key={item.title}
                   type="button"
-                  className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-border bg-card text-left text-text transition hover:-translate-y-1 hover:border-primary focus-visible:-translate-y-1 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-border bg-card text-left text-text transition hover:border-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   onClick={() => setActiveInterview(item)}
                   aria-label={`Assistir ${item.title}`}
                 >
                   <span className="relative block">
                     {item.thumbnail ? (
-                      <img className="aspect-video w-full object-cover" src={item.thumbnail} alt="" />
+                      <img className="aspect-video w-full object-cover" src={item.thumbnail} alt="" loading="lazy" decoding="async" />
                     ) : (
                       <span className="grid aspect-video place-items-center bg-surface">
                         <Library className="text-primary" aria-hidden="true" />
@@ -310,11 +319,11 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                   key={item.title}
                   type="button"
                   onClick={() => setActiveViralItem(item)}
-                  className="group cursor-pointer overflow-hidden rounded-2xl border border-border bg-card text-left transition hover:-translate-y-1 hover:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  className="group cursor-pointer overflow-hidden rounded-2xl border border-border bg-card text-left transition hover:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   aria-label={`Abrir ${item.title}`}
                 >
                   {item.thumbnail ? (
-                    <img className="aspect-[4/3] w-full object-cover" src={item.thumbnail} alt="" />
+                    <img className="aspect-[4/3] w-full object-cover" src={item.thumbnail} alt="" loading="lazy" decoding="async" />
                   ) : (
                     <span className="grid aspect-[4/3] place-items-center bg-surface">
                       <Library className="text-primary" aria-hidden="true" />
@@ -330,7 +339,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
               ) : mediaCards && item.href ? (
                 <a
                   key={item.title}
-                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card text-text transition hover:-translate-y-1 hover:border-primary focus-visible:-translate-y-1 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card text-text transition hover:border-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   href={item.href}
                   target="_blank"
                   rel="noreferrer"
@@ -338,7 +347,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                 >
                   <span className="relative block">
                     {item.thumbnail ? (
-                      <img className="aspect-video w-full object-cover" src={item.thumbnail} alt="" />
+                      <img className="aspect-video w-full object-cover" src={item.thumbnail} alt="" loading="lazy" decoding="async" />
                     ) : (
                       <span className="grid aspect-video place-items-center bg-surface">
                         <Library className="text-primary" aria-hidden="true" />
@@ -392,7 +401,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
 
       {activeViralItem && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm md:p-8"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 md:p-8"
           role="dialog"
           aria-modal="true"
           aria-labelledby="viral-modal-title"
@@ -456,7 +465,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                   <div className={`grid gap-4 ${activeViralImages.length > 1 ? "lg:grid-cols-2" : ""}`}>
                     {activeViralImages.map((imageUrl, index) => (
                       <div key={imageUrl} className="flex items-center justify-center rounded-2xl border border-border bg-black p-2 md:p-4">
-                        <img className="max-h-[78vh] w-auto max-w-full object-contain" src={imageUrl} alt={`Página ${index + 1} de ${activeViralItem.title}`} />
+                        <img className="max-h-[78vh] w-auto max-w-full object-contain" src={imageUrl} alt={`Página ${index + 1} de ${activeViralItem.title}`} decoding="async" />
                       </div>
                     ))}
                   </div>
@@ -466,7 +475,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
               <section className="mt-8 grid items-start gap-8 lg:grid-cols-[0.8fr_1.2fr]">
                 {activeViralImage ? (
                   <div className="self-start rounded-2xl border border-border bg-surface p-2">
-                    <img className="max-h-[72vh] w-full rounded-xl object-contain" src={activeViralImage} alt="" />
+                    <img className="max-h-[72vh] w-full rounded-xl object-contain" src={activeViralImage} alt="" decoding="async" />
                   </div>
                 ) : (
                   <span className="grid aspect-[4/5] place-items-center rounded-2xl bg-surface">
@@ -493,7 +502,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
 
       {activeInterview && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-8"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 md:p-8"
           role="dialog"
           aria-modal="true"
           aria-labelledby="interview-modal-title"
@@ -546,7 +555,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
 
       {activePodcast && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-8"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 md:p-8"
           role="dialog"
           aria-modal="true"
           aria-labelledby="podcast-modal-title"
@@ -575,7 +584,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                     loading="lazy"
                   />
                 ) : activePodcast.thumbnail ? (
-                  <img className="aspect-video w-full rounded-2xl object-cover" src={activePodcast.thumbnail} alt="" />
+                  <img className="aspect-video w-full rounded-2xl object-cover" src={activePodcast.thumbnail} alt="" decoding="async" />
                 ) : (
                   <span className="grid aspect-video place-items-center rounded-2xl bg-surface">
                     <Library className="text-primary" aria-hidden="true" />
@@ -694,7 +703,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
 
       {activeResearchersPodcast && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-8"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 md:p-8"
           role="dialog"
           aria-modal="true"
           aria-labelledby="researchers-modal-title"
