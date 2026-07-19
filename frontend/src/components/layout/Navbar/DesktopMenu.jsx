@@ -52,10 +52,26 @@ export default function DesktopMenu() {
                     <li key={i}>
                       <Link
                         to={sub.path}
-                        className="block rounded px-3 py-2 text-sm text-text transition hover:bg-surface hover:text-primary"
+                        className="flex items-center justify-between gap-3 rounded px-3 py-2 text-sm text-text transition hover:bg-surface hover:text-primary"
                       >
-                        {sub.title}
+                        <span>{sub.title}</span>
+                        {sub.children && <ChevronDown size={12} aria-hidden="true" />}
                       </Link>
+
+                      {sub.children && (
+                        <ul className="mt-1 border-l border-border pl-3">
+                          {sub.children.map((nested) => (
+                            <li key={nested.path}>
+                              <Link
+                                to={nested.path}
+                                className="block rounded px-3 py-2 text-sm normal-case tracking-normal text-muted transition hover:bg-surface hover:text-primary"
+                              >
+                                {nested.title}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </li>
                   ))}
                 </motion.ul>

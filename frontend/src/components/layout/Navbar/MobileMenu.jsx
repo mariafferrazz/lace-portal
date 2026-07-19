@@ -109,10 +109,27 @@ export default function MobileMenu() {
                                   <Link
                                     to={sub.path}
                                     onClick={closeMenu}
-                                    className="block rounded-md bg-background px-4 py-3 text-sm font-medium text-text transition hover:text-primary"
+                                    className="flex items-center justify-between gap-3 rounded-md bg-background px-4 py-3 text-sm font-medium text-text transition hover:text-primary"
                                   >
-                                    {sub.title}
+                                    <span>{sub.title}</span>
+                                    {sub.children && <ChevronDown size={14} aria-hidden="true" />}
                                   </Link>
+
+                                  {sub.children && (
+                                    <ul className="mt-2 flex flex-col gap-1 border-l border-border pl-3">
+                                      {sub.children.map((nested) => (
+                                        <li key={nested.path}>
+                                          <Link
+                                            to={nested.path}
+                                            onClick={closeMenu}
+                                            className="block rounded-md bg-background/70 px-4 py-2 text-sm font-medium normal-case tracking-normal text-muted transition hover:text-primary"
+                                          >
+                                            {nested.title}
+                                          </Link>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
                                 </li>
                               ))}
                             </motion.ul>

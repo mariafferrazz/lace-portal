@@ -23,7 +23,18 @@ export const menu = [
     title: "Produção Acadêmica",
     children: [
       { title: "Linhas de Fugas Virais", path: "/producao-academica/linhas-de-fugas-virais" },
-      { title: "Artigos", path: "/producao-academica/artigos" },
+      {
+        title: "Artigos",
+        path: "/producao-academica/artigos",
+        children: [
+          { title: "Joana D'Arc Fernandes Ferraz", path: "/producao-academica/artigos#joana-d-arc-fernandes-ferraz" },
+          { title: "Cecilia Maria Bouças Coimbra", path: "/producao-academica/artigos#cecilia-maria-boucas-coimbra" },
+          { title: "Ana Cláudia Camuri", path: "/producao-academica/artigos#ana-claudia-camuri" },
+          { title: "Flávia Mendes Ferreira", path: "/producao-academica/artigos#flavia-mendes-ferreira" },
+          { title: "Carlos Contente", path: "/producao-academica/artigos#carlos-contente" },
+          { title: "Aline Ribeiro Nascimento", path: "/producao-academica/artigos#aline-ribeiro-nascimento" },
+        ],
+      },
       { title: "Traduções", path: "/producao-academica/traducoes" },
       { title: "Pesquisas", path: "/producao-academica/pesquisas" },
     ],
