@@ -1,95 +1,91 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
 
 import Home from "../pages/Home/Home";
-import NotFound from "../pages/NotFound";
-import AccessPage from "../pages/Access/AccessPage";
 
-// Cinema e Ditadura
-import Filmes from "../pages/CinemaDitadura/Filmes";
-import Verbetes from "../pages/CinemaDitadura/Verbetes";
-import MostraIII from "../pages/CinemaDitadura/MostraIII";
-import MostraIV from "../pages/CinemaDitadura/MostraIV";
-import MostraV from "../pages/CinemaDitadura/MostraV";
-import MostraVI from "../pages/CinemaDitadura/MostraVI";
-import MostraVII from "../pages/CinemaDitadura/MostraVII";
+const AccessPage = lazy(() => import("../pages/Access/AccessPage"));
+const NotFound = lazy(() => import("../pages/NotFound"));
+const Filmes = lazy(() => import("../pages/CinemaDitadura/Filmes"));
+const Verbetes = lazy(() => import("../pages/CinemaDitadura/Verbetes"));
+const MostraIII = lazy(() => import("../pages/CinemaDitadura/MostraIII"));
+const MostraIV = lazy(() => import("../pages/CinemaDitadura/MostraIV"));
+const MostraV = lazy(() => import("../pages/CinemaDitadura/MostraV"));
+const MostraVI = lazy(() => import("../pages/CinemaDitadura/MostraVI"));
+const MostraVII = lazy(() => import("../pages/CinemaDitadura/MostraVII"));
+const Entrevistas = lazy(() => import("../pages/ProducaoAudiovisual/Entrevistas"));
+const Podcasts = lazy(() => import("../pages/ProducaoAudiovisual/Podcasts"));
+const LinhasDeFugasVirais = lazy(() => import("../pages/ProducaoAcademica/LinhasDeFugasVirais"));
+const Artigos = lazy(() => import("../pages/ProducaoAcademica/Artigos"));
+const Traducoes = lazy(() => import("../pages/ProducaoAcademica/Traducoes"));
+const Pesquisas = lazy(() => import("../pages/ProducaoAcademica/Pesquisas"));
+const Eventos2021 = lazy(() => import("../pages/Eventos/Eventos2021"));
+const Eventos2022 = lazy(() => import("../pages/Eventos/Eventos2022"));
+const Eventos2023 = lazy(() => import("../pages/Eventos/Eventos2023"));
+const Eventos2024 = lazy(() => import("../pages/Eventos/Eventos2024"));
+const Eventos2025 = lazy(() => import("../pages/Eventos/Eventos2025"));
+const SemanaAcademica2025 = lazy(() => import("../pages/Eventos/SemanaAcademica2025"));
 
-// Produção Audiovisual
-import Entrevistas from "../pages/ProducaoAudiovisual/Entrevistas";
-import Podcasts from "../pages/ProducaoAudiovisual/Podcasts";
-
-// Produção Acadêmica
-import LinhasDeFugasVirais from "../pages/ProducaoAcademica/LinhasDeFugasVirais";
-import Artigos from "../pages/ProducaoAcademica/Artigos";
-import Traducoes from "../pages/ProducaoAcademica/Traducoes";
-import Pesquisas from "../pages/ProducaoAcademica/Pesquisas";
-
-// Eventos
-import Eventos2021 from "../pages/Eventos/Eventos2021";
-import Eventos2022 from "../pages/Eventos/Eventos2022";
-import Eventos2023 from "../pages/Eventos/Eventos2023";
-import Eventos2024 from "../pages/Eventos/Eventos2024";
-import Eventos2025 from "../pages/Eventos/Eventos2025";
-import SemanaAcademica2025 from "../pages/Eventos/SemanaAcademica2025";
+const withSuspense = (element) => <Suspense fallback={null}>{element}</Suspense>;
 
 export default function AppRoutes() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
-        <Route path="/admin" element={<AccessPage />} />
+        <Route path="/admin" element={withSuspense(<AccessPage />)} />
 
         <Route element={<MainLayout />}>
           {/* Home */}
           <Route path="/" element={<Home />} />
 
           {/* Cinema e Ditadura */}
-          <Route path="/cinema-e-ditadura/filmes" element={<Filmes />} />
-          <Route path="/cinema-e-ditadura/verbetes" element={<Verbetes />} />
-          <Route path="/cinema-e-ditadura/iii-mostra" element={<MostraIII />} />
-          <Route path="/cinema-e-ditadura/iv-mostra" element={<MostraIV />} />
-          <Route path="/cinema-e-ditadura/v-mostra" element={<MostraV />} />
-          <Route path="/cinema-e-ditadura/vi-mostra" element={<MostraVI />} />
-          <Route path="/cinema-e-ditadura/vii-mostra" element={<MostraVII />} />
+          <Route path="/cinema-e-ditadura/filmes" element={withSuspense(<Filmes />)} />
+          <Route path="/cinema-e-ditadura/verbetes" element={withSuspense(<Verbetes />)} />
+          <Route path="/cinema-e-ditadura/iii-mostra" element={withSuspense(<MostraIII />)} />
+          <Route path="/cinema-e-ditadura/iv-mostra" element={withSuspense(<MostraIV />)} />
+          <Route path="/cinema-e-ditadura/v-mostra" element={withSuspense(<MostraV />)} />
+          <Route path="/cinema-e-ditadura/vi-mostra" element={withSuspense(<MostraVI />)} />
+          <Route path="/cinema-e-ditadura/vii-mostra" element={withSuspense(<MostraVII />)} />
 
           {/* Produção Audiovisual */}
           <Route
             path="/producao-audiovisual/entrevistas"
-            element={<Entrevistas />}
+            element={withSuspense(<Entrevistas />)}
           />
           <Route
             path="/producao-audiovisual/podcasts"
-            element={<Podcasts />}
+            element={withSuspense(<Podcasts />)}
           />
 
           {/* Produção Acadêmica */}
           <Route
             path="/producao-academica/linhas-de-fugas-virais"
-            element={<LinhasDeFugasVirais />}
+            element={withSuspense(<LinhasDeFugasVirais />)}
           />
           <Route
             path="/producao-academica/artigos"
-            element={<Artigos />}
+            element={withSuspense(<Artigos />)}
           />
           <Route
             path="/producao-academica/traducoes"
-            element={<Traducoes />}
+            element={withSuspense(<Traducoes />)}
           />
           <Route
             path="/producao-academica/pesquisas"
-            element={<Pesquisas />}
+            element={withSuspense(<Pesquisas />)}
           />
 
           {/* Eventos */}
-          <Route path="/eventos/2021" element={<Eventos2021 />} />
-          <Route path="/eventos/2022" element={<Eventos2022 />} />
-          <Route path="/eventos/2023" element={<Eventos2023 />} />
-          <Route path="/eventos/2024" element={<Eventos2024 />} />
-          <Route path="/eventos/2025" element={<Eventos2025 />} />
-          <Route path="/eventos/semana-academica-2025" element={<SemanaAcademica2025 />} />
+          <Route path="/eventos/2021" element={withSuspense(<Eventos2021 />)} />
+          <Route path="/eventos/2022" element={withSuspense(<Eventos2022 />)} />
+          <Route path="/eventos/2023" element={withSuspense(<Eventos2023 />)} />
+          <Route path="/eventos/2024" element={withSuspense(<Eventos2024 />)} />
+          <Route path="/eventos/2025" element={withSuspense(<Eventos2025 />)} />
+          <Route path="/eventos/semana-academica-2025" element={withSuspense(<SemanaAcademica2025 />)} />
 
           {/* 404 */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={withSuspense(<NotFound />)} />
         </Route>
       </Routes>
     </BrowserRouter>

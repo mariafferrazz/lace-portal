@@ -26,8 +26,8 @@ export default function Verbetes() {
   useEffect(() => {
     api.get("/contents", { params: { type: "GLOSSARY" } })
       .then(({ data }) => setEntries(data.contents))
-      .catch(() => {
-        setEntries(getStaticContents("GLOSSARY"));
+      .catch(async () => {
+        setEntries(await getStaticContents("GLOSSARY"));
         setFailed(false);
       })
       .finally(() => setLoading(false));
@@ -87,10 +87,10 @@ function GlossaryModal({ entry, onClose, onPrevious, onNext, navigationEnabled }
     return () => document.removeEventListener("keydown", navigate);
   }, [navigationEnabled, onNext, onPrevious]);
   return createPortal(<div className="fixed inset-0 overflow-y-auto bg-background" style={{ zIndex: 9999 }} role="dialog" aria-modal="true" aria-labelledby="glossary-title">
-    <div className="sticky top-0 z-10 flex justify-end border-b border-border bg-background/95 p-4 backdrop-blur"><button className="cursor-pointer rounded-full border border-border bg-card p-3 hover:border-primary hover:text-primary" onClick={onClose} aria-label="Fechar verbete"><X /></button></div>
+    <div className="sticky top-0 z-10 flex justify-end border-b border-border bg-background p-4"><button className="cursor-pointer rounded-full border border-border bg-card p-3 hover:border-primary hover:text-primary" onClick={onClose} aria-label="Fechar verbete"><X /></button></div>
     {navigationEnabled && <>
-      <button className="fixed left-3 top-1/2 z-40 grid -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-border bg-card/95 p-3 text-text shadow-2xl backdrop-blur transition hover:border-primary hover:text-primary md:left-6 md:p-4" type="button" onClick={onPrevious} aria-label="Verbete anterior"><ChevronLeft size={32} aria-hidden="true" /></button>
-      <button className="fixed right-3 top-1/2 z-40 grid -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-border bg-card/95 p-3 text-text shadow-2xl backdrop-blur transition hover:border-primary hover:text-primary md:right-6 md:p-4" type="button" onClick={onNext} aria-label="Próximo verbete"><ChevronRight size={32} aria-hidden="true" /></button>
+      <button className="fixed left-3 top-1/2 z-40 grid -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-border bg-card p-3 text-text shadow-xl transition hover:border-primary hover:text-primary md:left-6 md:p-4" type="button" onClick={onPrevious} aria-label="Verbete anterior"><ChevronLeft size={32} aria-hidden="true" /></button>
+      <button className="fixed right-3 top-1/2 z-40 grid -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-border bg-card p-3 text-text shadow-xl transition hover:border-primary hover:text-primary md:right-6 md:p-4" type="button" onClick={onNext} aria-label="Próximo verbete"><ChevronRight size={32} aria-hidden="true" /></button>
     </>}
     <article className="mx-auto max-w-5xl px-6 py-10 md:px-12 md:py-16"><p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">Verbete</p><h2 id="glossary-title" className="mt-3 font-title text-5xl md:text-7xl">{entry.title}</h2><p className="mt-5 text-muted">Autoria: <strong className="text-text">{entry.researcherName}</strong></p>
       <GlossaryText text={expanded ? text : limitWords(text, 180)} inlineImages={entry.metadata?.inlineImages} />
@@ -111,7 +111,7 @@ function GlossaryText({ text, inlineImages = [] }) {
   images.forEach((image, index) => {
     const splitAt = image.index + image.afterText.length;
     parts.push(<div key={`text-${index}`} className="whitespace-pre-line">{text.slice(cursor, splitAt)}</div>);
-    parts.push(<figure key={image.src} className="my-10 overflow-hidden rounded-2xl border border-border bg-card"><img className="max-h-[70vh] w-full object-contain" src={image.src} alt={image.alt} />{image.caption && <figcaption className="border-t border-border px-5 py-3 text-sm text-muted">{image.caption}</figcaption>}</figure>);
+    parts.push(<figure key={image.src} className="my-10 overflow-hidden rounded-2xl border border-border bg-card"><img className="max-h-[70vh] w-full object-contain" src={image.src} alt={image.alt} loading="lazy" decoding="async" />{image.caption && <figcaption className="border-t border-border px-5 py-3 text-sm text-muted">{image.caption}</figcaption>}</figure>);
     cursor = splitAt;
   });
   parts.push(<div key="text-end" className="whitespace-pre-line">{text.slice(cursor)}</div>);

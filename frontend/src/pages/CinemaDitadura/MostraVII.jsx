@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { CalendarDays, ExternalLink, PlayCircle, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import Button from "../../components/ui/Button";
@@ -118,7 +118,7 @@ export default function MostraVII() {
     api
       .get("/contents", { params: { type: "FILM" } })
       .then(({ data }) => setFilms(data.contents || []))
-      .catch(() => setFilms(getStaticContents("FILM")));
+      .catch(async () => setFilms(await getStaticContents("FILM")));
   }, []);
 
   useEffect(() => {
@@ -251,7 +251,7 @@ export default function MostraVII() {
 
       {activeSessionVideo && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-8"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 md:p-8"
           role="dialog"
           aria-modal="true"
           aria-labelledby="session-modal-title"
@@ -300,7 +300,7 @@ export default function MostraVII() {
 
       {isPlaylistOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-8"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 md:p-8"
           role="dialog"
           aria-modal="true"
           aria-labelledby="playlist-modal-title"
@@ -358,7 +358,7 @@ export default function MostraVII() {
                         onClick={() => setActivePlaylistVideo(video)}
                         className={`grid cursor-pointer grid-cols-[160px_1fr] gap-4 rounded-2xl p-3 text-left transition hover:bg-card ${active ? "bg-card ring-1 ring-primary/60" : ""}`}
                       >
-                        <img className="aspect-video w-full rounded-xl object-cover" src={video.thumbnail} alt="" />
+                        <img className="aspect-video w-full rounded-xl object-cover" src={video.thumbnail} alt="" loading="lazy" decoding="async" />
                         <span className="min-w-0">
                           <span className="block font-semibold leading-6 text-text">{video.title}</span>
                           <span className="mt-2 block text-sm text-muted">LACE</span>
@@ -376,7 +376,7 @@ export default function MostraVII() {
 
       {selectedFilm && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm md:p-8"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 md:p-8"
           role="dialog"
           aria-modal="true"
           aria-labelledby="film-modal-title"

@@ -32,8 +32,8 @@ export default function Filmes() {
 
     api.get("/contents", { params: { type: "FILM" } })
       .then(({ data }) => applyFilms(data.contents))
-      .catch(() => {
-        applyFilms(getStaticContents("FILM"));
+      .catch(async () => {
+        applyFilms(await getStaticContents("FILM"));
         setFailed(false);
       })
       .finally(() => setLoading(false));
@@ -105,7 +105,7 @@ export default function Filmes() {
             {visibleFilms.map((film) => (
               <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-1 hover:border-primary" key={film.id}>
                 <button className="relative cursor-pointer text-left" type="button" onClick={() => setSelectedFilm(film)} aria-label={`Abrir ${film.title}`}>
-                  {film.metadata?.imageUrl ? <img className="aspect-video w-full object-cover" src={film.metadata.imageUrl} alt="" /> : <div className="grid aspect-video place-items-center bg-surface"><Film className="text-primary" /></div>}
+                  {film.metadata?.imageUrl ? <img className="aspect-video w-full object-cover" src={film.metadata.imageUrl} alt="" loading="lazy" decoding="async" /> : <div className="grid aspect-video place-items-center bg-surface"><Film className="text-primary" /></div>}
                   <span className="absolute inset-0 grid place-items-center bg-black/20 transition group-hover:bg-black/40"><span className="grid size-14 place-items-center rounded-full bg-primary-fill text-on-primary shadow-xl"><Play fill="currentColor" aria-hidden="true" /></span></span>
                 </button>
                 <div className="flex flex-1 flex-col p-6">
@@ -150,12 +150,12 @@ function FilmModal({ film, onClose, onPrevious, onNext, navigationEnabled }) {
   return createPortal(
     <div className="fixed inset-0 overflow-y-auto bg-card" style={{ zIndex: 9999 }} role="dialog" aria-modal="true" aria-labelledby="film-modal-title">
       <div className="min-h-screen bg-background">
-        <div className="sticky top-0 z-30 flex justify-end bg-background/95 p-3 backdrop-blur md:p-5">
+        <div className="sticky top-0 z-30 flex justify-end border-b border-border bg-background p-3 md:p-5">
           <button className="grid cursor-pointer place-items-center rounded-full border border-border bg-card p-3 text-text shadow-xl transition hover:border-primary hover:text-primary" type="button" onClick={onClose} aria-label="Fechar filme"><X size={28} aria-hidden="true" /></button>
         </div>
         {navigationEnabled && <>
-          <button className="fixed left-3 top-1/2 z-40 grid -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-border bg-card/95 p-3 text-text shadow-2xl backdrop-blur transition hover:border-primary hover:text-primary md:left-6 md:p-4" type="button" onClick={onPrevious} aria-label="Filme anterior"><ChevronLeft size={32} aria-hidden="true" /></button>
-          <button className="fixed right-3 top-1/2 z-40 grid -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-border bg-card/95 p-3 text-text shadow-2xl backdrop-blur transition hover:border-primary hover:text-primary md:right-6 md:p-4" type="button" onClick={onNext} aria-label="Próximo filme"><ChevronRight size={32} aria-hidden="true" /></button>
+          <button className="fixed left-3 top-1/2 z-40 grid -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-border bg-card p-3 text-text shadow-xl transition hover:border-primary hover:text-primary md:left-6 md:p-4" type="button" onClick={onPrevious} aria-label="Filme anterior"><ChevronLeft size={32} aria-hidden="true" /></button>
+          <button className="fixed right-3 top-1/2 z-40 grid -translate-y-1/2 cursor-pointer place-items-center rounded-full border border-border bg-card p-3 text-text shadow-xl transition hover:border-primary hover:text-primary md:right-6 md:p-4" type="button" onClick={onNext} aria-label="Próximo filme"><ChevronRight size={32} aria-hidden="true" /></button>
         </>}
         <div className="mx-auto w-full px-4 md:px-8">
           <div className="relative mx-auto w-full overflow-hidden rounded-2xl bg-black shadow-2xl" style={{ aspectRatio: "16 / 9", maxWidth: "min(1280px, calc(72vh * 16 / 9))" }}>
@@ -172,7 +172,7 @@ function FilmModal({ film, onClose, onPrevious, onNext, navigationEnabled }) {
             />
           ) : embedUrl ? (
             <button className="group absolute inset-0 h-full w-full cursor-pointer bg-black" type="button" onClick={() => setPlayerStarted(true)} aria-label={`Reproduzir ${film.title}`}>
-              {previewImage ? <img className="h-full w-full object-cover" src={previewImage} alt="" /> : <span className="absolute inset-0 grid place-items-center px-8 text-center font-title text-3xl text-white md:text-5xl">{film.title}</span>}
+              {previewImage ? <img className="h-full w-full object-cover" src={previewImage} alt="" decoding="async" /> : <span className="absolute inset-0 grid place-items-center px-8 text-center font-title text-3xl text-white md:text-5xl">{film.title}</span>}
               <span className="absolute inset-0 grid place-items-center bg-black/15 transition group-hover:bg-black/30">
                 <span className="grid h-16 w-24 place-items-center rounded-2xl bg-red-600 text-white shadow-2xl transition group-hover:scale-110 md:h-20 md:w-28">
                   <Play size={40} fill="currentColor" aria-hidden="true" />
