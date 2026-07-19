@@ -33,7 +33,41 @@ const authors = [
       },
     ],
   },
-  { name: "Cecilia Maria Bouças Coimbra", articles: [] },
+  {
+    name: "Cecilia Maria Bouças Coimbra",
+    articles: [
+      {
+        title: "Eu não quero que o ódio seja o melhor de mim: lutar contra os microfascismos e afirmar a diferença que está no mundo",
+        url: "https://www.e-publicacoes.uerj.br/index.php/mnemosine/article/view/45995",
+        summary: "Entrevista com Cecília Maria Bouças Coimbra.",
+      },
+      {
+        title: "Problematizando A Experiência Clínicopolítica Da Equipe Clínico-Grupal Tortura Nunca Mais",
+        url: "https://www.e-publicacoes.uerj.br/index.php/transversos/article/view/33653",
+        note: "Cecilia Maria Bouças Coimbra, Ana Monteiro de Abreu",
+        summary:
+          "Este texto é um efeito de encontros experimentados ao longo de 23 anos de existência da Equipe Clínico-Grupal Tortura Nunca Mais. Destacamos aqui algumas linhas ético-estético-políticas que atravessaram a experiência compartilhada pelas autoras. Elegemos duas questões-analisadoras que, a nosso ver, expressam o percurso da construção do trabalho de assistência médica-psicológica-fisioterápica a pessoas atingidas, direta ou indiretamente, pela violência do Estado: a inseparabilidade entre clínica e política e o risco de naturalização da figura da vítima. Nestas problematizações escolhemos um caminho, buscando intercessores, para pensarmos os dispositivos clínicopolíticos em funcionamento ao longo do percurso. Dentre muitos, destacamos Michel Foucault, Gilles Deleuze e Felix Guattari como autores que, em muito, nos ajudam a pensar o tempo presente. Nossa aposta segue na afirmação dos movimentos desejantes que ousam inventar continuamente a Vida e um Viver Singular e Autônomo.",
+      },
+      {
+        title: "1968 na França - 2013 no Brasil: Acontecimentos-Resistências",
+        url: "https://www.scielo.br/j/rdp/a/MyVNVwbK3BDrsFPMBL9HNqH/?lang=pt&format=pdf",
+        note: "Cecilia Maria Bouças Coimbra, Ana Monteiro de Abreu",
+        summary:
+          "Movidas pela afirmação de Gilles Deleuze que qualifica o Maio de 68 francês como um Acontecimento, passamos a nos perguntar: qual o significado desta afirmação? O que este conceito filosófico expressa? Poderíamos considerar Junho de 2013 no Brasil um Acontecimento? Este texto surge no percurso desafiador destas interrogações. Além das contribuições de Gilles Deleuze, contamos com interlocuções de outros pensadores, tais como Félix Guattari, Fiedrich Nietzsche e Michel Foucault.",
+      },
+      {
+        title: "Cinquenta anos depois...",
+        url: "https://revistas.pucsp.br/index.php/verve/article/view/30684",
+        summary:
+          "Análise-depoimento acerca dos 50 anos do Golpe Civil-Militar de 1964. Afastado do saudosismo conservador, o artigo retoma eventos do dia do golpe e a tomada do CACO pelos militares. Questiona a continuidade da censura e da tortura mesmo na democracia. Alerta para a retomada necessária dessa memória, desviando-se dos acordos e concessões da Comissão Nacional da Verdade e suas correlatas estaduais. Afirma a continuidade do vigor político dos que enfrentaram o golpe para construção de outros mundos sem cair da chantagem do possível.",
+      },
+      {
+        title: "Grupo Tortura Nunca Mais do Rio De Janeiro: três décadas de resistência",
+        url: "https://www.e-publicacoes.uerj.br/index.php/transversos/issue/view/1782/showToc",
+        note: "Dossiê: Marilene Rosa Nogueira, Cecília Maria Bouças Coimbra, Joana D'Arc Fernandes Ferraz",
+      },
+    ],
+  },
   { name: "Ana Cláudia Camuri", articles: [] },
   { name: "Aline Ribeiro Nascimento", articles: [] },
   { name: "Flávia Mendes Ferreira", articles: [] },
