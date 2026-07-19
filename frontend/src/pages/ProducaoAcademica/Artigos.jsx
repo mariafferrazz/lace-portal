@@ -68,7 +68,17 @@ const authors = [
       },
     ],
   },
-  { name: "Ana Cláudia Camuri", articles: [] },
+  {
+    name: "Ana Cláudia Camuri",
+    articles: [
+      {
+        title: "Como não podemos olhar do mesmo modo para certas coisas",
+        url: "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000076-c7149c714b/Artigo.pdf?ph=3554c7d1fd",
+        summary:
+          "O presente artigo consiste em uma crítica à historiografia tradicional sobre a tortura a partir da perspectiva genealógica de Michel Foucault. Baseados neste autor, consideramos que para traçar a história das práticas de tortura é preciso traçar a história política das transformações dos métodos punitivos em correlação com uma tecnologia política do corpo. Por esse caminho, entendemos que a emergência da tortura está sempre vinculada às relações de poder/modos de governo (de si e dos outros), que se apresentam de diferentes formas ao longo da história. Para alcançar essas diferenças efetuamos um mapeamento das descontinuidades em torno da prática da tortura no período que vai do século XII ao XXI. O campo de problematização engendrado por esse olhar genealógico facultou pensar a tortura de três modos principais e nem sempre mutuamente exclusivos: a tortura legitimada pelo poder real; a tortura supostamente abolida e efetivamente redistribuída nas sociedades disciplinares; a tortura utilizada como tecnologia biopolítica de governo das condutas - dos regimes ditatoriais aos democráticos -, em que fazer viver e deixar morrer são duas faces de uma mesma moeda.",
+      },
+    ],
+  },
   { name: "Aline Ribeiro Nascimento", articles: [] },
   { name: "Flávia Mendes Ferreira", articles: [] },
   { name: "Carlos Contente", articles: [] },
