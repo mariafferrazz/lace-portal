@@ -135,7 +135,7 @@ const events = [
   },
   {
     title: "3° Mostra do Filme Marginal",
-    period: "2017",
+    period: "2020",
     image:
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000147-5d3d05d3d3/700/filme%20marginal%202017.webp?ph=3554c7d1fd",
     description:
@@ -146,12 +146,27 @@ const events = [
   },
 ];
 
+const eventDisplayOrder = [
+  "Cine Debate 2020: Lei da Anistia",
+  "Cine Debate 2020: Economia no período da Ditadura Empresarial Militar",
+  "Cine Debate 2020: Artes Plásticas no período da Ditadura Empresarial Militar",
+  "Cine Debate 2020: Que Bom Te Ver Viva",
+  "3° Mostra do Filme Marginal",
+  "III Mostra Virtual Cinema e Ditadura",
+  "Tema: Desaparecidos do Araguaia",
+  "Tema: Filhos de atingidos pela ditadura",
+];
+
 export default function Eventos2021() {
   const [activeEvent, setActiveEvent] = useState(null);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
+  const orderedEvents = useMemo(
+    () => eventDisplayOrder.map((title) => events.find((event) => event.title === title)).filter(Boolean),
+    [],
+  );
   const activeEventIndex = useMemo(
-    () => events.findIndex((event) => event.title === activeEvent?.title),
-    [activeEvent],
+    () => orderedEvents.findIndex((event) => event.title === activeEvent?.title),
+    [activeEvent, orderedEvents],
   );
 
   function closeEvent() {
@@ -164,12 +179,12 @@ export default function Eventos2021() {
 
     const nextIndex =
       direction === "previous"
-        ? (activeEventIndex - 1 + events.length) % events.length
-        : (activeEventIndex + 1) % events.length;
+        ? (activeEventIndex - 1 + orderedEvents.length) % orderedEvents.length
+        : (activeEventIndex + 1) % orderedEvents.length;
 
-    setActiveEvent(events[nextIndex]);
+    setActiveEvent(orderedEvents[nextIndex]);
     setActiveGalleryIndex(0);
-  }, [activeEvent, activeEventIndex]);
+  }, [activeEvent, activeEventIndex, orderedEvents]);
 
   useEffect(() => {
     if (!activeEvent) return undefined;
@@ -198,7 +213,7 @@ export default function Eventos2021() {
         </header>
 
         <section className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3" aria-label="Eventos 2020 e 2021">
-          {events.map((event) => (
+          {orderedEvents.map((event) => (
             <button
               key={event.title}
               type="button"
