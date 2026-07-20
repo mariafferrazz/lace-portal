@@ -172,7 +172,6 @@ function EventModal({ event, onClose, onNavigate }) {
                     key={link.to}
                     className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
                     to={link.to}
-                    onClick={onClose}
                   >
                     {link.label} <ExternalLink size={16} aria-hidden="true" />
                   </Link>

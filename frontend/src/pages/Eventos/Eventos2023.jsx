@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { ExternalLink, Images, X } from "lucide-react";
+import { Link } from "react-router-dom";
 import Container from "../../components/ui/Container";
 
 const events = [
@@ -42,7 +43,7 @@ const events = [
     links: [
       {
         label: "Abrir V Mostra",
-        href: "https://www.lablace.com.br/cinema-e-ditadura/v-mostra",
+        to: "/cinema-e-ditadura/v-mostra",
       },
     ],
   },
@@ -192,15 +193,25 @@ function EventModal({ event, activeGalleryIndex, onClose, onSelectGallery }) {
             {event.links?.length > 0 && (
               <div className="mt-8 flex flex-wrap gap-3">
                 {event.links.map((link) => (
-                  <a
-                    key={link.href}
-                    className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
-                    href={link.href}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {link.label} <ExternalLink size={16} aria-hidden="true" />
-                  </a>
+                  link.to ? (
+                    <Link
+                      key={link.to}
+                      className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
+                      to={link.to}
+                    >
+                      {link.label} <ExternalLink size={16} aria-hidden="true" />
+                    </Link>
+                  ) : (
+                    <a
+                      key={link.href}
+                      className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {link.label} <ExternalLink size={16} aria-hidden="true" />
+                    </a>
+                  )
                 ))}
               </div>
             )}

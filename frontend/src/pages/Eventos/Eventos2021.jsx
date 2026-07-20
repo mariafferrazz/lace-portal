@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { ArrowLeft, ArrowRight, ExternalLink, Images, X } from "lucide-react";
+import { Link } from "react-router-dom";
 import Container from "../../components/ui/Container";
 
 const events = [
@@ -33,7 +34,7 @@ const events = [
     image:
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000026-7a51b7a51d/Evento%20III%20Cine%201.jpg?ph=3554c7d1fd",
     videoUrl: "https://www.facebook.com/watch/?v=1700151500173920",
-    calendarUrl: "https://www.lablace.com.br/cinema-e-ditadura/iii-mostra",
+    calendarPath: "/cinema-e-ditadura/iii-mostra",
     description:
       "A III Mostra Virtual Cinema e Ditadura promoveu debates e reflexões sobre temas relacionados historicamente à ditadura militar brasileira, em diálogo com estudantes, pesquisadoras, pesquisadores e a sociedade.",
     details: [
@@ -341,15 +342,13 @@ function EventModal({ event, activeGalleryIndex, onClose, onNavigate, onSelectGa
                   Vídeo da programação <ExternalLink size={16} aria-hidden="true" />
                 </a>
               )}
-              {event.calendarUrl && (
-                <a
+              {event.calendarPath && (
+                <Link
                   className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
-                  href={event.calendarUrl}
-                  target="_blank"
-                  rel="noreferrer"
+                  to={event.calendarPath}
                 >
                   Calendário <ExternalLink size={16} aria-hidden="true" />
-                </a>
+                </Link>
               )}
               {event.oldUrl && (
                 <a

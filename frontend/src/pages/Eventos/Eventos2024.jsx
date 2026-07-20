@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { ExternalLink, Images, Mail, X } from "lucide-react";
+import { Link } from "react-router-dom";
 import Container from "../../components/ui/Container";
 
 const events = [
@@ -44,7 +45,7 @@ const events = [
     links: [
       {
         label: "Abrir VI Mostra",
-        href: "https://www.lablace.com.br/cinema-e-ditadura/vi-mostra",
+        to: "/cinema-e-ditadura/vi-mostra",
       },
     ],
   },
@@ -141,32 +142,38 @@ function EventModal({ event, onClose }) {
             </h2>
             <p className="mt-5 leading-8 text-muted">{event.description}</p>
 
-            <section className="mt-8">
-              <h3 className="font-title text-3xl">Verbetes</h3>
-              <ul className="mt-4 grid gap-2 text-muted sm:grid-cols-2">
-                {event.topics.map((topic) => (
-                  <li key={topic} className="rounded-xl border border-border bg-card px-4 py-3">{topic}</li>
-                ))}
-              </ul>
-            </section>
+            {event.topics?.length > 0 && (
+              <section className="mt-8">
+                <h3 className="font-title text-3xl">Verbetes</h3>
+                <ul className="mt-4 grid gap-2 text-muted sm:grid-cols-2">
+                  {event.topics.map((topic) => (
+                    <li key={topic} className="rounded-xl border border-border bg-card px-4 py-3">{topic}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
-            <section className="mt-8">
-              <h3 className="font-title text-3xl">Formato e requisitos</h3>
-              <ul className="mt-4 space-y-3 leading-7 text-muted">
-                {event.requirements.map((requirement) => (
-                  <li key={requirement}>{requirement}</li>
-                ))}
-              </ul>
-            </section>
+            {event.requirements?.length > 0 && (
+              <section className="mt-8">
+                <h3 className="font-title text-3xl">Formato e requisitos</h3>
+                <ul className="mt-4 space-y-3 leading-7 text-muted">
+                  {event.requirements.map((requirement) => (
+                    <li key={requirement}>{requirement}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
-            <section className="mt-8">
-              <h3 className="font-title text-3xl">Datas importantes</h3>
-              <ul className="mt-4 space-y-3 leading-7 text-muted">
-                {event.dates.map((date) => (
-                  <li key={date}>{date}</li>
-                ))}
-              </ul>
-            </section>
+            {event.dates?.length > 0 && (
+              <section className="mt-8">
+                <h3 className="font-title text-3xl">Datas importantes</h3>
+                <ul className="mt-4 space-y-3 leading-7 text-muted">
+                  {event.dates.map((date) => (
+                    <li key={date}>{date}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
             {event.submissionEmail && (
               <a
@@ -180,15 +187,25 @@ function EventModal({ event, onClose }) {
             {event.links?.length > 0 && (
               <div className="mt-8 flex flex-wrap gap-3">
                 {event.links.map((link) => (
-                  <a
-                    key={link.href}
-                    className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
-                    href={link.href}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {link.label} <ExternalLink size={16} aria-hidden="true" />
-                  </a>
+                  link.to ? (
+                    <Link
+                      key={link.to}
+                      className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
+                      to={link.to}
+                    >
+                      {link.label} <ExternalLink size={16} aria-hidden="true" />
+                    </Link>
+                  ) : (
+                    <a
+                      key={link.href}
+                      className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {link.label} <ExternalLink size={16} aria-hidden="true" />
+                    </a>
+                  )
                 ))}
               </div>
             )}
