@@ -9,6 +9,12 @@ export default function DesktopMenu() {
   const [openIndex, setOpenIndex] = useState(null);
   const [openNestedIndex, setOpenNestedIndex] = useState(null);
 
+  function toggleDropdown(index) {
+    const isOpen = openIndex === index;
+    setOpenIndex(isOpen ? null : index);
+    setOpenNestedIndex(null);
+  }
+
   function closeDropdown() {
     setOpenIndex(null);
     setOpenNestedIndex(null);
@@ -21,15 +27,22 @@ export default function DesktopMenu() {
           <li
             key={index}
             className="relative"
-            onMouseEnter={() => setOpenIndex(index)}
-            onMouseLeave={closeDropdown}
           >
             {/* ITEM PRINCIPAL */}
             {item.children ? (
-              <div className="flex cursor-pointer items-center gap-1 transition hover:text-primary">
+              <button
+                type="button"
+                className="flex cursor-pointer items-center gap-1 transition hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                onClick={() => toggleDropdown(index)}
+                aria-expanded={openIndex === index}
+              >
                 {item.title}
-                <ChevronDown size={14} />
-              </div>
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform ${openIndex === index ? "rotate-180" : ""}`}
+                  aria-hidden="true"
+                />
+              </button>
             ) : item.path === "/" ? (
               <HomeLink className="transition hover:text-primary">
                 {item.title}
@@ -66,6 +79,7 @@ export default function DesktopMenu() {
                         <Link
                           to={sub.path}
                           className="flex items-center justify-between gap-3 rounded px-3 py-2 text-sm uppercase tracking-wide text-text transition hover:bg-surface hover:text-primary"
+                          onClick={closeDropdown}
                         >
                           <span>{sub.title}</span>
                         </Link>
