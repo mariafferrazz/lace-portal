@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 
@@ -10,27 +10,55 @@ function menuLabel(label) {
 }
 
 export default function DesktopMenu() {
+  const navRef = useRef(null);
   const [openIndex, setOpenIndex] = useState(null);
   const [openNestedIndex, setOpenNestedIndex] = useState(null);
+  const [lockedIndex, setLockedIndex] = useState(null);
 
   function toggleDropdown(index) {
-    const isOpen = openIndex === index;
-    setOpenIndex(isOpen ? null : index);
+    const isLocked = lockedIndex === index;
+    setOpenIndex(isLocked ? null : index);
+    setLockedIndex(isLocked ? null : index);
+    setOpenNestedIndex(null);
+  }
+
+  function openDropdown(index) {
+    if (lockedIndex !== null && lockedIndex !== index) setLockedIndex(null);
+    if (openIndex !== index) setOpenNestedIndex(null);
+    setOpenIndex(index);
+  }
+
+  function leaveDropdown(index) {
+    if (lockedIndex === index) return;
+    setOpenIndex(null);
     setOpenNestedIndex(null);
   }
 
   function closeDropdown() {
     setOpenIndex(null);
     setOpenNestedIndex(null);
+    setLockedIndex(null);
   }
 
+  useEffect(() => {
+    function closeOnOutsideClick(event) {
+      if (!navRef.current?.contains(event.target)) closeDropdown();
+    }
+
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+
+    return () => document.removeEventListener("pointerdown", closeOnOutsideClick);
+  }, []);
+
   return (
-    <nav className="hidden lg:block">
+    <nav ref={navRef} className="hidden lg:block">
       <ul className="flex items-center gap-8 text-sm font-medium uppercase tracking-wide text-text">
         {menu.map((item, index) => (
           <li
             key={index}
-            className="relative"
+            className="relative -my-4 flex items-center py-4"
+            onMouseEnter={() => item.children && openDropdown(index)}
+            onMouseLeave={() => item.children && leaveDropdown(index)}
           >
             {/* ITEM PRINCIPAL */}
             {item.children ? (
@@ -62,9 +90,9 @@ export default function DesktopMenu() {
 
             {/* DROPDOWN */}
             {item.children && openIndex === index && (
-                <ul className="absolute left-0 top-6 z-50 mt-3 w-64 rounded-md border border-border bg-card p-3 shadow-lg">
+                <ul className="absolute left-0 top-full z-50 w-64 rounded-md border border-border bg-card p-3 shadow-lg">
                   {item.children.map((sub, i) => (
-                    <li key={i}>
+                    <li key={i} onMouseEnter={() => sub.children && setOpenNestedIndex(i)}>
                       {sub.children ? (
                         <button
                           type="button"

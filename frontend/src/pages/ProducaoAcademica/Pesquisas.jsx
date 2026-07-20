@@ -309,14 +309,6 @@ function ResearchModal({ research, researchPosition, researchCount, onClose, onN
               Informe Público <ExternalLink size={16} aria-hidden="true" />
             </a>
           )}
-          <a
-            className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
-            href={research.url}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Acessar pesquisa <ExternalLink size={16} aria-hidden="true" />
-          </a>
         </div>
       </div>
     </div>,
