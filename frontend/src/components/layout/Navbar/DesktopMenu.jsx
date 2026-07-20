@@ -5,6 +5,10 @@ import { ChevronDown } from "lucide-react";
 import { menu } from "../../../data/menu";
 import HomeLink from "./HomeLink";
 
+function menuLabel(label) {
+  return label.toLocaleUpperCase("pt-BR");
+}
+
 export default function DesktopMenu() {
   const [openIndex, setOpenIndex] = useState(null);
   const [openNestedIndex, setOpenNestedIndex] = useState(null);
@@ -36,7 +40,7 @@ export default function DesktopMenu() {
                 onClick={() => toggleDropdown(index)}
                 aria-expanded={openIndex === index}
               >
-                {item.title}
+                {menuLabel(item.title)}
                 <ChevronDown
                   size={14}
                   className={`transition-transform ${openIndex === index ? "rotate-180" : ""}`}
@@ -45,14 +49,14 @@ export default function DesktopMenu() {
               </button>
             ) : item.path === "/" ? (
               <HomeLink className="transition hover:text-primary">
-                {item.title}
+                {menuLabel(item.title)}
               </HomeLink>
             ) : (
               <Link
                 to={item.path}
                 className="transition hover:text-primary"
               >
-                {item.title}
+                {menuLabel(item.title)}
               </Link>
             )}
 
@@ -68,7 +72,7 @@ export default function DesktopMenu() {
                           className="flex w-full items-center justify-between gap-3 rounded px-3 py-2 text-left text-sm uppercase tracking-wide text-text transition hover:bg-surface hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                           aria-expanded={openNestedIndex === i}
                         >
-                          <span>{sub.title}</span>
+                          <span>{menuLabel(sub.title)}</span>
                           <ChevronDown
                             size={12}
                             className={`transition-transform ${openNestedIndex === i ? "rotate-180" : ""}`}
@@ -81,7 +85,7 @@ export default function DesktopMenu() {
                           className="flex items-center justify-between gap-3 rounded px-3 py-2 text-sm uppercase tracking-wide text-text transition hover:bg-surface hover:text-primary"
                           onClick={closeDropdown}
                         >
-                          <span>{sub.title}</span>
+                          <span>{menuLabel(sub.title)}</span>
                         </Link>
                       )}
 
@@ -94,7 +98,7 @@ export default function DesktopMenu() {
                                   className="block rounded px-3 py-2 text-sm uppercase tracking-wide text-muted transition hover:bg-surface hover:text-primary"
                                   onClick={closeDropdown}
                                 >
-                                  {nested.title}
+                                  {menuLabel(nested.title)}
                                 </Link>
                               </li>
                             ))}

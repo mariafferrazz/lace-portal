@@ -5,6 +5,10 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { menu } from "../../../data/menu";
 import HomeLink from "./HomeLink";
 
+function menuLabel(label) {
+  return label.toLocaleUpperCase("pt-BR");
+}
+
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
@@ -61,7 +65,7 @@ export default function MobileMenu() {
               {/* HEADER */}
               <div className="mb-8 flex items-center justify-between">
                 <h2 className="text-xl font-bold uppercase tracking-wide text-primary">
-                  Menu
+                  MENU
                 </h2>
 
                 <button
@@ -85,7 +89,7 @@ export default function MobileMenu() {
                           onClick={() => toggleSubmenu(index)}
                           className="flex min-h-12 w-full items-center justify-between rounded-md border border-border bg-card px-4 py-3 text-left font-semibold text-text transition hover:border-primary hover:text-primary"
                         >
-                          {item.title}
+                          {menuLabel(item.title)}
                           <ChevronDown
                             size={16}
                             className={`transition-transform ${
@@ -106,7 +110,7 @@ export default function MobileMenu() {
                                       className="flex w-full items-center justify-between gap-3 rounded-md bg-background px-4 py-3 text-left text-sm font-medium uppercase tracking-wide text-text transition hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                                       aria-expanded={openNestedSubmenu === i}
                                     >
-                                      <span>{sub.title}</span>
+                                      <span>{menuLabel(sub.title)}</span>
                                       <ChevronDown
                                         size={14}
                                         className={`transition-transform ${openNestedSubmenu === i ? "rotate-180" : ""}`}
@@ -119,7 +123,7 @@ export default function MobileMenu() {
                                       onClick={closeMenu}
                                       className="flex items-center justify-between gap-3 rounded-md bg-background px-4 py-3 text-sm font-medium uppercase tracking-wide text-text transition hover:text-primary"
                                     >
-                                      <span>{sub.title}</span>
+                                      <span>{menuLabel(sub.title)}</span>
                                     </Link>
                                   )}
 
@@ -132,7 +136,7 @@ export default function MobileMenu() {
                                               onClick={closeMenu}
                                               className="block rounded-md bg-background/70 px-4 py-2 text-sm font-medium uppercase tracking-wide text-muted transition hover:text-primary"
                                             >
-                                              {nested.title}
+                                              {menuLabel(nested.title)}
                                             </Link>
                                           </li>
                                         ))}
@@ -148,7 +152,7 @@ export default function MobileMenu() {
                         onClick={closeMenu}
                         className="block min-h-12 rounded-md border border-border bg-card px-4 py-3 font-semibold text-text transition hover:border-primary hover:text-primary"
                       >
-                        {item.title}
+                        {menuLabel(item.title)}
                       </HomeLink>
                     ) : (
                       <Link
@@ -156,7 +160,7 @@ export default function MobileMenu() {
                         onClick={closeMenu}
                         className="block min-h-12 rounded-md border border-border bg-card px-4 py-3 font-semibold text-text transition hover:border-primary hover:text-primary"
                       >
-                        {item.title}
+                        {menuLabel(item.title)}
                       </Link>
                     )}
                   </li>
