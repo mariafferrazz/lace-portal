@@ -8,6 +8,12 @@ import HomeLink from "./HomeLink";
 
 export default function DesktopMenu() {
   const [openIndex, setOpenIndex] = useState(null);
+  const [openNestedIndex, setOpenNestedIndex] = useState(null);
+
+  function closeDropdown() {
+    setOpenIndex(null);
+    setOpenNestedIndex(null);
+  }
 
   return (
     <nav className="hidden lg:block">
@@ -17,7 +23,7 @@ export default function DesktopMenu() {
             key={index}
             className="relative"
             onMouseEnter={() => setOpenIndex(index)}
-            onMouseLeave={() => setOpenIndex(null)}
+            onMouseLeave={closeDropdown}
           >
             {/* ITEM PRINCIPAL */}
             {item.children ? (
@@ -50,28 +56,52 @@ export default function DesktopMenu() {
                 >
                   {item.children.map((sub, i) => (
                     <li key={i}>
-                      <Link
-                        to={sub.path}
-                        className="flex items-center justify-between gap-3 rounded px-3 py-2 text-sm text-text transition hover:bg-surface hover:text-primary"
-                      >
-                        <span>{sub.title}</span>
-                        {sub.children && <ChevronDown size={12} aria-hidden="true" />}
-                      </Link>
-
-                      {sub.children && (
-                        <ul className="mt-1 border-l border-border pl-3">
-                          {sub.children.map((nested) => (
-                            <li key={nested.path}>
-                              <Link
-                                to={nested.path}
-                                className="block rounded px-3 py-2 text-sm normal-case tracking-normal text-muted transition hover:bg-surface hover:text-primary"
-                              >
-                                {nested.title}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
+                      {sub.children ? (
+                        <button
+                          type="button"
+                          onClick={() => setOpenNestedIndex(openNestedIndex === i ? null : i)}
+                          className="flex w-full items-center justify-between gap-3 rounded px-3 py-2 text-left text-sm text-text transition hover:bg-surface hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          aria-expanded={openNestedIndex === i}
+                        >
+                          <span>{sub.title}</span>
+                          <ChevronDown
+                            size={12}
+                            className={`transition-transform ${openNestedIndex === i ? "rotate-180" : ""}`}
+                            aria-hidden="true"
+                          />
+                        </button>
+                      ) : (
+                        <Link
+                          to={sub.path}
+                          className="flex items-center justify-between gap-3 rounded px-3 py-2 text-sm text-text transition hover:bg-surface hover:text-primary"
+                        >
+                          <span>{sub.title}</span>
+                        </Link>
                       )}
+
+                      <AnimatePresence>
+                        {sub.children && openNestedIndex === i && (
+                          <motion.ul
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.18 }}
+                            className="mt-1 overflow-hidden border-l border-border pl-3"
+                          >
+                            {sub.children.map((nested) => (
+                              <li key={nested.path}>
+                                <Link
+                                  to={nested.path}
+                                  className="block rounded px-3 py-2 text-sm normal-case tracking-normal text-muted transition hover:bg-surface hover:text-primary"
+                                  onClick={closeDropdown}
+                                >
+                                  {nested.title}
+                                </Link>
+                              </li>
+                            ))}
+                          </motion.ul>
+                        )}
+                      </AnimatePresence>
                     </li>
                   ))}
                 </motion.ul>

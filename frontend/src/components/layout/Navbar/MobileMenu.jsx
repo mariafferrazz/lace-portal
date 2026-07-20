@@ -9,19 +9,27 @@ import HomeLink from "./HomeLink";
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
+  const [openNestedSubmenu, setOpenNestedSubmenu] = useState(null);
 
   function toggleMenu() {
     setIsOpen(!isOpen);
     setOpenSubmenu(null);
+    setOpenNestedSubmenu(null);
   }
 
   function toggleSubmenu(index) {
     setOpenSubmenu(openSubmenu === index ? null : index);
+    setOpenNestedSubmenu(null);
+  }
+
+  function toggleNestedSubmenu(index) {
+    setOpenNestedSubmenu(openNestedSubmenu === index ? null : index);
   }
 
   function closeMenu() {
     setIsOpen(false);
     setOpenSubmenu(null);
+    setOpenNestedSubmenu(null);
   }
 
   return (
@@ -106,30 +114,52 @@ export default function MobileMenu() {
                             >
                               {item.children.map((sub, i) => (
                                 <li key={i}>
-                                  <Link
-                                    to={sub.path}
-                                    onClick={closeMenu}
-                                    className="flex items-center justify-between gap-3 rounded-md bg-background px-4 py-3 text-sm font-medium text-text transition hover:text-primary"
-                                  >
-                                    <span>{sub.title}</span>
-                                    {sub.children && <ChevronDown size={14} aria-hidden="true" />}
-                                  </Link>
-
-                                  {sub.children && (
-                                    <ul className="mt-2 flex flex-col gap-1 border-l border-border pl-3">
-                                      {sub.children.map((nested) => (
-                                        <li key={nested.path}>
-                                          <Link
-                                            to={nested.path}
-                                            onClick={closeMenu}
-                                            className="block rounded-md bg-background/70 px-4 py-2 text-sm font-medium normal-case tracking-normal text-muted transition hover:text-primary"
-                                          >
-                                            {nested.title}
-                                          </Link>
-                                        </li>
-                                      ))}
-                                    </ul>
+                                  {sub.children ? (
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleNestedSubmenu(i)}
+                                      className="flex w-full items-center justify-between gap-3 rounded-md bg-background px-4 py-3 text-left text-sm font-medium text-text transition hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                                      aria-expanded={openNestedSubmenu === i}
+                                    >
+                                      <span>{sub.title}</span>
+                                      <ChevronDown
+                                        size={14}
+                                        className={`transition-transform ${openNestedSubmenu === i ? "rotate-180" : ""}`}
+                                        aria-hidden="true"
+                                      />
+                                    </button>
+                                  ) : (
+                                    <Link
+                                      to={sub.path}
+                                      onClick={closeMenu}
+                                      className="flex items-center justify-between gap-3 rounded-md bg-background px-4 py-3 text-sm font-medium text-text transition hover:text-primary"
+                                    >
+                                      <span>{sub.title}</span>
+                                    </Link>
                                   )}
+
+                                  <AnimatePresence>
+                                    {sub.children && openNestedSubmenu === i && (
+                                      <motion.ul
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: "auto", opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                        className="mt-2 flex flex-col gap-1 overflow-hidden border-l border-border pl-3"
+                                      >
+                                        {sub.children.map((nested) => (
+                                          <li key={nested.path}>
+                                            <Link
+                                              to={nested.path}
+                                              onClick={closeMenu}
+                                              className="block rounded-md bg-background/70 px-4 py-2 text-sm font-medium normal-case tracking-normal text-muted transition hover:text-primary"
+                                            >
+                                              {nested.title}
+                                            </Link>
+                                          </li>
+                                        ))}
+                                      </motion.ul>
+                                    )}
+                                  </AnimatePresence>
                                 </li>
                               ))}
                             </motion.ul>
