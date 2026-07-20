@@ -30,10 +30,11 @@ const events = [
   },
   {
     title: "III Mostra Virtual Cinema e Ditadura",
-    period: "Junho de 2021 a janeiro de 2022",
+    period: "2021",
     image:
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000026-7a51b7a51d/Evento%20III%20Cine%201.jpg?ph=3554c7d1fd",
     videoUrl: "https://www.facebook.com/watch/?v=1700151500173920",
+    calendarUrl: "https://www.lablace.com.br/cinema-e-ditadura/iii-mostra",
     description:
       "A III Mostra Virtual Cinema e Ditadura promoveu debates e reflexões sobre temas relacionados historicamente à ditadura militar brasileira, em diálogo com estudantes, pesquisadoras, pesquisadores e a sociedade.",
     details: [
@@ -75,16 +76,6 @@ const events = [
         label: "Janeiro de 2022",
         url: "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000033-b6b0ab6b0c/Evento%20III%20Cine%208.jpg?ph=3554c7d1fd",
       },
-    ],
-    schedule: [
-      "Junho: Nossos mortos têm voz - 14/06/21 - 18h. Tema: Violência do Estado ontem e hoje.",
-      "Julho: Camponeses do Araguaia: A Guerrilha vista por dentro - 16/07/21 - 18h. Tema: Desaparecidos do Araguaia.",
-      "Agosto: 15 Filhos - 19/08/21 - 18h. Tema: Filhos de atingidos pela ditadura.",
-      "Setembro: Marãiatsédé - O Resgate da Terra - 10/09/21 - 18h. Tema: Indígenas na ditadura.",
-      "Outubro: Nosso Sagrado - 21/10/21 - 18h. Tema: Religiões perseguidas na ditadura.",
-      "Novembro: Uma história de amor e fúria - 12/11/21 - 18h. Tema: Contexto histórico do golpe.",
-      "Dezembro: Barra 68 - Sem perder a ternura - 03/12/21 - 18h. Tema: Educação na ditadura.",
-      "Janeiro de 2022: Cabra marcado para morrer - 07/01/22 - 18h. Tema: Movimentos sociais na ditadura.",
     ],
   },
   {
@@ -340,17 +331,6 @@ function EventModal({ event, activeGalleryIndex, onClose, onNavigate, onSelectGa
               </div>
             )}
 
-            {event.schedule && (
-              <section className="mt-8 rounded-2xl border border-border bg-card p-5">
-                <h3 className="font-title text-3xl text-text">Programação</h3>
-                <ul className="mt-4 grid gap-3 leading-7 text-muted">
-                  {event.schedule.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </section>
-            )}
-
             <div className="mt-8 flex flex-wrap gap-3">
               {event.videoUrl && (
                 <a
@@ -360,6 +340,16 @@ function EventModal({ event, activeGalleryIndex, onClose, onNavigate, onSelectGa
                   rel="noreferrer"
                 >
                   Vídeo da programação <ExternalLink size={16} aria-hidden="true" />
+                </a>
+              )}
+              {event.calendarUrl && (
+                <a
+                  className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
+                  href={event.calendarUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Calendário <ExternalLink size={16} aria-hidden="true" />
                 </a>
               )}
               {event.oldUrl && (
