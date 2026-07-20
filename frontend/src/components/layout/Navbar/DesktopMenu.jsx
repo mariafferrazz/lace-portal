@@ -91,7 +91,7 @@ export default function DesktopMenu() {
                               <li key={nested.path}>
                                 <Link
                                   to={nested.path}
-                                  className="block rounded px-3 py-2 text-sm normal-case tracking-normal text-muted transition hover:bg-surface hover:text-primary"
+                                  className="block rounded px-3 py-2 text-sm uppercase tracking-wide text-muted transition hover:bg-surface hover:text-primary"
                                   onClick={closeDropdown}
                                 >
                                   {nested.title}

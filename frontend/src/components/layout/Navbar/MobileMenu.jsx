@@ -130,7 +130,7 @@ export default function MobileMenu() {
                                             <Link
                                               to={nested.path}
                                               onClick={closeMenu}
-                                              className="block rounded-md bg-background/70 px-4 py-2 text-sm font-medium normal-case tracking-normal text-muted transition hover:text-primary"
+                                              className="block rounded-md bg-background/70 px-4 py-2 text-sm font-medium uppercase tracking-wide text-muted transition hover:text-primary"
                                             >
                                               {nested.title}
                                             </Link>
