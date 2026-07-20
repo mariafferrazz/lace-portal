@@ -44,6 +44,13 @@ const films = [
     country: "Argentina",
     description: "Filme exibido na VII Mostra Cinema e Ditadura. Sessão com debate de María Adela Antokoletz, Madre de la Plaza de Mayo.",
   },
+  {
+    title: "Arquivos da ditadura: luta e resistência em Perus",
+    youtubeId: "_VmVV19X6EM",
+    director: "Memorial da Resistência de SP",
+    country: "Brasil",
+    description: "Filme exibido na VII Mostra Cinema e Ditadura. Debate com Liza Santos, Gabriel Rivas, Rayane Miranda, Carlos Santos e Rafaela Reis.",
+  },
 ];
 
 async function main() {

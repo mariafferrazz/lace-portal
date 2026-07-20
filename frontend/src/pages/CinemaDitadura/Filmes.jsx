@@ -16,6 +16,25 @@ const initialLetter = (title) => {
   return /^[A-Z]$/.test(letter) ? letter : "#";
 };
 
+const normalizedContentKey = (content) =>
+  content.title
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+function mergeFilms(apiFilms = [], fallbackFilms = []) {
+  const seen = new Set();
+  return [...apiFilms, ...fallbackFilms].filter((film) => {
+    const key = normalizedContentKey(film);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 export default function Filmes() {
   const [films, setFilms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +49,10 @@ export default function Filmes() {
     };
 
     api.get("/contents", { params: { type: "FILM" } })
-      .then(({ data }) => applyFilms(data.contents))
+      .then(async ({ data }) => {
+        const fallbackFilms = await getStaticContents("FILM");
+        applyFilms(mergeFilms(data.contents || [], fallbackFilms));
+      })
       .catch(async () => {
         applyFilms(await getStaticContents("FILM"));
       })
