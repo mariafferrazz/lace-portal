@@ -1,24 +1,10 @@
-import { motion } from "framer-motion";
-
 export default function StatisticCard({
   number,
   title,
   description,
 }) {
   return (
-    <motion.div
-      whileHover={{ y: -6 }}
-      transition={{ duration: .25 }}
-      className="
-        rounded-2xl
-        bg-card
-        border
-        border-border
-        p-8
-        text-center
-        transition
-      "
-    >
+    <div className="rounded-2xl border border-border bg-card p-8 text-center transition hover:-translate-y-1 hover:border-primary/60">
       <h2 className="text-5xl font-bold text-primary">
         {number}
       </h2>
@@ -28,10 +14,10 @@ export default function StatisticCard({
       </h3>
 
       {description && (
-        <p className="mt-3 text-sm text-muted leading-relaxed">
+        <p className="mt-3 text-sm leading-relaxed text-muted">
           {description}
         </p>
       )}
-    </motion.div>
+    </div>
   );
 }

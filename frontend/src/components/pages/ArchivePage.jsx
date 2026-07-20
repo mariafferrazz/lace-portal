@@ -83,7 +83,6 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
     if (!contentType) return undefined;
 
     let active = true;
-    setLoading(true);
     api
       .get("/contents", { params: { type: contentType } })
       .then(({ data }) => {

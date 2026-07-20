@@ -1,5 +1,4 @@
 import { useId, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
 const slugify = (value) =>
@@ -13,7 +12,6 @@ const slugify = (value) =>
 export default function TeamCard({ name, role, bio }) {
   const [open, setOpen] = useState(false);
   const contentId = useId();
-  const reduceMotion = useReducedMotion();
 
   return (
     <article id={slugify(name)} className="scroll-mt-24 rounded-2xl border border-border bg-card p-6 transition hover:border-primary/60">
@@ -31,20 +29,11 @@ export default function TeamCard({ name, role, bio }) {
         <ChevronDown aria-hidden="true" className={`shrink-0 transition ${open ? "rotate-180" : ""}`} />
       </button>
 
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            id={contentId}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: reduceMotion ? 0 : 0.25 }}
-            className="overflow-hidden"
-          >
-            <p className="mt-6 border-t border-border pt-5 leading-7 text-muted">{bio}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {open && (
+        <div id={contentId} className="overflow-hidden">
+          <p className="mt-6 border-t border-border pt-5 leading-7 text-muted">{bio}</p>
+        </div>
+      )}
     </article>
   );
 }

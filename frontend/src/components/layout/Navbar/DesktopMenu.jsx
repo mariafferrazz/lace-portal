@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 
 import { menu } from "../../../data/menu";
 import HomeLink from "./HomeLink";
@@ -45,15 +44,8 @@ export default function DesktopMenu() {
             )}
 
             {/* DROPDOWN */}
-            <AnimatePresence>
-              {item.children && openIndex === index && (
-                <motion.ul
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute left-0 top-6 z-50 mt-3 w-64 rounded-md border border-border bg-card p-3 shadow-lg"
-                >
+            {item.children && openIndex === index && (
+                <ul className="absolute left-0 top-6 z-50 mt-3 w-64 rounded-md border border-border bg-card p-3 shadow-lg">
                   {item.children.map((sub, i) => (
                     <li key={i}>
                       {sub.children ? (
@@ -79,15 +71,8 @@ export default function DesktopMenu() {
                         </Link>
                       )}
 
-                      <AnimatePresence>
-                        {sub.children && openNestedIndex === i && (
-                          <motion.ul
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.18 }}
-                            className="mt-1 overflow-hidden border-l border-border pl-3"
-                          >
+                      {sub.children && openNestedIndex === i && (
+                          <ul className="mt-1 overflow-hidden border-l border-border pl-3">
                             {sub.children.map((nested) => (
                               <li key={nested.path}>
                                 <Link
@@ -99,14 +84,12 @@ export default function DesktopMenu() {
                                 </Link>
                               </li>
                             ))}
-                          </motion.ul>
+                          </ul>
                         )}
-                      </AnimatePresence>
                     </li>
                   ))}
-                </motion.ul>
+                </ul>
               )}
-            </AnimatePresence>
           </li>
         ))}
       </ul>

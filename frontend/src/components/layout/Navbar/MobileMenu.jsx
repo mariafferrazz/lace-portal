@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 
 import { menu } from "../../../data/menu";
 import HomeLink from "./HomeLink";
@@ -46,24 +45,16 @@ export default function MobileMenu() {
       </button>
 
       {/* OVERLAY + MENU */}
-      <AnimatePresence>
-        {isOpen && (
+      {isOpen && (
           <>
             {/* FUNDO ESCURO */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              exit={{ opacity: 0 }}
+            <div
               onClick={closeMenu}
               className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
             />
 
             {/* MENU */}
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.3 }}
+            <div
               style={{ backgroundColor: "var(--app-background)" }}
               className="mobile-menu-panel fixed bottom-0 right-0 top-0 z-50 flex w-full max-w-sm flex-col overflow-y-auto border-l border-border p-6 text-text shadow-2xl"
             >
@@ -104,14 +95,8 @@ export default function MobileMenu() {
                         </button>
 
                         {/* SUBMENU */}
-                        <AnimatePresence>
-                          {openSubmenu === index && (
-                            <motion.ul
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              className="mt-2 flex flex-col gap-2 overflow-hidden rounded-md border border-border bg-card p-2"
-                            >
+                        {openSubmenu === index && (
+                            <ul className="mt-2 flex flex-col gap-2 overflow-hidden rounded-md border border-border bg-card p-2">
                               {item.children.map((sub, i) => (
                                 <li key={i}>
                                   {sub.children ? (
@@ -138,14 +123,8 @@ export default function MobileMenu() {
                                     </Link>
                                   )}
 
-                                  <AnimatePresence>
-                                    {sub.children && openNestedSubmenu === i && (
-                                      <motion.ul
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: "auto", opacity: 1 }}
-                                        exit={{ height: 0, opacity: 0 }}
-                                        className="mt-2 flex flex-col gap-1 overflow-hidden border-l border-border pl-3"
-                                      >
+                                  {sub.children && openNestedSubmenu === i && (
+                                      <ul className="mt-2 flex flex-col gap-1 overflow-hidden border-l border-border pl-3">
                                         {sub.children.map((nested) => (
                                           <li key={nested.path}>
                                             <Link
@@ -157,14 +136,12 @@ export default function MobileMenu() {
                                             </Link>
                                           </li>
                                         ))}
-                                      </motion.ul>
+                                      </ul>
                                     )}
-                                  </AnimatePresence>
                                 </li>
                               ))}
-                            </motion.ul>
+                            </ul>
                           )}
-                        </AnimatePresence>
                       </>
                     ) : item.path === "/" ? (
                       <HomeLink
@@ -185,10 +162,9 @@ export default function MobileMenu() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           </>
         )}
-      </AnimatePresence>
     </div>
   );
 }
