@@ -1912,6 +1912,132 @@
       }
     },
     {
+      "id": "film-o-dia-em-que-dorival-encarou-a-guarda",
+      "title": "O Dia em que Dorival Encarou a Guarda",
+      "description": "Filme exibido na VII Mostra Cinema e Ditadura.",
+      "type": "FILM",
+      "researcherName": "Equipe LACE",
+      "externalUrl": "https://www.youtube.com/watch?v=I418PGZIONQ",
+      "published": true,
+      "metadata": {
+        "youtubeId": "I418PGZIONQ",
+        "vimeoId": null,
+        "videoProvider": "youtube",
+        "imageUrl": "https://img.youtube.com/vi/I418PGZIONQ/hqdefault.jpg",
+        "director": "Jorge Furtado e José Pedro Goulart",
+        "genre": null,
+        "country": "Brasil",
+        "year": null,
+        "duration": null,
+        "website": null
+      }
+    },
+    {
+      "id": "film-ze",
+      "title": "Zé",
+      "description": "Filme exibido na VII Mostra Cinema e Ditadura. Sessão com debate de Dulce Pandolfi e Ricardo Máximo.",
+      "type": "FILM",
+      "researcherName": "Equipe LACE",
+      "externalUrl": "https://www.youtube.com/watch?v=8L5g64U-sc8",
+      "published": true,
+      "metadata": {
+        "youtubeId": "8L5g64U-sc8",
+        "vimeoId": null,
+        "videoProvider": "youtube",
+        "imageUrl": "https://img.youtube.com/vi/8L5g64U-sc8/hqdefault.jpg",
+        "director": "Rafael Conde",
+        "genre": null,
+        "country": "Brasil",
+        "year": null,
+        "duration": null,
+        "website": null
+      }
+    },
+    {
+      "id": "film-acervo-dops-os-papeis-da-repressao",
+      "title": "Acervo Dops - Os papéis da repressão",
+      "description": "Filme do Núcleo de audiovisual da UFF e do Arquivo Público do Estado do Rio de Janeiro, exibido na VII Mostra Cinema e Ditadura. Sessão com debate de Felipe Nin, Fernanda Pradal e Daniel Elian.",
+      "type": "FILM",
+      "researcherName": "Equipe LACE",
+      "externalUrl": "https://www.youtube.com/watch?v=5BXLPRnrQJE",
+      "published": true,
+      "metadata": {
+        "youtubeId": "5BXLPRnrQJE",
+        "vimeoId": null,
+        "videoProvider": "youtube",
+        "imageUrl": "https://img.youtube.com/vi/5BXLPRnrQJE/hqdefault.jpg",
+        "director": "Núcleo de audiovisual da UFF e Arquivo Público do Estado do Rio de Janeiro",
+        "genre": null,
+        "country": "Brasil",
+        "year": null,
+        "duration": null,
+        "website": null
+      }
+    },
+    {
+      "id": "film-caio-martins-e-o-apagamento-da-memoria",
+      "title": "Caio Martins e o apagamento da memória",
+      "description": "Filme exibido na VII Mostra Cinema e Ditadura. Sessão com debate de Kenia Maia e Gabriel Souza.",
+      "type": "FILM",
+      "researcherName": "Equipe LACE",
+      "externalUrl": "https://www.youtube.com/watch?v=c-oxcKCqVws",
+      "published": true,
+      "metadata": {
+        "youtubeId": "c-oxcKCqVws",
+        "vimeoId": null,
+        "videoProvider": "youtube",
+        "imageUrl": "https://img.youtube.com/vi/c-oxcKCqVws/hqdefault.jpg",
+        "director": "Lucas Cavalcante",
+        "genre": null,
+        "country": "Brasil",
+        "year": null,
+        "duration": null,
+        "website": null
+      }
+    },
+    {
+      "id": "film-qual-e-a-memoria-da-ditadura-militar",
+      "title": "Qual é a memória da ditadura militar?",
+      "description": "Filme exibido na VII Mostra Cinema e Ditadura. Sessão com debate de Helen Ortiz, Guilherme Oliveira, Gabriel Rivas, Stella Moreira e Maria Antônia.",
+      "type": "FILM",
+      "researcherName": "Equipe LACE",
+      "externalUrl": "https://www.youtube.com/watch?v=0pXwARWKHlk",
+      "published": true,
+      "metadata": {
+        "youtubeId": "0pXwARWKHlk",
+        "vimeoId": null,
+        "videoProvider": "youtube",
+        "imageUrl": "https://img.youtube.com/vi/0pXwARWKHlk/hqdefault.jpg",
+        "director": null,
+        "genre": null,
+        "country": "Brasil",
+        "year": null,
+        "duration": null,
+        "website": null
+      }
+    },
+    {
+      "id": "film-atuacao-da-fedefam-como-espaco-de-resistencia-e-de-memoria-na-ditadura-argentina",
+      "title": "Atuação da FEDEFAM como espaço de resistência e de memória na ditadura Argentina",
+      "description": "Filme exibido na VII Mostra Cinema e Ditadura. Sessão com debate de María Adela Antokoletz, Madre de la Plaza de Mayo.",
+      "type": "FILM",
+      "researcherName": "Equipe LACE",
+      "externalUrl": "https://www.youtube.com/watch?v=O2jwZVeaPkM",
+      "published": true,
+      "metadata": {
+        "youtubeId": "O2jwZVeaPkM",
+        "vimeoId": null,
+        "videoProvider": "youtube",
+        "imageUrl": "https://img.youtube.com/vi/O2jwZVeaPkM/hqdefault.jpg",
+        "director": null,
+        "genre": null,
+        "country": "Argentina",
+        "year": null,
+        "duration": null,
+        "website": null
+      }
+    },
+    {
       "id": "film-zuzu-angel",
       "title": "Zuzu Angel",
       "description": "Brasil, anos 60. A ditadura militar faz o país mergulhar em um dos momentos mais difíceis de sua história. Alheia a tudo isto, Zuzu Angel (Patrícia Pillar), uma estilista de modas, fica cada vez mais famosa no Brasil e no exterior. Paralelamente seu filho, Stuart (Daniel de Oliveira), ingressa na luta armada, que combatia as arbitrariedades dos militares. Resumindo: as diferenças ideológicas entre mãe e filho eram profundas. Numa noite Zuzu recebe uma ligação, dizendo Stuart tinha sido preso pelos militares. As forças armadas negam. Pouco tempo depois ela recebe uma carta dizendo que Stuart foi torturado até a morte na aeronáutica. Então ela inicia uma batalha aparentemente simples: localizar o corpo do filho e enterrá-lo. Mas Zuzu vai se tornando uma figura cada vez mais incômoda para a ditadura.",

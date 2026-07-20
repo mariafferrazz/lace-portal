@@ -25,41 +25,65 @@ const sessions = [
     date: "08/10/2025",
     title: "O Dia em que Dorival Encarou a Guarda",
     direction: "Jorge Furtado e José Pedro Goulart",
+    filmTitle: "O Dia em que Dorival Encarou a Guarda",
+    filmYoutubeId: "I418PGZIONQ",
     titleFontSize: "1.8rem",
   },
   {
-    date: "15/10/2025",
-    title: "Tupinambá — O Retorno da Terra",
-    direction: "Daniela Alarcon",
-    titleFontSize: "1.95rem",
+    date: "21/10/2025",
+    title: "Zé",
+    direction: "Rafael Conde",
+    note: "Debate com Dulce Pandolfi e Ricardo Máximo.",
+    filmTitle: "Zé",
+    filmYoutubeId: "8L5g64U-sc8",
+    videoId: "DAFR5oG3vPk",
+    titleFontSize: "2.35rem",
+  },
+  {
+    date: "21/10/2025",
+    title: "Acervo Dops - Os papéis da repressão",
+    direction: "Núcleo de audiovisual da UFF e Arquivo Público do Estado do Rio de Janeiro",
+    note: "Debate com Felipe Nin, Fernanda Pradal e Daniel Elian.",
+    filmTitle: "Acervo Dops - Os papéis da repressão",
+    filmYoutubeId: "5BXLPRnrQJE",
+    videoId: "BP90zueiAsI",
+    titleFontSize: "1.7rem",
   },
   {
     date: "22/10/2025",
-    title: "A Real História de José Porfírio de Souza, em Trombas-GO",
-    titleFontSize: "1.65rem",
-  },
-  {
-    date: "29/10/2025",
-    title: "Nau Insensata",
-    direction: "Cristiano Sidoti",
-    titleFontSize: "2.2rem",
-  },
-  {
-    date: "05/11/2025",
-    title: "Arqueologia no DOI-Codi: Rompendo o Silêncio",
+    title: "Caio Martins e o apagamento da memória",
+    direction: "Lucas Cavalcante",
+    note: "Debate com Kenia Maia e Gabriel Souza.",
+    filmTitle: "Caio Martins e o apagamento da memória",
+    filmYoutubeId: "c-oxcKCqVws",
+    videoId: "tJSgBMCBnWo",
     titleFontSize: "1.8rem",
   },
   {
-    date: "12/11/2025",
-    title: "Ditadura nas Universidades Brasileiras",
-    note: "Sessão com dois curtas",
+    date: "09/12/2025",
+    title: "Qual é a memória da ditadura militar?",
+    note: "Debate com Helen Ortiz, Guilherme Oliveira, Gabriel Rivas, Stella Moreira e Maria Antônia.",
+    filmTitle: "Qual é a memória da ditadura militar?",
+    filmYoutubeId: "0pXwARWKHlk",
+    videoId: "WsI9D1cTV64",
+    titleFontSize: "1.75rem",
+  },
+  {
+    date: "09/12/2025",
+    title: "Arquivos da ditadura: luta e resistência em Perus",
+    direction: "Memorial da Resistência de SP",
+    note: "Debate com Liza Santos, Gabriel Rivas, Rayane Miranda, Carlos Santos e Rafaela Reis.",
+    videoId: "_VmVV19X6EM",
     titleFontSize: "1.9rem",
   },
   {
-    date: "19/11/2025",
-    title: "Asalto",
-    direction: "Carlos Álvarez",
-    titleFontSize: "2.2rem",
+    date: "10/12/2025",
+    title: "Atuação da FEDEFAM como espaço de resistência e de memória na ditadura Argentina",
+    note: "Debate com María Adela Antokoletz (Madre de la Plaza de Mayo).",
+    filmTitle: "Atuação da FEDEFAM como espaço de resistência e de memória na ditadura Argentina",
+    filmYoutubeId: "O2jwZVeaPkM",
+    videoId: "xInohttBwsY",
+    titleFontSize: "1.55rem",
   },
 ];
 
@@ -81,6 +105,54 @@ const playlistVideos = [
     thumbnail: "https://i1.ytimg.com/vi/LTnNaWM4R3Y/hqdefault.jpg",
     meta: "114 visualizações · Transmitido há 9 meses",
     date: "26/09/2025",
+  },
+  {
+    id: "DAFR5oG3vPk",
+    title: "VII Mostra Cinema e Ditadura - Zé",
+    shortTitle: "Zé",
+    thumbnail: "https://i.ytimg.com/vi/DAFR5oG3vPk/hqdefault.jpg",
+    meta: "Sessão gravada · Debate com Dulce Pandolfi e Ricardo Máximo",
+    date: "21/10/2025",
+  },
+  {
+    id: "BP90zueiAsI",
+    title: "VII Mostra Cinema e Ditadura - Acervo Dops - Os papéis da repressão",
+    shortTitle: "Acervo Dops - Os papéis da repressão",
+    thumbnail: "https://i.ytimg.com/vi/BP90zueiAsI/hqdefault.jpg",
+    meta: "Sessão gravada · Debate com Felipe Nin, Fernanda Pradal e Daniel Elian",
+    date: "21/10/2025",
+  },
+  {
+    id: "tJSgBMCBnWo",
+    title: "VII Mostra Cinema e Ditadura - Caio Martins e o apagamento da memória",
+    shortTitle: "Caio Martins e o apagamento da memória",
+    thumbnail: "https://i.ytimg.com/vi/tJSgBMCBnWo/hqdefault.jpg",
+    meta: "Sessão gravada · Debate com Kenia Maia e Gabriel Souza",
+    date: "22/10/2025",
+  },
+  {
+    id: "WsI9D1cTV64",
+    title: "VII Mostra Cinema e Ditadura - Qual é a memória da ditadura militar?",
+    shortTitle: "Qual é a memória da ditadura militar?",
+    thumbnail: "https://i.ytimg.com/vi/WsI9D1cTV64/hqdefault.jpg",
+    meta: "Sessão gravada · Debate com Helen Ortiz, Guilherme Oliveira, Gabriel Rivas, Stella Moreira e Maria Antônia",
+    date: "09/12/2025",
+  },
+  {
+    id: "_VmVV19X6EM",
+    title: "VII Mostra Cinema e Ditadura - Arquivos da ditadura: luta e resistência em Perus",
+    shortTitle: "Arquivos da ditadura: luta e resistência em Perus",
+    thumbnail: "https://i.ytimg.com/vi/_VmVV19X6EM/hqdefault.jpg",
+    meta: "Sessão gravada · Debate com Liza Santos, Gabriel Rivas, Rayane Miranda, Carlos Santos e Rafaela Reis",
+    date: "09/12/2025",
+  },
+  {
+    id: "xInohttBwsY",
+    title: "VII Mostra Cinema e Ditadura - Atuação da FEDEFAM como espaço de resistência e de memória na ditadura Argentina",
+    shortTitle: "Atuação da FEDEFAM como espaço de resistência e de memória na ditadura Argentina",
+    thumbnail: "https://i.ytimg.com/vi/xInohttBwsY/hqdefault.jpg",
+    meta: "Sessão gravada · Debate com María Adela Antokoletz",
+    date: "10/12/2025",
   },
 ];
 
@@ -174,7 +246,7 @@ export default function MostraVII() {
           <span>
             <span className="block text-sm font-semibold uppercase tracking-[0.25em] text-primary">Transmissões gravadas</span>
             <span className="mt-3 block font-title text-4xl">Playlist completa da VII Mostra</span>
-            <span className="mt-3 block text-muted">Registros das transmissões realizadas entre setembro e novembro de 2025.</span>
+            <span className="mt-3 block text-muted">Registros das transmissões realizadas entre setembro e dezembro de 2025.</span>
           </span>
           <Button as="span" variant="outline" className="mt-6 inline-flex shrink-0 items-center gap-2 md:mt-0">
             <PlayCircle size={18} aria-hidden="true" /> Abrir playlist
@@ -190,6 +262,18 @@ export default function MostraVII() {
             {sessions.map((session) => {
               const playlistVideo = playlistVideos.find((video) => video.id === session.videoId);
               const film = findFilmByTitle(films, session.filmTitle || session.title);
+              const fallbackFilm = session.filmYoutubeId
+                ? {
+                    title: session.filmTitle || session.title,
+                    description: session.note || "",
+                    metadata: {
+                      youtubeId: session.filmYoutubeId,
+                      imageUrl: `https://img.youtube.com/vi/${session.filmYoutubeId}/hqdefault.jpg`,
+                      director: session.direction || null,
+                    },
+                  }
+                : null;
+              const filmToWatch = film?.metadata?.youtubeId ? film : fallbackFilm;
 
               return (
                 <article
@@ -220,11 +304,11 @@ export default function MostraVII() {
                     </div>
 
                     <div className="mt-3 flex flex-wrap items-center gap-4">
-                      {film?.metadata?.youtubeId && (
+                      {filmToWatch?.metadata?.youtubeId && (
                         <button
                           type="button"
                           className="group inline-flex w-fit cursor-pointer items-center gap-2 text-base font-semibold text-primary"
-                          onClick={() => setSelectedFilm(film)}
+                          onClick={() => setSelectedFilm(filmToWatch)}
                         >
                           <span className="animated-underline">Assistir ao filme</span>
                           <PlayCircle size={18} aria-hidden="true" />
@@ -335,7 +419,7 @@ export default function MostraVII() {
                 <h2 id="playlist-modal-title" className="mt-3 font-title text-4xl md:text-5xl">
                   VII Mostra Cinema e Ditadura
                 </h2>
-                <p className="mt-3 text-muted">Playlist · 2 vídeos · por LACE</p>
+                <p className="mt-3 text-muted">Playlist · {playlistVideos.length} vídeos · por LACE</p>
                 <a
                   className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 font-semibold text-black transition hover:bg-primary-fill hover:text-on-primary"
                   href={playlistUrl}
