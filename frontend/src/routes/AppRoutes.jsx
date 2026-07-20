@@ -18,7 +18,6 @@ const Entrevistas = lazy(() => import("../pages/ProducaoAudiovisual/Entrevistas"
 const Podcasts = lazy(() => import("../pages/ProducaoAudiovisual/Podcasts"));
 const LinhasDeFugasVirais = lazy(() => import("../pages/ProducaoAcademica/LinhasDeFugasVirais"));
 const Artigos = lazy(() => import("../pages/ProducaoAcademica/Artigos"));
-const Traducoes = lazy(() => import("../pages/ProducaoAcademica/Traducoes"));
 const Pesquisas = lazy(() => import("../pages/ProducaoAcademica/Pesquisas"));
 const Eventos2021 = lazy(() => import("../pages/Eventos/Eventos2021"));
 const Eventos2022 = lazy(() => import("../pages/Eventos/Eventos2022"));
@@ -66,10 +65,6 @@ export default function AppRoutes() {
           <Route
             path="/producao-academica/artigos"
             element={withSuspense(<Artigos />)}
-          />
-          <Route
-            path="/producao-academica/traducoes"
-            element={withSuspense(<Traducoes />)}
           />
           <Route
             path="/producao-academica/pesquisas"

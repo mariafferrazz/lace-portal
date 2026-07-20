@@ -9,7 +9,6 @@ const contentTypes = [
   ["GLOSSARY", "Verbete"],
   ["ARTICLE", "Artigo"],
   ["RESEARCH", "Pesquisa"],
-  ["TRANSLATION", "Tradução"],
   ["VIRAL_ESCAPE_LINES", "Linhas de Fugas Virais"],
   ["INTERVIEW", "Entrevista"],
   ["PODCAST", "Podcast"],
@@ -20,7 +19,7 @@ const contentTypes = [
 const contentAreas = [
   { value: "CINEMA_DITADURA", label: "Cinema e Ditadura", types: ["FILM", "GLOSSARY"] },
   { value: "PRODUCAO_AUDIOVISUAL", label: "Produção Audiovisual", types: ["INTERVIEW", "PODCAST"] },
-  { value: "PRODUCAO_ACADEMICA", label: "Produção Acadêmica", types: ["ARTICLE", "RESEARCH", "TRANSLATION"] },
+  { value: "PRODUCAO_ACADEMICA", label: "Produção Acadêmica", types: ["ARTICLE", "RESEARCH"] },
   { value: "EVENTOS_ATIVIDADES", label: "Eventos e Atividades", types: ["EVENT", "VIRAL_ESCAPE_LINES"] },
   { value: "OUTROS", label: "Outros", types: ["OTHER"] },
 ];

@@ -35,7 +35,14 @@ export const menu = [
           { title: "Aline Ribeiro Nascimento", path: "/producao-academica/artigos#aline-ribeiro-nascimento" },
         ],
       },
-      { title: "Pesquisas", path: "/producao-academica/pesquisas" },
+      {
+        title: "Pesquisas",
+        path: "/producao-academica/pesquisas",
+        children: [
+          { title: "Aracruz Celulose S/A", path: "/producao-academica/pesquisas#aracruz-celulose" },
+          { title: "Ditadura na UFF", path: "/producao-academica/pesquisas#ditadura-na-uff" },
+        ],
+      },
     ],
   },
   {

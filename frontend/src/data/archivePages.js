@@ -9,11 +9,6 @@ export const archivePages = {
     title: "Pesquisas",
     description: "Investigações desenvolvidas no laboratório sobre experiências cotidianas, memória, política e direitos humanos.",
   },
-  traducoes: {
-    eyebrow: "Produção acadêmica",
-    title: "Traduções",
-    description: "Traduções que ampliam a circulação de debates e referências relacionados às áreas de atuação do LACE.",
-  },
   linhasDeFugasVirais: {
     eyebrow: "Produção acadêmica",
     title: "Linhas de Fugas Virais",
