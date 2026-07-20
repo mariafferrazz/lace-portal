@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { ArrowRight, BookOpenText, ChevronLeft, ChevronRight, ExternalLink, X } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -21,14 +21,12 @@ export default function Verbetes() {
   const [selectedLetter, setSelectedLetter] = useState("A");
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     api.get("/contents", { params: { type: "GLOSSARY" } })
       .then(({ data }) => setEntries(data.contents))
       .catch(async () => {
         setEntries(await getStaticContents("GLOSSARY"));
-        setFailed(false);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -54,17 +52,28 @@ export default function Verbetes() {
     return () => document.removeEventListener("keydown", navigate);
   }, [entries, selectedEntry, selectedLetter]);
 
-  const availableLetters = new Set(entries.map((entry) => initialLetter(entry.title)));
-  const visibleLetters = alphabet.filter((letter) => availableLetters.has(letter));
-  const visibleEntries = entries.filter((entry) => initialLetter(entry.title) === selectedLetter);
-  const selectedIndex = selectedEntry ? visibleEntries.findIndex((entry) => entry.id === selectedEntry.id) : -1;
+  const availableLetters = useMemo(
+    () => new Set(entries.map((entry) => initialLetter(entry.title))),
+    [entries],
+  );
+  const visibleLetters = useMemo(
+    () => alphabet.filter((letter) => availableLetters.has(letter)),
+    [availableLetters],
+  );
+  const visibleEntries = useMemo(
+    () => entries.filter((entry) => initialLetter(entry.title) === selectedLetter),
+    [entries, selectedLetter],
+  );
+  const selectedIndex = useMemo(
+    () => selectedEntry ? visibleEntries.findIndex((entry) => entry.id === selectedEntry.id) : -1,
+    [selectedEntry, visibleEntries],
+  );
   const previousEntry = selectedIndex >= 0 ? visibleEntries[(selectedIndex - 1 + visibleEntries.length) % visibleEntries.length] : null;
   const nextEntry = selectedIndex >= 0 ? visibleEntries[(selectedIndex + 1) % visibleEntries.length] : null;
 
   return <main className="bg-background py-20 lg:py-28"><Container>
     <header className="max-w-4xl"><p className="text-sm font-semibold uppercase tracking-[0.3em] text-primary">Cinema e Ditadura</p><h1 className="mt-4 font-title text-5xl md:text-7xl">Verbetes</h1><p className="mt-6 max-w-3xl text-lg leading-8 text-muted">Conceitos, acontecimentos e contextos históricos relacionados à <strong className="text-primary">Ditadura Militar Empresarial Brasileira</strong>.</p></header>
     {loading && <p className="mt-14 text-muted">Carregando verbetes…</p>}
-    {failed && <p className="mt-14 rounded-2xl border border-red-500/30 p-5 text-red-700">Não foi possível carregar os verbetes.</p>}
     {entries.length > 0 && <>
       <nav className="mt-12 flex flex-wrap gap-2" aria-label="Filtrar verbetes por letra">{visibleLetters.map((letter) => { const active = selectedLetter === letter; return <button key={letter} aria-pressed={active} onClick={() => setSelectedLetter(letter)} className={`grid size-11 cursor-pointer place-items-center rounded-xl border font-bold transition ${active ? "border-primary bg-primary-fill text-on-primary" : "border-border bg-card hover:border-primary hover:text-primary"}`}>{letter}</button>; })}</nav>
       <p className="mt-6 text-sm text-muted">{visibleEntries.length} {visibleEntries.length === 1 ? "verbete" : "verbetes"} com a letra {selectedLetter}</p>

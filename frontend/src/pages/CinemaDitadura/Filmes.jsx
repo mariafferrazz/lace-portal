@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, ExternalLink, Film, Play, X } from "lucide-react";
 import Container from "../../components/ui/Container";
@@ -19,7 +19,6 @@ const initialLetter = (title) => {
 export default function Filmes() {
   const [films, setFilms] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
   const [selectedFilm, setSelectedFilm] = useState(null);
   const [selectedLetter, setSelectedLetter] = useState("A");
 
@@ -34,7 +33,6 @@ export default function Filmes() {
       .then(({ data }) => applyFilms(data.contents))
       .catch(async () => {
         applyFilms(await getStaticContents("FILM"));
-        setFailed(false);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -67,9 +65,18 @@ export default function Filmes() {
     return () => document.removeEventListener('keydown', navigateLetters);
   }, [films, selectedFilm, selectedLetter]);
 
-  const availableLetters = new Set(films.map((film) => initialLetter(film.title)));
-  const visibleFilms = films.filter((film) => initialLetter(film.title) === selectedLetter);
-  const selectedIndex = selectedFilm ? visibleFilms.findIndex((film) => film.id === selectedFilm.id) : -1;
+  const availableLetters = useMemo(
+    () => new Set(films.map((film) => initialLetter(film.title))),
+    [films],
+  );
+  const visibleFilms = useMemo(
+    () => films.filter((film) => initialLetter(film.title) === selectedLetter),
+    [films, selectedLetter],
+  );
+  const selectedIndex = useMemo(
+    () => selectedFilm ? visibleFilms.findIndex((film) => film.id === selectedFilm.id) : -1,
+    [selectedFilm, visibleFilms],
+  );
   const previousFilm = selectedIndex >= 0 ? visibleFilms[(selectedIndex - 1 + visibleFilms.length) % visibleFilms.length] : null;
   const nextFilm = selectedIndex >= 0 ? visibleFilms[(selectedIndex + 1) % visibleFilms.length] : null;
 
@@ -83,8 +90,7 @@ export default function Filmes() {
         </header>
 
         {loading && <p className="mt-14 text-muted">Carregando filmes…</p>}
-        {failed && <p className="mt-14 rounded-2xl border border-red-500/30 bg-red-500/10 p-5 text-red-700 dark:text-red-300">Não foi possível carregar o acervo agora.</p>}
-        {!loading && !failed && films.length === 0 && (
+        {!loading && films.length === 0 && (
           <div className="mt-14 rounded-3xl border border-dashed border-border bg-card/50 p-10">
             <Film className="text-primary" aria-hidden="true" />
             <h2 className="mt-5 font-title text-3xl">Acervo em preparação</h2>

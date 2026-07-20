@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { Mail, Send } from "lucide-react";
-import { FaFacebookF, FaInstagram } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import { ExternalLink, Mail, Send } from "lucide-react";
 import Container from "../ui/Container";
 import SectionTitle from "../ui/SectionTitle";
 import Button from "../ui/Button";
@@ -78,13 +76,13 @@ export default function ContactSection() {
                 rel="noreferrer"
                 className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 transition hover:border-primary hover:text-primary"
               >
-                <FaXTwitter aria-hidden="true" /> <span>X / Twitter</span>
+                <ExternalLink size={18} aria-hidden="true" /> <span>X / Twitter</span>
               </a>
               <div className="flex items-center gap-3 rounded-xl border border-border bg-card/60 px-4 py-3 text-muted" title="Link em breve">
-                <FaInstagram aria-hidden="true" /> <span>Instagram</span>
+                <ExternalLink size={18} aria-hidden="true" /> <span>Instagram</span>
               </div>
               <div className="flex items-center gap-3 rounded-xl border border-border bg-card/60 px-4 py-3 text-muted" title="Link em breve">
-                <FaFacebookF aria-hidden="true" /> <span>Facebook</span>
+                <ExternalLink size={18} aria-hidden="true" /> <span>Facebook</span>
               </div>
             </div>
             <p className="mt-3 text-sm text-muted">Os links do Instagram e do Facebook serão adicionados em breve.</p>
