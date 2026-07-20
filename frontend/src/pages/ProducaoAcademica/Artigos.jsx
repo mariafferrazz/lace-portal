@@ -230,6 +230,11 @@ function authorSlug(name) {
 export default function Artigos() {
   const [activeAuthor, setActiveAuthor] = useState(null);
 
+  function setAuthorAndHash(author) {
+    setActiveAuthor(author);
+    window.history.replaceState(null, "", `#${authorSlug(author.name)}`);
+  }
+
   useEffect(() => {
     if (!activeAuthor) return undefined;
 
@@ -262,8 +267,7 @@ export default function Artigos() {
   }, []);
 
   function openAuthor(author) {
-    setActiveAuthor(author);
-    window.history.replaceState(null, "", `#${authorSlug(author.name)}`);
+    setAuthorAndHash(author);
   }
 
   function closeAuthor() {
@@ -271,6 +275,18 @@ export default function Artigos() {
     if (window.location.hash) {
       window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
     }
+  }
+
+  function navigateAuthor(direction) {
+    if (!activeAuthor) return;
+
+    const currentIndex = authors.findIndex((author) => author.name === activeAuthor.name);
+    const nextIndex =
+      direction === "previous"
+        ? (currentIndex - 1 + authors.length) % authors.length
+        : (currentIndex + 1) % authors.length;
+
+    setAuthorAndHash(authors[nextIndex]);
   }
 
   return (
@@ -299,49 +315,38 @@ export default function Artigos() {
         </section>
       </Container>
 
-      {activeAuthor && <AuthorModal author={activeAuthor} onClose={closeAuthor} />}
+      {activeAuthor && (
+        <AuthorModal
+          author={activeAuthor}
+          authorPosition={authors.findIndex((item) => item.name === activeAuthor.name) + 1}
+          authorCount={authors.length}
+          onClose={closeAuthor}
+          onNavigate={navigateAuthor}
+        />
+      )}
     </main>
   );
 }
 
-function AuthorModal({ author, onClose }) {
-  const [activeArticleIndex, setActiveArticleIndex] = useState(0);
-  const articleCount = author.articles.length;
-  const activeArticle = author.articles[activeArticleIndex];
-  const hasArticleNavigation = articleCount > 1;
-
+function AuthorModal({ author, authorPosition, authorCount, onClose, onNavigate }) {
   useEffect(() => {
-    setActiveArticleIndex(0);
-  }, [author.name]);
-
-  useEffect(() => {
-    if (!hasArticleNavigation) return undefined;
-
     const navigateByKeyboard = (event) => {
       const tagName = event.target?.tagName;
       if (tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT") return;
 
       if (event.key === "ArrowLeft") {
-        setActiveArticleIndex((current) => (current === 0 ? articleCount - 1 : current - 1));
+        onNavigate("previous");
       }
 
       if (event.key === "ArrowRight") {
-        setActiveArticleIndex((current) => (current === articleCount - 1 ? 0 : current + 1));
+        onNavigate("next");
       }
     };
 
     window.addEventListener("keydown", navigateByKeyboard);
 
     return () => window.removeEventListener("keydown", navigateByKeyboard);
-  }, [articleCount, hasArticleNavigation]);
-
-  function goToPreviousArticle() {
-    setActiveArticleIndex((current) => (current === 0 ? articleCount - 1 : current - 1));
-  }
-
-  function goToNextArticle() {
-    setActiveArticleIndex((current) => (current === articleCount - 1 ? 0 : current + 1));
-  }
+  }, [onNavigate]);
 
   return createPortal(
     <div
@@ -378,47 +383,49 @@ function AuthorModal({ author, onClose }) {
           </a>
         )}
 
-        {activeArticle ? (
+        {author.articles.length > 0 ? (
           <div className="mt-8">
-            {hasArticleNavigation && (
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={goToPreviousArticle}
-                  className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-3 font-semibold text-text transition hover:border-primary hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                  aria-label="Artigo anterior"
-                >
-                  <ChevronLeft size={18} aria-hidden="true" />
-                  Anterior
-                </button>
-                <span className="text-sm font-semibold text-muted">
-                  {activeArticleIndex + 1} de {articleCount}
-                </span>
-                <button
-                  type="button"
-                  onClick={goToNextArticle}
-                  className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-3 font-semibold text-text transition hover:border-primary hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                  aria-label="Próximo artigo"
-                >
-                  Próximo
-                  <ChevronRight size={18} aria-hidden="true" />
-                </button>
-              </div>
-            )}
-
-            <article key={activeArticle.title} className="rounded-2xl border border-border bg-card p-5 md:p-6">
-              <h3 className="font-title text-3xl text-text">{activeArticle.title}</h3>
-              {activeArticle.note && <p className="mt-3 text-sm font-semibold text-primary">{activeArticle.note}</p>}
-              {activeArticle.summary && <p className="mt-4 leading-7 text-muted">{activeArticle.summary}</p>}
-              <a
-                className="mt-5 inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
-                href={activeArticle.url}
-                target="_blank"
-                rel="noreferrer"
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => onNavigate("previous")}
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-3 font-semibold text-text transition hover:border-primary hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                aria-label="Autora ou autor anterior"
               >
-                Link para PDF <ExternalLink size={16} aria-hidden="true" />
-              </a>
-            </article>
+                <ChevronLeft size={18} aria-hidden="true" />
+                Anterior
+              </button>
+              <span className="text-sm font-semibold text-muted">
+                {authorPosition} de {authorCount}
+              </span>
+              <button
+                type="button"
+                onClick={() => onNavigate("next")}
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-3 font-semibold text-text transition hover:border-primary hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                aria-label="Próxima autora ou próximo autor"
+              >
+                Próximo
+                <ChevronRight size={18} aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="grid gap-5">
+              {author.articles.map((article) => (
+                <article key={article.title} className="rounded-2xl border border-border bg-card p-5 md:p-6">
+                  <h3 className="font-title text-3xl text-text">{article.title}</h3>
+                  {article.note && <p className="mt-3 text-sm font-semibold text-primary">{article.note}</p>}
+                  {article.summary && <p className="mt-4 leading-7 text-muted">{article.summary}</p>}
+                  <a
+                    className="mt-5 inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
+                    href={article.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Link para PDF <ExternalLink size={16} aria-hidden="true" />
+                  </a>
+                </article>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="mt-8 rounded-2xl border border-dashed border-border bg-card/60 p-6">
