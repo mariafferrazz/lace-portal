@@ -1,6 +1,18 @@
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
 
+function shouldHideOnSamsungMobile() {
+  if (typeof window === "undefined") return false;
+
+  const userAgent = window.navigator.userAgent || "";
+  const isSamsungInternet = /SamsungBrowser/i.test(userAgent);
+  const isTouchDevice =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(pointer: coarse)").matches;
+
+  return isSamsungInternet && isTouchDevice;
+}
+
 export default function BackToTop() {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -28,7 +40,7 @@ export default function BackToTop() {
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   }
 
-  if (!isVisible) return null;
+  if (!isVisible || shouldHideOnSamsungMobile()) return null;
 
   return (
     <button
