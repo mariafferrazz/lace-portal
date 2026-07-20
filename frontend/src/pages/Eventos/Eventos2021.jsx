@@ -9,7 +9,6 @@ const events = [
     period: "19/08/2021 - 18h",
     image:
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000117-f2047f204b/15filhos.webp?ph=3554c7d1fd",
-    oldUrl: "https://lab-lace.webnode.page/l/tema-filhos-de-atingidos-pela-ditadura/",
     description:
       "Em agosto, no dia 19/08 às 18h, tivemos a continuação da III Mostra Virtual Cinema e Ditadura. O filme dessa sessão foi 15 Filhos.",
     details: [
