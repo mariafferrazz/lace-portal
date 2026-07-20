@@ -118,7 +118,7 @@ export default function MobileMenu() {
                                     <button
                                       type="button"
                                       onClick={() => toggleNestedSubmenu(i)}
-                                      className="flex w-full items-center justify-between gap-3 rounded-md bg-background px-4 py-3 text-left text-sm font-medium text-text transition hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                                      className="flex w-full items-center justify-between gap-3 rounded-md bg-background px-4 py-3 text-left text-sm font-medium uppercase tracking-wide text-text transition hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                                       aria-expanded={openNestedSubmenu === i}
                                     >
                                       <span>{sub.title}</span>
@@ -132,7 +132,7 @@ export default function MobileMenu() {
                                     <Link
                                       to={sub.path}
                                       onClick={closeMenu}
-                                      className="flex items-center justify-between gap-3 rounded-md bg-background px-4 py-3 text-sm font-medium text-text transition hover:text-primary"
+                                      className="flex items-center justify-between gap-3 rounded-md bg-background px-4 py-3 text-sm font-medium uppercase tracking-wide text-text transition hover:text-primary"
                                     >
                                       <span>{sub.title}</span>
                                     </Link>

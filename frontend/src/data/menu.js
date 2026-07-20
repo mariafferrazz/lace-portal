@@ -35,7 +35,6 @@ export const menu = [
           { title: "Aline Ribeiro Nascimento", path: "/producao-academica/artigos#aline-ribeiro-nascimento" },
         ],
       },
-      { title: "Traduções", path: "/producao-academica/traducoes" },
       { title: "Pesquisas", path: "/producao-academica/pesquisas" },
     ],
   },

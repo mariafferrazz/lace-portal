@@ -60,7 +60,7 @@ export default function DesktopMenu() {
                         <button
                           type="button"
                           onClick={() => setOpenNestedIndex(openNestedIndex === i ? null : i)}
-                          className="flex w-full items-center justify-between gap-3 rounded px-3 py-2 text-left text-sm text-text transition hover:bg-surface hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          className="flex w-full items-center justify-between gap-3 rounded px-3 py-2 text-left text-sm uppercase tracking-wide text-text transition hover:bg-surface hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                           aria-expanded={openNestedIndex === i}
                         >
                           <span>{sub.title}</span>
@@ -73,7 +73,7 @@ export default function DesktopMenu() {
                       ) : (
                         <Link
                           to={sub.path}
-                          className="flex items-center justify-between gap-3 rounded px-3 py-2 text-sm text-text transition hover:bg-surface hover:text-primary"
+                          className="flex items-center justify-between gap-3 rounded px-3 py-2 text-sm uppercase tracking-wide text-text transition hover:bg-surface hover:text-primary"
                         >
                           <span>{sub.title}</span>
                         </Link>
