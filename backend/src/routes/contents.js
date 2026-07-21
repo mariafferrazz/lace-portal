@@ -6,6 +6,33 @@ const { notifyCoordinatorContentChange } = require("../services/notifications");
 const router = express.Router();
 const contentTypes = new Set(["FILM", "GLOSSARY", "CINEMA_SHOW", "ARTICLE", "RESEARCH", "TRANSLATION", "VIRAL_ESCAPE_LINES", "INTERVIEW", "PODCAST", "EVENT", "OTHER"]);
 
+function parseMetadata(value) {
+  if (!value || typeof value !== "string") return value || null;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
+
+async function listManageContents() {
+  try {
+    return await prisma.content.findMany({ orderBy: { createdAt: "desc" } });
+  } catch (error) {
+    console.error("Erro ao listar conteudos pelo Prisma:", error);
+    const rows = await prisma.$queryRaw`
+      SELECT id, title, description, type, researcherName, researcherMemberId, fileUrl, externalUrl, metadata, published, createdById, createdAt, updatedAt
+      FROM Content
+      ORDER BY createdAt DESC
+    `;
+    return rows.map((row) => ({
+      ...row,
+      metadata: parseMetadata(row.metadata),
+      published: Boolean(row.published),
+    }));
+  }
+}
+
 function parseContent(body, partial = false) {
   const data = {};
   const required = (field, label) => {
@@ -47,11 +74,19 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/manage", requireAuth, async (req, res) => {
-  const [contents, users, members] = await Promise.all([
-    prisma.content.findMany({ orderBy: { createdAt: "desc" } }),
-    prisma.user.findMany({ select: { id: true, name: true, email: true, role: true } }),
-    prisma.teamMember.findMany({ select: { id: true, name: true, role: true } }),
-  ]);
+  const contents = await listManageContents();
+  let users = [];
+  let members = [];
+  try {
+    users = await prisma.user.findMany({ select: { id: true, name: true, email: true, role: true } });
+  } catch (error) {
+    console.error("Erro ao listar usuarios para o painel:", error);
+  }
+  try {
+    members = await prisma.teamMember.findMany({ select: { id: true, name: true, role: true } });
+  } catch (error) {
+    console.error("Erro ao listar equipe para o painel:", error);
+  }
   const usersById = new Map(users.map((user) => [user.id, user]));
   const membersById = new Map(members.map((member) => [member.id, member]));
 

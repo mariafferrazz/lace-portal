@@ -1054,7 +1054,7 @@ export default function AccessPage() {
       <Container>
         {!user ? <Login onLogin={handleLogin} /> : <>
           <header className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-center">
-            <div><p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">Painel LACE</p><h1 className="mt-2 font-title text-4xl md:text-5xl">Ola, {user.name}</h1><p className="mt-2 text-muted">{user.role === "COORDINATOR" ? "Acesso de coordenacao" : "Acesso de pesquisadores e estudantes"}</p></div>
+            <div><p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">Painel LACE</p><h1 className="mt-2 font-title text-4xl md:text-5xl">Ola, {user.name}</h1><p className="mt-2 text-muted">{user.role === "COORDINATOR" ? "Acesso de coordenacao" : "Acesso da Equipe LACE"}</p></div>
             <Button variant="dark" type="button" onClick={logout}><LogOut className="inline" size={17} /> Sair</Button>
           </header>
           {dashboardError && (
