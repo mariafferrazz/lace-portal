@@ -665,7 +665,7 @@ function contentBelongsToArea(content, area) {
 
 function ContentPreviewModal({ content, onClose, onEdit, user }) {
   const isCoordinator = user.role === "COORDINATOR";
-  const canEdit = isCoordinator || content.createdBy?.id === user.id;
+  const canEdit = isCoordinator || !content.readOnly;
   const sessions = Array.isArray(content.metadata?.sessions) ? content.metadata.sessions : [];
   const fileUrls = uniqueUrls(content.metadata?.fileUrls, content.fileUrl, content.externalUrl);
   const playlistUrls = uniqueUrls(content.metadata?.playlistUrls, content.metadata?.playlistUrl);
@@ -742,7 +742,7 @@ function ContentPreviewModal({ content, onClose, onEdit, user }) {
 function ContentCard({ content, user, refresh, onEdit, onOpen }) {
   const isCoordinator = user.role === "COORDINATOR";
   const isReadOnly = content.readOnly;
-  const canEdit = !isReadOnly && (isCoordinator || content.createdBy?.id === user.id);
+  const canEdit = !isReadOnly;
 
   async function publish() {
     await api.patch(`/contents/${content.id}`, { published: !content.published });

@@ -75,10 +75,6 @@ router.patch("/:id", requireAuth, async (req, res) => {
     const existing = await prisma.content.findUnique({ where: { id: req.params.id } });
     if (!existing) return res.status(404).json({ error: "Conteudo nao encontrado." });
     const isCoordinator = req.user.role === "COORDINATOR";
-    const isOwner = existing.createdById === req.user.id;
-    if (!isCoordinator && !isOwner) {
-      return res.status(403).json({ error: "Voce so pode editar conteudos enviados pela sua conta." });
-    }
 
     const data = parseContent(req.body, true);
     if (req.body.published !== undefined) {
