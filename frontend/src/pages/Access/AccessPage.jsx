@@ -660,6 +660,7 @@ function contentBelongsToArea(content, area) {
   const editorialAreas = content.metadata?.editorialAreas;
   if (Array.isArray(editorialAreas) && editorialAreas.includes(area.value)) return true;
   if (content.metadata?.editorialArea === area.value) return true;
+  if (content.type === "CINEMA_SHOW") return area.types.includes("CINEMA_SHOW");
   return area.types.includes(content.type) && areaForType(content.type)?.value === area.value;
 }
 

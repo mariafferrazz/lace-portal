@@ -8,29 +8,22 @@ const contentTypes = new Set(["FILM", "GLOSSARY", "CINEMA_SHOW", "ARTICLE", "RES
 
 async function listManageContents(summaryOnly = false) {
   if (summaryOnly) {
-    return prisma.content.findMany({
-      select: {
-        id: true,
-        title: true,
-        type: true,
-        researcherName: true,
-        researcherMemberId: true,
-        metadata: true,
-        published: true,
-        createdById: true,
-        createdAt: true,
-        updatedAt: true,
-        createdBy: { select: { id: true, name: true, role: true } },
-        researcherMember: { select: { id: true, name: true, role: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    }).then((contents) => contents.map((content) => ({
+    const rows = await prisma.$queryRaw`
+      SELECT id, title, type, researcherName, researcherMemberId, published, createdById, createdAt, updatedAt
+      FROM Content
+      ORDER BY createdAt DESC
+    `;
+    return rows.map((content) => ({
       ...content,
       description: null,
       fileUrl: null,
       externalUrl: null,
+      metadata: null,
+      published: Boolean(content.published),
+      createdBy: null,
+      researcherMember: null,
       summaryOnly: true,
-    })));
+    }));
   }
 
   return prisma.content.findMany({
