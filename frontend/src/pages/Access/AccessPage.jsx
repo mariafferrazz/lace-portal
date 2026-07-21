@@ -27,6 +27,18 @@ const contentAreas = [
 
 const areaForType = (type) => contentAreas.find((area) => area.types.includes(type));
 const typeLabel = (type) => contentTypes.find(([value]) => value === type)?.[1] || type;
+const cinemaShowAreas = ["CINEMA_DITADURA", "EVENTOS_ATIVIDADES"];
+
+function contentAreaLabel(content) {
+  const areas = content.metadata?.editorialAreas;
+  if (Array.isArray(areas) && areas.length > 0) {
+    return areas
+      .map((areaValue) => contentAreas.find((area) => area.value === areaValue)?.label)
+      .filter(Boolean)
+      .join(" + ");
+  }
+  return contentAreas.find((area) => area.value === content.metadata?.editorialArea)?.label || areaForType(content.type)?.label;
+}
 
 const emptySession = {
   date: "",
@@ -155,6 +167,8 @@ function ContentForm({ onCreated }) {
     };
 
     if (isCinemaShow) {
+      metadata.editorialArea = "CINEMA_DITADURA";
+      metadata.editorialAreas = cinemaShowAreas;
       metadata.showNumber = form.showNumber.trim();
       metadata.playlistUrl = form.playlistUrl.trim() || null;
       metadata.sessions = form.sessions
@@ -354,7 +368,7 @@ function ContentList({ user, contents, refresh }) {
             <article className="rounded-2xl border border-border bg-background p-5" key={content.id}>
               <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-primary">{areaForType(content.type)?.label} - {typeLabel(content.type)}</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-primary">{contentAreaLabel(content)} - {typeLabel(content.type)}</p>
                   <h3 className="mt-2 font-title text-2xl">{content.title}</h3>
                   {content.type === "CINEMA_SHOW" && (
                     <p className="mt-2 text-sm text-muted">
