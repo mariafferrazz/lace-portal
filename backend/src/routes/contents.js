@@ -47,14 +47,7 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/manage", requireAuth, async (req, res) => {
-  const where = req.user.role === "COORDINATOR" ? {} : {
-    OR: [
-      { published: true },
-      { createdById: req.user.id },
-    ],
-  };
   const contents = await prisma.content.findMany({
-    where,
     include: {
       createdBy: { select: { id: true, name: true, email: true, role: true } },
       researcherMember: { select: { id: true, name: true, role: true } },
