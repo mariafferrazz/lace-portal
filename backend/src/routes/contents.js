@@ -16,21 +16,16 @@ function parseMetadata(value) {
 }
 
 async function listManageContents() {
-  try {
-    return await prisma.content.findMany({ orderBy: { createdAt: "desc" } });
-  } catch (error) {
-    console.error("Erro ao listar conteudos pelo Prisma:", error);
-    const rows = await prisma.$queryRaw`
-      SELECT id, title, description, type, researcherName, researcherMemberId, fileUrl, externalUrl, metadata, published, createdById, createdAt, updatedAt
-      FROM Content
-      ORDER BY createdAt DESC
-    `;
-    return rows.map((row) => ({
-      ...row,
-      metadata: parseMetadata(row.metadata),
-      published: Boolean(row.published),
-    }));
-  }
+  const rows = await prisma.$queryRaw`
+    SELECT id, title, description, type, researcherName, researcherMemberId, fileUrl, externalUrl, metadata, published, createdById, createdAt, updatedAt
+    FROM Content
+    ORDER BY createdAt DESC
+  `;
+  return rows.map((row) => ({
+    ...row,
+    metadata: parseMetadata(row.metadata),
+    published: Boolean(row.published),
+  }));
 }
 
 function attachContentRelations(contents, users = [], members = []) {
@@ -82,6 +77,15 @@ router.get("/", async (req, res) => {
       researcherMember: { select: { id: true, name: true, role: true } },
     },
     orderBy: { title: "asc" },
+  });
+  res.json({ contents });
+});
+
+router.get("/navigation", async (_req, res) => {
+  const contents = await prisma.content.findMany({
+    where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW"] } },
+    select: { id: true, title: true, type: true, metadata: true },
+    orderBy: { createdAt: "desc" },
   });
   res.json({ contents });
 });

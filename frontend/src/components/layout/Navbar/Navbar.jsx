@@ -46,7 +46,7 @@ export default function Navbar() {
   useEffect(() => {
     let active = true;
     api
-      .get("/contents")
+      .get("/contents/navigation")
       .then(({ data }) => {
         if (active) setItems(mergeDynamicMenu(data.contents || []));
       })

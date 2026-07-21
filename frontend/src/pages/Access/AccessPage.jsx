@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bell, CheckCircle2, Database, FolderUp, LogOut, Pencil, Plus, ShieldCheck, Trash2, Upload, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import Button from "../../components/ui/Button";
@@ -802,8 +802,14 @@ function ContentCard({ content, user, refresh, onEdit, onOpen }) {
 function AreaModal({ area, contents, user, refresh, onClose, onAddContent, onEditContent, onOpenContent }) {
   const [selectedType, setSelectedType] = useState(area.types[0]);
 
-  const areaContents = contents.filter((content) => contentBelongsToArea(content, area));
-  const visibleContents = areaContents.filter((content) => content.type === selectedType);
+  const areaContents = useMemo(
+    () => contents.filter((content) => contentBelongsToArea(content, area)),
+    [area, contents],
+  );
+  const visibleContents = useMemo(
+    () => areaContents.filter((content) => content.type === selectedType),
+    [areaContents, selectedType],
+  );
 
   return (
     <Modal onClose={onClose}>
@@ -854,7 +860,7 @@ function AreaModal({ area, contents, user, refresh, onClose, onAddContent, onEdi
 }
 
 function PendingApprovals({ contents, refresh, onEdit, onOpen }) {
-  const pending = contents.filter((content) => !content.published);
+  const pending = useMemo(() => contents.filter((content) => !content.published), [contents]);
   if (pending.length === 0) return null;
 
   async function approve(content) {
@@ -899,6 +905,13 @@ function EditorialDashboard({ user, contents, refresh, teamMembers }) {
   const [addDefaults, setAddDefaults] = useState(null);
   const [editingContent, setEditingContent] = useState(null);
   const [previewContent, setPreviewContent] = useState(null);
+  const areaCounts = useMemo(
+    () => Object.fromEntries(contentAreas.map((area) => [
+      area.value,
+      contents.filter((content) => contentBelongsToArea(content, area)).length,
+    ])),
+    [contents],
+  );
 
   return (
     <>
@@ -918,7 +931,7 @@ function EditorialDashboard({ user, contents, refresh, teamMembers }) {
 
         <div className="mt-8 grid gap-5 md:grid-cols-2">
           {contentAreas.map((area) => {
-            const count = contents.filter((content) => contentBelongsToArea(content, area)).length;
+            const count = areaCounts[area.value] || 0;
             return (
               <button
                 key={area.value}
