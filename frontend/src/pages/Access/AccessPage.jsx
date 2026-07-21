@@ -569,7 +569,7 @@ function AreaModal({ area, contents, user, refresh, onClose, onAddContent, onEdi
             </button>
           ))}
         </div>
-        <Button type="button" onClick={() => onAddContent(area.value, selectedType)}><Plus size={17} aria-hidden="true" /> Adicionar conteudo</Button>
+        <Button type="button" className="inline-flex min-w-56 flex-nowrap items-center justify-center gap-2 whitespace-nowrap" onClick={() => onAddContent(area.value, selectedType)}><Plus className="shrink-0" size={17} aria-hidden="true" /> <span>Adicionar conteudo</span></Button>
       </div>
 
       <div className="mt-7 space-y-4">
@@ -656,7 +656,7 @@ function EditorialDashboard({ user, contents, refresh }) {
               <p className="mt-1 text-muted">Escolha uma area editorial para ver os tipos de conteudo.</p>
             </div>
           </div>
-          <Button type="button" onClick={() => setAddDefaults(createInitialForm())}><Plus size={17} aria-hidden="true" /> Adicionar conteudo</Button>
+          <Button type="button" className="inline-flex min-w-56 flex-nowrap items-center justify-center gap-2 whitespace-nowrap" onClick={() => setAddDefaults(createInitialForm())}><Plus className="shrink-0" size={17} aria-hidden="true" /> <span>Adicionar conteudo</span></Button>
         </div>
 
         <div className="mt-8 grid gap-5 md:grid-cols-2">
