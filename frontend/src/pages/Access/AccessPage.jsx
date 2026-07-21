@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { CheckCircle2, Database, FolderUp, LogOut, Plus, ShieldCheck, Trash2, Upload } from "lucide-react";
+import { CheckCircle2, Database, FolderUp, LogOut, Plus, ShieldCheck, Trash2, Upload, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import Button from "../../components/ui/Button";
 import api, { apiError } from "../../services/api";
@@ -14,7 +14,6 @@ const contentTypes = [
   ["INTERVIEW", "Entrevista"],
   ["PODCAST", "Podcast"],
   ["EVENT", "Evento"],
-  ["OTHER", "Outro"],
 ];
 
 const contentAreas = [
@@ -22,7 +21,6 @@ const contentAreas = [
   { value: "PRODUCAO_AUDIOVISUAL", label: "Producao Audiovisual", types: ["INTERVIEW", "PODCAST"] },
   { value: "PRODUCAO_ACADEMICA", label: "Producao Academica", types: ["ARTICLE", "RESEARCH"] },
   { value: "EVENTOS_ATIVIDADES", label: "Eventos e Atividades", types: ["EVENT", "CINEMA_SHOW", "VIRAL_ESCAPE_LINES"] },
-  { value: "OUTROS", label: "Outros", types: ["OTHER"] },
 ];
 
 const areaForType = (type) => contentAreas.find((area) => area.types.includes(type));
@@ -52,6 +50,7 @@ const emptySession = {
 const initialForm = {
   title: "",
   researcherName: "",
+  researcherUrl: "",
   area: "CINEMA_DITADURA",
   type: "FILM",
   description: "",
@@ -64,6 +63,18 @@ const initialForm = {
 };
 
 const fieldClass = "mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-text outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20";
+
+function createInitialForm(areaValue = "CINEMA_DITADURA", typeValue) {
+  const area = contentAreas.find((item) => item.value === areaValue) || contentAreas[0];
+  const type = typeValue && area.types.includes(typeValue) ? typeValue : area.types[0];
+  return {
+    ...initialForm,
+    area: area.value,
+    type,
+    mediaFile: null,
+    sessions: [{ ...emptySession }],
+  };
+}
 
 function Login({ onLogin }) {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -105,8 +116,8 @@ function Login({ onLogin }) {
   );
 }
 
-function ContentForm({ onCreated }) {
-  const [form, setForm] = useState(initialForm);
+function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, onClose }) {
+  const [form, setForm] = useState(() => createInitialForm(initialArea, initialType));
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const isCinemaShow = form.type === "CINEMA_SHOW";
@@ -165,6 +176,7 @@ function ContentForm({ onCreated }) {
     const metadata = {
       editorialArea: form.area,
     };
+    if (form.researcherUrl.trim()) metadata.researcherUrl = form.researcherUrl.trim();
 
     if (isCinemaShow) {
       metadata.editorialArea = "CINEMA_DITADURA";
@@ -209,9 +221,10 @@ function ContentForm({ onCreated }) {
 
     try {
       await api.post("/contents", buildPayload());
-      setForm(initialForm);
+      setForm(createInitialForm(initialArea, initialType));
       setStatus({ ok: true, message: "Conteudo enviado para revisao da coordenacao." });
       onCreated();
+      onClose?.();
     } catch (error) {
       setStatus({ ok: false, message: apiError(error) });
     } finally {
@@ -226,6 +239,7 @@ function ContentForm({ onCreated }) {
       <form className="mt-7 grid gap-5 md:grid-cols-2" onSubmit={submit}>
         <label className="font-semibold">Titulo *<input className={fieldClass} required maxLength={200} value={form.title} onChange={update("title")} /></label>
         <label className="font-semibold">Nome do pesquisador *<input className={fieldClass} required maxLength={160} value={form.researcherName} onChange={update("researcherName")} /></label>
+        <label className="font-semibold md:col-span-2">Link do curriculo, Lattes ou LinkedIn do pesquisador<input className={fieldClass} type="url" placeholder="https://..." value={form.researcherUrl} onChange={update("researcherUrl")} /></label>
         <label className="font-semibold">Area editorial *
           <select className={fieldClass} required value={form.area} onChange={updateArea}>{contentAreas.map((area) => <option key={area.value} value={area.value}>{area.label}</option>)}</select>
         </label>
@@ -345,51 +359,194 @@ function CinemaShowFields({ form, update, updateSession, updateSessionFile, addS
   );
 }
 
-function ContentList({ user, contents, refresh }) {
+function Modal({ children, onClose, size = "max-w-6xl" }) {
+  useEffect(() => {
+    const close = (event) => event.key === "Escape" && onClose();
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", close);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", close);
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 md:p-8"
+      role="dialog"
+      aria-modal="true"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div className={`relative max-h-[92vh] w-full overflow-y-auto rounded-3xl border border-border bg-background p-5 shadow-2xl md:p-8 ${size}`}>
+        <button
+          type="button"
+          className="absolute right-4 top-4 z-10 rounded-full border border-border bg-card p-3 text-text transition hover:border-primary hover:text-primary"
+          onClick={onClose}
+          aria-label="Fechar"
+        >
+          <X size={22} aria-hidden="true" />
+        </button>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function contentBelongsToArea(content, area) {
+  const editorialAreas = content.metadata?.editorialAreas;
+  if (Array.isArray(editorialAreas) && editorialAreas.includes(area.value)) return true;
+  if (content.metadata?.editorialArea === area.value) return true;
+  return area.types.includes(content.type) && areaForType(content.type)?.value === area.value;
+}
+
+function ContentCard({ content, user, refresh }) {
   const isCoordinator = user.role === "COORDINATOR";
 
-  async function publish(content) {
+  async function publish() {
     await api.patch(`/contents/${content.id}`, { published: !content.published });
     refresh();
   }
 
-  async function remove(content) {
+  async function remove() {
     if (!window.confirm(`Excluir "${content.title}"?`)) return;
     await api.delete(`/contents/${content.id}`);
     refresh();
   }
 
   return (
-    <section className="mt-8 rounded-3xl border border-border bg-card p-6 md:p-9">
-      <div className="flex items-center gap-3"><Database className="text-primary" aria-hidden="true" /><h2 className="font-title text-3xl">Conteudos cadastrados</h2></div>
-      {contents.length === 0 ? <p className="mt-6 text-muted">Nenhum conteudo cadastrado ainda.</p> : (
-        <div className="mt-6 space-y-4">
-          {contents.map((content) => (
-            <article className="rounded-2xl border border-border bg-background p-5" key={content.id}>
-              <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-primary">{contentAreaLabel(content)} - {typeLabel(content.type)}</p>
-                  <h3 className="mt-2 font-title text-2xl">{content.title}</h3>
-                  {content.type === "CINEMA_SHOW" && (
-                    <p className="mt-2 text-sm text-muted">
-                      Mostra: <strong className="text-text">{content.metadata?.showNumber || "Sem numeracao"}</strong>
-                      {content.metadata?.sessions?.length ? ` - ${content.metadata.sessions.length} sessoes cadastradas` : ""}
-                    </p>
-                  )}
-                  <p className="mt-2 text-sm text-muted">Pesquisador(a): <strong className="text-text">{content.researcherName}</strong></p>
-                  <p className="mt-1 text-xs text-muted">Enviado por {content.createdBy.name}</p>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className={`rounded-full px-3 py-1 text-xs font-bold ${content.published ? "bg-green-600/15 text-green-700 dark:text-green-300" : "bg-primary/10 text-primary"}`}>{content.published ? "Publicado" : "Em revisao"}</span>
-                  {isCoordinator && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => publish(content)}>{content.published ? "Retirar" : <><CheckCircle2 className="inline" size={15} /> Publicar</>}</Button>}
-                  {isCoordinator && <button className="cursor-pointer rounded-xl border border-red-500/40 p-2 text-red-700 transition hover:bg-red-500/10 dark:text-red-300" type="button" aria-label={`Excluir ${content.title}`} onClick={() => remove(content)}><Trash2 size={18} /></button>}
-                </div>
-              </div>
-            </article>
+    <article className="rounded-2xl border border-border bg-background p-5">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-primary">{contentAreaLabel(content)} - {typeLabel(content.type)}</p>
+          <h3 className="mt-2 font-title text-2xl">{content.title}</h3>
+          {content.type === "CINEMA_SHOW" && (
+            <p className="mt-2 text-sm text-muted">
+              Mostra: <strong className="text-text">{content.metadata?.showNumber || "Sem numeracao"}</strong>
+              {content.metadata?.sessions?.length ? ` - ${content.metadata.sessions.length} sessoes cadastradas` : ""}
+            </p>
+          )}
+          <p className="mt-2 text-sm text-muted">Pesquisador(a): <strong className="text-text">{content.researcherName}</strong></p>
+          <p className="mt-1 text-xs text-muted">Enviado por {content.createdBy?.name || "usuario do LACE"}</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className={`rounded-full px-3 py-1 text-xs font-bold ${content.published ? "bg-green-600/15 text-green-700 dark:text-green-300" : "bg-primary/10 text-primary"}`}>{content.published ? "Publicado" : "Em revisao"}</span>
+          {isCoordinator && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={publish}>{content.published ? "Retirar" : <><CheckCircle2 className="inline" size={15} /> Publicar</>}</Button>}
+          {isCoordinator && <button className="cursor-pointer rounded-xl border border-red-500/40 p-2 text-red-700 transition hover:bg-red-500/10 dark:text-red-300" type="button" aria-label={`Excluir ${content.title}`} onClick={remove}><Trash2 size={18} /></button>}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function AreaModal({ area, contents, user, refresh, onClose, onAddContent }) {
+  const [selectedType, setSelectedType] = useState(area.types[0]);
+
+  const areaContents = contents.filter((content) => contentBelongsToArea(content, area));
+  const visibleContents = areaContents.filter((content) => content.type === selectedType);
+
+  return (
+    <Modal onClose={onClose}>
+      <div className="pr-14">
+        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">Area editorial</p>
+        <h2 className="mt-2 font-title text-4xl md:text-5xl">{area.label}</h2>
+        <p className="mt-3 text-muted">{areaContents.length} conteudos cadastrados nesta area.</p>
+      </div>
+
+      <div className="mt-7 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-wrap gap-2">
+          {area.types.map((type) => (
+            <button
+              key={type}
+              type="button"
+              className={`rounded-xl border px-4 py-3 text-sm font-bold transition ${selectedType === type ? "border-primary bg-primary-fill text-on-primary" : "border-border bg-card text-text hover:border-primary hover:text-primary"}`}
+              onClick={() => setSelectedType(type)}
+            >
+              {typeLabel(type)}
+            </button>
           ))}
         </div>
+        <Button type="button" onClick={() => onAddContent(area.value, selectedType)}><Plus size={17} aria-hidden="true" /> Adicionar conteudo</Button>
+      </div>
+
+      <div className="mt-7 space-y-4">
+        {visibleContents.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border bg-card/50 p-8">
+            <Database className="text-primary" aria-hidden="true" />
+            <h3 className="mt-4 font-title text-2xl">Nenhum conteudo deste tipo</h3>
+            <p className="mt-2 text-muted">Use o botao acima para cadastrar o primeiro item.</p>
+          </div>
+        ) : (
+          visibleContents.map((content) => <ContentCard key={content.id} content={content} user={user} refresh={refresh} />)
+        )}
+      </div>
+    </Modal>
+  );
+}
+
+function EditorialDashboard({ user, contents, refresh }) {
+  const [activeArea, setActiveArea] = useState(null);
+  const [addDefaults, setAddDefaults] = useState(null);
+
+  return (
+    <>
+      <section className="rounded-3xl border border-border bg-card p-6 md:p-9">
+        <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
+          <div className="flex items-center gap-3">
+            <Database className="text-primary" aria-hidden="true" />
+            <div>
+              <h2 className="font-title text-3xl">Conteudos cadastrados</h2>
+              <p className="mt-1 text-muted">Escolha uma area editorial para ver os tipos de conteudo.</p>
+            </div>
+          </div>
+          <Button type="button" onClick={() => setAddDefaults(createInitialForm())}><Plus size={17} aria-hidden="true" /> Adicionar conteudo</Button>
+        </div>
+
+        <div className="mt-8 grid gap-5 md:grid-cols-2">
+          {contentAreas.map((area) => {
+            const count = contents.filter((content) => contentBelongsToArea(content, area)).length;
+            return (
+              <button
+                key={area.value}
+                type="button"
+                className="group flex cursor-pointer flex-col items-start rounded-2xl border-2 border-dashed border-primary/40 bg-background px-6 py-8 text-left transition hover:-translate-y-1 hover:border-primary hover:bg-primary/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                onClick={() => setActiveArea(area)}
+              >
+                <FolderUp className="text-primary" size={38} aria-hidden="true" />
+                <span className="mt-4 font-title text-3xl text-text">{area.label}</span>
+                <span className="mt-2 text-sm text-muted">{count} {count === 1 ? "conteudo" : "conteudos"}</span>
+                <span className="mt-4 flex flex-wrap gap-2">
+                  {area.types.map((type) => <span key={type} className="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-muted group-hover:border-primary/60">{typeLabel(type)}</span>)}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {activeArea && (
+        <AreaModal
+          area={activeArea}
+          contents={contents}
+          user={user}
+          refresh={refresh}
+          onClose={() => setActiveArea(null)}
+          onAddContent={(areaValue, typeValue) => setAddDefaults(createInitialForm(areaValue, typeValue))}
+        />
       )}
-    </section>
+
+      {addDefaults && (
+        <Modal onClose={() => setAddDefaults(null)} size="max-w-7xl">
+          <ContentForm
+            onCreated={refresh}
+            initialArea={addDefaults.area}
+            initialType={addDefaults.type}
+            onClose={() => setAddDefaults(null)}
+          />
+        </Modal>
+      )}
+    </>
   );
 }
 
@@ -434,8 +591,7 @@ export default function AccessPage() {
             <div><p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">Painel LACE</p><h1 className="mt-2 font-title text-4xl md:text-5xl">Ola, {user.name}</h1><p className="mt-2 text-muted">{user.role === "COORDINATOR" ? "Acesso de coordenacao" : "Acesso de pesquisadores e estudantes"}</p></div>
             <Button variant="dark" type="button" onClick={logout}><LogOut className="inline" size={17} /> Sair</Button>
           </header>
-          <ContentForm onCreated={loadContents} />
-          <ContentList user={user} contents={contents} refresh={loadContents} />
+          <EditorialDashboard user={user} contents={contents} refresh={loadContents} />
         </>}
       </Container>
     </main>

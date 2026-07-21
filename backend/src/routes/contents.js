@@ -31,7 +31,11 @@ router.get("/", async (req, res) => {
     return res.status(400).json({ error: "Tipo de conteúdo inválido." });
   }
   const where = req.query.type ? { type: req.query.type, published: true } : { published: true };
-  const contents = await prisma.content.findMany({ where, orderBy: { title: "asc" } });
+  const contents = await prisma.content.findMany({
+    where,
+    include: { createdBy: { select: { name: true, role: true } } },
+    orderBy: { title: "asc" },
+  });
   res.json({ contents });
 });
 

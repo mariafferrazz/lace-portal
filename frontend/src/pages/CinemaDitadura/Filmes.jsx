@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, ExternalLink, Film, Play, X } from "lucide-react";
 import Container from "../../components/ui/Container";
+import ContentCredit from "../../components/ui/ContentCredit";
 import api from "../../services/api";
 import { getStaticContents } from "../../data/staticContent";
 
@@ -143,7 +144,7 @@ export default function Filmes() {
                   </div>
                   <h2 className="mt-3 font-title text-3xl">{film.title}</h2>
                   {film.description && <p className="mt-4 flex-1 leading-7 text-muted">{limitWords(film.description)}</p>}
-                  <p className="mt-5 text-sm text-muted">Pesquisa: <strong className="text-text">{film.researcherName}</strong></p>
+                  <ContentCredit content={film} label="Pesquisa" className="mt-5" linkName={false} />
                   <button className="mt-5 inline-flex cursor-pointer items-center gap-2 self-start font-semibold text-primary" type="button" onClick={() => setSelectedFilm(film)}>Ver mais <Play size={16} aria-hidden="true" /></button>
                 </div>
               </article>
@@ -220,7 +221,7 @@ function FilmModal({ film, onClose, onPrevious, onNext, navigationEnabled }) {
             {film.metadata?.genre && <span>· {film.metadata.genre}</span>}
           </div>
           <div className="mt-6 whitespace-pre-line leading-8 text-muted">{film.description}</div>
-          <p className="mt-6 text-sm">Pesquisa: <strong>{film.researcherName}</strong></p>
+          <ContentCredit content={film} label="Pesquisa" className="mt-6" />
           {film.externalUrl && <a className="mt-6 inline-flex items-center gap-2 font-semibold text-primary" href={film.externalUrl} target="_blank" rel="noreferrer">Abrir no YouTube <ExternalLink size={16} aria-hidden="true" /></a>}
           {film.metadata?.website && <a className="ml-6 mt-6 inline-flex items-center gap-2 font-semibold text-primary" href={film.metadata.website} target="_blank" rel="noreferrer">Site do filme <ExternalLink size={16} aria-hidden="true" /></a>}
         </div>

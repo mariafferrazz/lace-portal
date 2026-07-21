@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, ExternalLink, Library, Play, PlayCircle, Users, 
 import { Link } from "react-router-dom";
 import Container from "../ui/Container";
 import Button from "../ui/Button";
+import ContentCredit from "../ui/ContentCredit";
 import api from "../../services/api";
 
 function getSpotifyEmbedUrl(url) {
@@ -18,6 +19,7 @@ function mapContentToItem(content) {
     title: content.title,
     description: content.description || "Conteúdo disponível no acervo do LACE.",
     meta: content.researcherName,
+    submittedBy: content.createdBy?.name,
     href: content.externalUrl || content.fileUrl,
     thumbnail: content.metadata?.thumbnail || (youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : null),
     youtubeId,
@@ -28,7 +30,7 @@ function mapContentToItem(content) {
     soundtrack: content.metadata?.soundtrack || [],
     platform: content.metadata?.platform,
     authorBio: content.metadata?.authorBio,
-    researcherUrl: content.metadata?.researcherUrl,
+    researcherUrl: content.metadata?.researcherUrl || content.metadata?.researcherProfileUrl || content.metadata?.lattesUrl || content.metadata?.curriculumUrl || content.metadata?.linkedinUrl,
     images: content.metadata?.images || (content.metadata?.thumbnail ? [content.metadata.thumbnail] : []),
   };
 }
@@ -236,7 +238,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                   </span>
                   <span className="flex min-h-72 flex-col justify-between p-7 md:p-10">
                     <span>
-                    {item.meta && <span className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</span>}
+                    <ContentCredit name={item.meta} profileUrl={item.researcherUrl} submittedBy={item.submittedBy} label="Produção" />
                     <span className="mt-3 block font-title text-4xl md:text-5xl">{item.title}</span>
                     <span className="mt-5 block max-w-3xl leading-8 text-muted">{item.description}</span>
                     {item.soundtrack.length > 0 && (
@@ -304,7 +306,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                     </span>
                   </span>
                   <span className="flex flex-1 flex-col p-6">
-                    {item.meta && <span className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</span>}
+                    <ContentCredit name={item.meta} profileUrl={item.researcherUrl} submittedBy={item.submittedBy} label="Pesquisa" linkName={false} />
                     <span className="mt-3 block font-title text-3xl">{item.title}</span>
                     <span className="mt-4 flex-1 leading-7 text-muted">{item.description}</span>
                     <span className="mt-6 inline-flex items-center gap-2 self-start font-semibold text-primary">
@@ -329,7 +331,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                     </span>
                   )}
                   <div className="p-6">
-                    {item.meta && <p className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</p>}
+                    <ContentCredit name={item.meta} profileUrl={item.researcherUrl} submittedBy={item.submittedBy} label="Autoria" linkName={false} />
                     <span className="mt-3 block font-title text-3xl text-text">
                       <span className="animated-underline">{item.title}</span>
                     </span>
@@ -359,7 +361,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                     </span>
                   </span>
                   <span className="flex flex-1 flex-col p-6">
-                    {item.meta && <span className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</span>}
+                    <ContentCredit name={item.meta} profileUrl={item.researcherUrl} submittedBy={item.submittedBy} label="Pesquisa" linkName={false} />
                     <span className="mt-3 block font-title text-3xl">{item.title}</span>
                     <span className="mt-4 flex-1 leading-7 text-muted">{item.description}</span>
                     <span className="mt-6 inline-flex items-center gap-2 self-start font-semibold text-primary">
@@ -370,7 +372,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                 </a>
               ) : (
                 <article key={item.title} className="flex flex-col rounded-2xl border border-border bg-card p-7">
-                  {item.meta && <p className="text-xs font-semibold uppercase tracking-widest text-primary">{item.meta}</p>}
+                  <ContentCredit name={item.meta} profileUrl={item.researcherUrl} submittedBy={item.submittedBy} label="Pesquisa" />
                   <h2 className="mt-3 font-title text-3xl">{item.title}</h2>
                   <p className="mt-4 flex-1 leading-7 text-muted">{item.description}</p>
                   {item.to && (
@@ -529,9 +531,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
               />
             </div>
 
-            {activeInterview.meta && (
-              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-primary">{activeInterview.meta}</p>
-            )}
+            <ContentCredit name={activeInterview.meta} profileUrl={activeInterview.researcherUrl} submittedBy={activeInterview.submittedBy} label="Pesquisa" className="mt-6" />
             <h2 id="interview-modal-title" className="mt-3 pr-12 font-title text-4xl md:text-5xl">
               {activeInterview.title}
             </h2>
