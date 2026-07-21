@@ -62,6 +62,28 @@ const initialForm = {
   sessions: [{ ...emptySession }],
 };
 
+const existingCinemaShows = [
+  ["VII", "VII Mostra Cinema e Ditadura", "/cinema-e-ditadura/vii-mostra"],
+  ["VI", "VI Mostra Cinema e Ditadura", "/cinema-e-ditadura/vi-mostra"],
+  ["V", "V Mostra Cinema e Ditadura", "/cinema-e-ditadura/v-mostra"],
+  ["IV", "IV Mostra Cinema e Ditadura", "/cinema-e-ditadura/iv-mostra"],
+  ["III", "III Mostra Cinema e Ditadura", "/cinema-e-ditadura/iii-mostra"],
+].map(([showNumber, title, path]) => ({
+  id: `static-cinema-show-${showNumber}`,
+  title,
+  type: "CINEMA_SHOW",
+  researcherName: "LACE",
+  published: true,
+  readOnly: true,
+  externalUrl: path,
+  createdBy: { name: "Site LACE" },
+  metadata: {
+    editorialArea: "CINEMA_DITADURA",
+    editorialAreas: cinemaShowAreas,
+    showNumber,
+  },
+}));
+
 const fieldClass = "mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-text outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20";
 
 function createInitialForm(areaValue = "CINEMA_DITADURA", typeValue) {
@@ -403,6 +425,7 @@ function contentBelongsToArea(content, area) {
 
 function ContentCard({ content, user, refresh }) {
   const isCoordinator = user.role === "COORDINATOR";
+  const isReadOnly = content.readOnly;
 
   async function publish() {
     await api.patch(`/contents/${content.id}`, { published: !content.published });
@@ -431,9 +454,10 @@ function ContentCard({ content, user, refresh }) {
           <p className="mt-1 text-xs text-muted">Enviado por {content.createdBy?.name || "usuario do LACE"}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className={`rounded-full px-3 py-1 text-xs font-bold ${content.published ? "bg-green-600/15 text-green-700 dark:text-green-300" : "bg-primary/10 text-primary"}`}>{content.published ? "Publicado" : "Em revisao"}</span>
-          {isCoordinator && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={publish}>{content.published ? "Retirar" : <><CheckCircle2 className="inline" size={15} /> Publicar</>}</Button>}
-          {isCoordinator && <button className="cursor-pointer rounded-xl border border-red-500/40 p-2 text-red-700 transition hover:bg-red-500/10 dark:text-red-300" type="button" aria-label={`Excluir ${content.title}`} onClick={remove}><Trash2 size={18} /></button>}
+          <span className={`rounded-full px-3 py-1 text-xs font-bold ${content.published ? "bg-green-600/15 text-green-700 dark:text-green-300" : "bg-primary/10 text-primary"}`}>{isReadOnly ? "No site" : content.published ? "Publicado" : "Em revisao"}</span>
+          {content.externalUrl && <a className="rounded-xl border border-border px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary" href={content.externalUrl}>Abrir pagina</a>}
+          {isCoordinator && !isReadOnly && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={publish}>{content.published ? "Retirar" : <><CheckCircle2 className="inline" size={15} /> Publicar</>}</Button>}
+          {isCoordinator && !isReadOnly && <button className="cursor-pointer rounded-xl border border-red-500/40 p-2 text-red-700 transition hover:bg-red-500/10 dark:text-red-300" type="button" aria-label={`Excluir ${content.title}`} onClick={remove}><Trash2 size={18} /></button>}
         </div>
       </div>
     </article>
@@ -488,6 +512,7 @@ function AreaModal({ area, contents, user, refresh, onClose, onAddContent }) {
 function EditorialDashboard({ user, contents, refresh }) {
   const [activeArea, setActiveArea] = useState(null);
   const [addDefaults, setAddDefaults] = useState(null);
+  const visibleContents = [...existingCinemaShows, ...contents];
 
   return (
     <>
@@ -505,7 +530,7 @@ function EditorialDashboard({ user, contents, refresh }) {
 
         <div className="mt-8 grid gap-5 md:grid-cols-2">
           {contentAreas.map((area) => {
-            const count = contents.filter((content) => contentBelongsToArea(content, area)).length;
+            const count = visibleContents.filter((content) => contentBelongsToArea(content, area)).length;
             return (
               <button
                 key={area.value}
@@ -528,7 +553,7 @@ function EditorialDashboard({ user, contents, refresh }) {
       {activeArea && (
         <AreaModal
           area={activeArea}
-          contents={contents}
+          contents={visibleContents}
           user={user}
           refresh={refresh}
           onClose={() => setActiveArea(null)}
