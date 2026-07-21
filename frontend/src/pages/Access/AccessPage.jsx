@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { CheckCircle2, Database, FolderUp, LogOut, Plus, ShieldCheck, Trash2, Upload, X } from "lucide-react";
+import { Bell, CheckCircle2, Database, FolderUp, LogOut, Pencil, Plus, ShieldCheck, Trash2, Upload, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import Button from "../../components/ui/Button";
 import api, { apiError } from "../../services/api";
@@ -76,6 +76,29 @@ function createInitialForm(areaValue = "CINEMA_DITADURA", typeValue) {
   };
 }
 
+function formFromContent(content) {
+  const metadata = content.metadata || {};
+  const areaValue = Array.isArray(metadata.editorialAreas)
+    ? metadata.editorialAreas[0]
+    : metadata.editorialArea || areaForType(content.type)?.value || "CINEMA_DITADURA";
+  const base = createInitialForm(areaValue, content.type);
+  return {
+    ...base,
+    title: content.title || "",
+    researcherName: content.researcherName || "",
+    researcherUrl: metadata.researcherUrl || "",
+    description: content.description || "",
+    externalUrl: content.externalUrl || "",
+    fileUrl: content.fileUrl || "",
+    mediaFile: metadata.mediaFile || null,
+    showNumber: metadata.showNumber || "",
+    playlistUrl: metadata.playlistUrl || content.externalUrl || "",
+    sessions: Array.isArray(metadata.sessions) && metadata.sessions.length
+      ? metadata.sessions.map((session) => ({ ...emptySession, ...session }))
+      : [{ ...emptySession }],
+  };
+}
+
 function Login({ onLogin }) {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -116,8 +139,9 @@ function Login({ onLogin }) {
   );
 }
 
-function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, onClose }) {
-  const [form, setForm] = useState(() => createInitialForm(initialArea, initialType));
+function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, onClose, content = null }) {
+  const isEditing = Boolean(content);
+  const [form, setForm] = useState(() => (content ? formFromContent(content) : createInitialForm(initialArea, initialType)));
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const isCinemaShow = form.type === "CINEMA_SHOW";
@@ -220,9 +244,13 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
     }
 
     try {
-      await api.post("/contents", buildPayload());
+      if (isEditing) {
+        await api.patch(`/contents/${content.id}`, buildPayload());
+      } else {
+        await api.post("/contents", buildPayload());
+      }
       setForm(createInitialForm(initialArea, initialType));
-      setStatus({ ok: true, message: "Conteudo enviado para revisao da coordenacao." });
+      setStatus({ ok: true, message: isEditing ? "Conteudo atualizado." : "Conteudo enviado para revisao da coordenacao." });
       onCreated();
       onClose?.();
     } catch (error) {
@@ -234,8 +262,8 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
 
   return (
     <section className="rounded-3xl border border-border bg-card p-6 md:p-9">
-      <div className="flex items-center gap-3 text-primary"><Upload aria-hidden="true" /><h2 className="font-title text-3xl text-text">Novo conteudo</h2></div>
-      <p className="mt-3 text-muted">O nome informado abaixo sera exibido como autoria do material.</p>
+      <div className="flex items-center gap-3 text-primary"><Upload aria-hidden="true" /><h2 className="font-title text-3xl text-text">{isEditing ? "Editar conteudo" : "Novo conteudo"}</h2></div>
+      <p className="mt-3 text-muted">{isEditing ? "Revise as informacoes antes de publicar ou manter em revisao." : "O nome informado abaixo sera exibido como autoria do material."}</p>
       <form className="mt-7 grid gap-5 md:grid-cols-2" onSubmit={submit}>
         <label className="font-semibold">Titulo *<input className={fieldClass} required maxLength={200} value={form.title} onChange={update("title")} /></label>
         <label className="font-semibold">Nome do pesquisador *<input className={fieldClass} required maxLength={160} value={form.researcherName} onChange={update("researcherName")} /></label>
@@ -271,7 +299,7 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
 
         <label className="font-semibold md:col-span-2">Descricao<textarea className={`${fieldClass} min-h-36 resize-y`} maxLength={5000} value={form.description} onChange={update("description")} /></label>
         <div className="flex flex-col gap-4 md:col-span-2 md:flex-row md:items-center">
-          <Button type="submit" disabled={loading} className="disabled:cursor-wait disabled:opacity-60">{loading ? "Enviando..." : "Enviar para revisao"}</Button>
+          <Button type="submit" disabled={loading} className="disabled:cursor-wait disabled:opacity-60">{loading ? "Salvando..." : isEditing ? "Salvar alteracoes" : "Enviar para revisao"}</Button>
           {status && <p className={status.ok ? "text-sm font-semibold text-green-700 dark:text-green-300" : "text-sm font-semibold text-red-700 dark:text-red-300"} role="status">{status.message}</p>}
         </div>
       </form>
@@ -401,7 +429,7 @@ function contentBelongsToArea(content, area) {
   return area.types.includes(content.type) && areaForType(content.type)?.value === area.value;
 }
 
-function ContentCard({ content, user, refresh }) {
+function ContentCard({ content, user, refresh, onEdit }) {
   const isCoordinator = user.role === "COORDINATOR";
   const isReadOnly = content.readOnly;
 
@@ -434,6 +462,7 @@ function ContentCard({ content, user, refresh }) {
         <div className="flex flex-wrap items-center gap-2">
           <span className={`rounded-full px-3 py-1 text-xs font-bold ${content.published ? "bg-green-600/15 text-green-700 dark:text-green-300" : "bg-primary/10 text-primary"}`}>{isReadOnly ? "No site" : content.published ? "Publicado" : "Em revisao"}</span>
           {content.externalUrl && <a className="rounded-xl border border-border px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary" href={content.externalUrl}>Abrir pagina</a>}
+          {isCoordinator && !isReadOnly && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => onEdit(content)}><Pencil className="inline" size={15} /> Editar</Button>}
           {isCoordinator && !isReadOnly && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={publish}>{content.published ? "Retirar" : <><CheckCircle2 className="inline" size={15} /> Publicar</>}</Button>}
           {isCoordinator && !isReadOnly && <button className="cursor-pointer rounded-xl border border-red-500/40 p-2 text-red-700 transition hover:bg-red-500/10 dark:text-red-300" type="button" aria-label={`Excluir ${content.title}`} onClick={remove}><Trash2 size={18} /></button>}
         </div>
@@ -442,7 +471,7 @@ function ContentCard({ content, user, refresh }) {
   );
 }
 
-function AreaModal({ area, contents, user, refresh, onClose, onAddContent }) {
+function AreaModal({ area, contents, user, refresh, onClose, onAddContent, onEditContent }) {
   const [selectedType, setSelectedType] = useState(area.types[0]);
 
   const areaContents = contents.filter((content) => contentBelongsToArea(content, area));
@@ -480,19 +509,62 @@ function AreaModal({ area, contents, user, refresh, onClose, onAddContent }) {
             <p className="mt-2 text-muted">Use o botao acima para cadastrar o primeiro item.</p>
           </div>
         ) : (
-          visibleContents.map((content) => <ContentCard key={content.id} content={content} user={user} refresh={refresh} />)
+          visibleContents.map((content) => <ContentCard key={content.id} content={content} user={user} refresh={refresh} onEdit={onEditContent} />)
         )}
       </div>
     </Modal>
   );
 }
 
+function PendingApprovals({ contents, refresh, onEdit }) {
+  const pending = contents.filter((content) => !content.published);
+  if (pending.length === 0) return null;
+
+  async function approve(content) {
+    await api.patch(`/contents/${content.id}`, { published: true });
+    refresh();
+  }
+
+  return (
+    <section className="mb-6 rounded-3xl border border-primary/40 bg-primary/10 p-6 md:p-8">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+        <div className="flex items-start gap-3">
+          <Bell className="mt-1 text-primary" aria-hidden="true" />
+          <div>
+            <h2 className="font-title text-3xl text-text">Aguardando autorizacao</h2>
+            <p className="mt-1 text-muted">{pending.length} {pending.length === 1 ? "conteudo precisa" : "conteudos precisam"} de revisao da coordenacao antes de entrar no site.</p>
+          </div>
+        </div>
+      </div>
+      <div className="mt-5 grid gap-3">
+        {pending.slice(0, 6).map((content) => (
+          <article key={content.id} className="flex flex-col justify-between gap-4 rounded-2xl border border-border bg-background p-4 md:flex-row md:items-center">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-primary">{contentAreaLabel(content)} - {typeLabel(content.type)}</p>
+              <h3 className="mt-1 font-title text-2xl">{content.title}</h3>
+              <p className="mt-1 text-sm text-muted">Enviado por {content.createdBy?.name || "usuario do LACE"} - Pesquisador(a): <strong className="text-text">{content.researcherName}</strong></p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => onEdit(content)}><Pencil className="inline" size={15} /> Editar</Button>
+              <Button className="px-3 py-2 text-sm" type="button" onClick={() => approve(content)}><CheckCircle2 className="inline" size={15} /> Publicar</Button>
+            </div>
+          </article>
+        ))}
+        {pending.length > 6 && <p className="text-sm text-muted">Mais {pending.length - 6} conteudos em revisao aparecem nas areas editoriais abaixo.</p>}
+      </div>
+    </section>
+  );
+}
+
 function EditorialDashboard({ user, contents, refresh }) {
   const [activeArea, setActiveArea] = useState(null);
   const [addDefaults, setAddDefaults] = useState(null);
+  const [editingContent, setEditingContent] = useState(null);
 
   return (
     <>
+      {user.role === "COORDINATOR" && <PendingApprovals contents={contents} refresh={refresh} onEdit={setEditingContent} />}
+
       <section className="rounded-3xl border border-border bg-card p-6 md:p-9">
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
           <div className="flex items-center gap-3">
@@ -535,6 +607,7 @@ function EditorialDashboard({ user, contents, refresh }) {
           refresh={refresh}
           onClose={() => setActiveArea(null)}
           onAddContent={(areaValue, typeValue) => setAddDefaults(createInitialForm(areaValue, typeValue))}
+          onEditContent={setEditingContent}
         />
       )}
 
@@ -545,6 +618,16 @@ function EditorialDashboard({ user, contents, refresh }) {
             initialArea={addDefaults.area}
             initialType={addDefaults.type}
             onClose={() => setAddDefaults(null)}
+          />
+        </Modal>
+      )}
+
+      {editingContent && (
+        <Modal onClose={() => setEditingContent(null)} size="max-w-7xl">
+          <ContentForm
+            content={editingContent}
+            onCreated={refresh}
+            onClose={() => setEditingContent(null)}
           />
         </Modal>
       )}

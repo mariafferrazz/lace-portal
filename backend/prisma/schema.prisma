@@ -43,8 +43,8 @@ model Content {
   description    String?     @db.Text
   type           ContentType
   researcherName String
-  fileUrl        String?
-  externalUrl    String?
+  fileUrl        String?     @db.Text
+  externalUrl    String?     @db.Text
   metadata       Json?
   published      Boolean     @default(false)
   createdById    String

@@ -62,6 +62,15 @@ FRONTEND_URLS=https://lablace.com.br,https://www.lablace.com.br
 DATABASE_URL=${{MySQL.MYSQL_URL}}
 ```
 
+Para a coordenadora receber e-mail quando pesquisadoras ou pesquisadores enviarem conteudo para revisao, configure tambem no Railway:
+
+```env
+COORDINATOR_NOTIFY_EMAIL=joanadferraz@gmail.com
+COORDINATOR_NOTIFY_WEBHOOK_URL=https://script.google.com/macros/s/SEU_DEPLOY_ID/exec
+```
+
+Use um endpoint seguro, como o Google Apps Script ja usado no formulario de contato. Se essa URL nao estiver configurada, o envio continua funcionando, mas o backend apenas registra no log que a notificacao nao foi enviada.
+
 Tambem configure as contas iniciais usadas pelo seed:
 
 ```env
