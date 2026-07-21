@@ -33,8 +33,8 @@ const emptySession = {
   title: "",
   direction: "",
   sessionUrl: "",
-  filmUrl: "",
-  archiveDownloadUrl: "",
+  archiveHtmlOrUrl: "",
+  archiveFile: null,
 };
 
 const initialForm = {
@@ -45,6 +45,7 @@ const initialForm = {
   description: "",
   externalUrl: "",
   fileUrl: "",
+  mediaFile: null,
   showNumber: "",
   playlistUrl: "",
   sessions: [{ ...emptySession }],
@@ -120,6 +121,22 @@ function ContentForm({ onCreated }) {
     }));
   }
 
+  function updateMediaFile(event) {
+    const file = event.target.files?.[0];
+    setForm((current) => ({
+      ...current,
+      mediaFile: file ? { name: file.name, type: file.type || "application/octet-stream", size: file.size } : null,
+    }));
+  }
+
+  function updateSessionFile(index, file) {
+    updateSession(
+      index,
+      "archiveFile",
+      file ? { name: file.name, type: file.type || "application/octet-stream", size: file.size } : null,
+    );
+  }
+
   function addSession() {
     setForm((current) => ({ ...current, sessions: [...current.sessions, { ...emptySession }] }));
   }
@@ -147,10 +164,12 @@ function ContentForm({ onCreated }) {
           title: session.title.trim(),
           direction: session.direction.trim() || null,
           sessionUrl: session.sessionUrl.trim() || null,
-          filmUrl: session.filmUrl.trim() || null,
-          archiveDownloadUrl: session.archiveDownloadUrl.trim() || null,
+          archiveHtmlOrUrl: session.archiveHtmlOrUrl.trim() || null,
+          archiveFile: session.archiveFile,
         }))
-        .filter((session) => session.date || session.title || session.sessionUrl || session.filmUrl || session.archiveDownloadUrl);
+        .filter((session) => session.date || session.title || session.sessionUrl || session.archiveHtmlOrUrl || session.archiveFile);
+    } else if (form.mediaFile) {
+      metadata.mediaFile = form.mediaFile;
     }
 
     return {
@@ -158,7 +177,7 @@ function ContentForm({ onCreated }) {
       researcherName: form.researcherName,
       type: form.type,
       description: form.description,
-      externalUrl: isCinemaShow ? form.playlistUrl || form.externalUrl : form.externalUrl,
+      externalUrl: isCinemaShow ? form.playlistUrl : null,
       fileUrl: form.fileUrl,
       metadata,
     };
@@ -206,13 +225,27 @@ function ContentForm({ onCreated }) {
             form={form}
             update={update}
             updateSession={updateSession}
+            updateSessionFile={updateSessionFile}
             addSession={addSession}
             removeSession={removeSession}
           />
         ) : (
           <>
-            <label className="font-semibold">Link externo<input className={fieldClass} type="url" placeholder="https://..." value={form.externalUrl} onChange={update("externalUrl")} /></label>
             <label className="font-semibold md:col-span-2">URL do arquivo ou midia<input className={fieldClass} type="url" placeholder="https://..." value={form.fileUrl} onChange={update("fileUrl")} /></label>
+            <label className="font-semibold md:col-span-2">
+              Arquivo do PC
+              <input
+                className={fieldClass}
+                type="file"
+                accept="image/*,application/pdf,audio/*,video/*,.doc,.docx,.odt,.ppt,.pptx,.xls,.xlsx"
+                onChange={updateMediaFile}
+              />
+              {form.mediaFile && (
+                <span className="mt-2 block text-sm text-muted">
+                  Selecionado: {form.mediaFile.name}. Para publicar o arquivo no site, ele ainda precisara ser enviado para um armazenamento publico.
+                </span>
+              )}
+            </label>
           </>
         )}
 
@@ -226,7 +259,7 @@ function ContentForm({ onCreated }) {
   );
 }
 
-function CinemaShowFields({ form, update, updateSession, addSession, removeSession }) {
+function CinemaShowFields({ form, update, updateSession, updateSessionFile, addSession, removeSession }) {
   return (
     <section className="md:col-span-2 rounded-2xl border border-primary/30 bg-primary/5 p-5">
       <div className="grid gap-5 md:grid-cols-2">
@@ -238,16 +271,12 @@ function CinemaShowFields({ form, update, updateSession, addSession, removeSessi
           Link da playlist
           <input className={fieldClass} type="url" placeholder="https://youtube.com/playlist?list=..." value={form.playlistUrl} onChange={update("playlistUrl")} />
         </label>
-        <label className="font-semibold md:col-span-2">
-          Link geral para download/acervo da mostra
-          <input className={fieldClass} type="url" placeholder="https://..." value={form.fileUrl} onChange={update("fileUrl")} />
-        </label>
       </div>
 
       <div className="mt-7 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <h3 className="font-title text-2xl text-text">Calendario com sessoes</h3>
-          <p className="mt-1 text-sm text-muted">Adicione cada sessao com data, filme, link da sessao, link do filme e download para o acervo.</p>
+          <p className="mt-1 text-sm text-muted">Adicione cada sessao com data, filme, link da sessao e material do filme para o acervo.</p>
         </div>
         <Button type="button" variant="outline" className="self-start" onClick={addSession}><Plus size={16} aria-hidden="true" /> Adicionar sessao</Button>
       </div>
@@ -270,9 +299,30 @@ function CinemaShowFields({ form, update, updateSession, addSession, removeSessi
               <label className="font-semibold">Data<input className={fieldClass} placeholder="20/09/2026" value={session.date} onChange={(event) => updateSession(index, "date", event.target.value)} /></label>
               <label className="font-semibold">Titulo do filme/sessao<input className={fieldClass} value={session.title} onChange={(event) => updateSession(index, "title", event.target.value)} /></label>
               <label className="font-semibold md:col-span-2">Direcao/debate<input className={fieldClass} value={session.direction} onChange={(event) => updateSession(index, "direction", event.target.value)} /></label>
-              <label className="font-semibold">Link da sessao<input className={fieldClass} type="url" placeholder="https://..." value={session.sessionUrl} onChange={(event) => updateSession(index, "sessionUrl", event.target.value)} /></label>
-              <label className="font-semibold">Link do filme<input className={fieldClass} type="url" placeholder="https://..." value={session.filmUrl} onChange={(event) => updateSession(index, "filmUrl", event.target.value)} /></label>
-              <label className="font-semibold md:col-span-2">Download do filme para o acervo<input className={fieldClass} type="url" placeholder="https://..." value={session.archiveDownloadUrl} onChange={(event) => updateSession(index, "archiveDownloadUrl", event.target.value)} /></label>
+              <label className="font-semibold md:col-span-2">Link da sessao<input className={fieldClass} type="url" placeholder="https://..." value={session.sessionUrl} onChange={(event) => updateSession(index, "sessionUrl", event.target.value)} /></label>
+              <label className="font-semibold md:col-span-2">
+                HTML ou URL do filme para o acervo
+                <textarea
+                  className={`${fieldClass} min-h-28 resize-y`}
+                  placeholder="<iframe ...></iframe> ou https://..."
+                  value={session.archiveHtmlOrUrl}
+                  onChange={(event) => updateSession(index, "archiveHtmlOrUrl", event.target.value)}
+                />
+              </label>
+              <label className="font-semibold md:col-span-2">
+                Arquivo do PC para o acervo
+                <input
+                  className={fieldClass}
+                  type="file"
+                  accept="video/mp4,video/webm,video/ogg,video/quicktime,.mp4,.webm,.ogv,.mov,.m4v,.avi,.mkv,.html,.htm"
+                  onChange={(event) => updateSessionFile(index, event.target.files?.[0] || null)}
+                />
+                {session.archiveFile && (
+                  <span className="mt-2 block text-sm text-muted">
+                    Selecionado: {session.archiveFile.name}. Para o filme ficar disponivel no site, esse arquivo ainda precisara ser enviado para um armazenamento publico.
+                  </span>
+                )}
+              </label>
             </div>
           </article>
         ))}
