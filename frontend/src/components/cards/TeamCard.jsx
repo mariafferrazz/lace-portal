@@ -51,7 +51,7 @@ export default function TeamCard({ name, role, bio, profileUrl, contributions = 
               target="_blank"
               rel="noreferrer"
             >
-              Currículo / perfil <ExternalLink size={16} aria-hidden="true" />
+              Lattes / LinkedIn <ExternalLink size={16} aria-hidden="true" />
             </a>
           )}
           {contributions.length > 0 && (
