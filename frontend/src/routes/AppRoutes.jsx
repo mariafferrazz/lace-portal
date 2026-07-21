@@ -24,7 +24,6 @@ const Eventos2022 = lazy(() => import("../pages/Eventos/Eventos2022"));
 const Eventos2023 = lazy(() => import("../pages/Eventos/Eventos2023"));
 const Eventos2024 = lazy(() => import("../pages/Eventos/Eventos2024"));
 const Eventos2025 = lazy(() => import("../pages/Eventos/Eventos2025"));
-const SemanaAcademica2025 = lazy(() => import("../pages/Eventos/SemanaAcademica2025"));
 
 const withSuspense = (element) => <Suspense fallback={null}>{element}</Suspense>;
 
@@ -77,7 +76,6 @@ export default function AppRoutes() {
           <Route path="/eventos/2023" element={withSuspense(<Eventos2023 />)} />
           <Route path="/eventos/2024" element={withSuspense(<Eventos2024 />)} />
           <Route path="/eventos/2025" element={withSuspense(<Eventos2025 />)} />
-          <Route path="/eventos/semana-academica-2025" element={withSuspense(<SemanaAcademica2025 />)} />
 
           {/* 404 */}
           <Route path="*" element={withSuspense(<NotFound />)} />
