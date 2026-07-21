@@ -91,6 +91,18 @@ export default function DynamicMostra() {
           </div>
         </header>
 
+        {show.metadata?.imageUrl && (
+          <figure className="mt-12 overflow-hidden rounded-3xl border border-border bg-card">
+            <img
+              className="max-h-[520px] w-full object-cover"
+              src={show.metadata.imageUrl}
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+        )}
+
         <section className="mt-14">
           <div className="flex items-center gap-3">
             <CalendarDays className="text-primary" aria-hidden="true" />
@@ -114,11 +126,6 @@ export default function DynamicMostra() {
                       <a className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-3 font-semibold text-text transition hover:border-primary hover:text-primary" href={session.archiveFilmUrl} target="_blank" rel="noreferrer">
                         Acessar filme no acervo <Film size={16} aria-hidden="true" />
                       </a>
-                    )}
-                    {session.archiveFile?.name && (
-                      <span className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-3 text-sm text-muted">
-                        Arquivo selecionado: <strong className="text-text">{session.archiveFile.name}</strong>
-                      </span>
                     )}
                   </div>
                 </article>

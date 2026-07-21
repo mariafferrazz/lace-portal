@@ -8,7 +8,7 @@ import api from "../../services/api";
 import { eventYear, showPath } from "../../utils/contentRoutes";
 
 function eventImage(content) {
-  return content.metadata?.thumbnail || content.metadata?.imageUrl || content.fileUrl || "https://i.ytimg.com/vi/iuRlQ17bDbM/hqdefault.jpg";
+  return content.metadata?.thumbnail || content.metadata?.imageUrl || "https://i.ytimg.com/vi/iuRlQ17bDbM/hqdefault.jpg";
 }
 
 function eventLink(content) {

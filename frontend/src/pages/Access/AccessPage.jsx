@@ -45,7 +45,6 @@ const emptySession = {
   direction: "",
   sessionUrl: "",
   archiveFilmUrl: "",
-  archiveFile: null,
 };
 
 const initialForm = {
@@ -57,7 +56,7 @@ const initialForm = {
   description: "",
   externalUrl: "",
   fileUrl: "",
-  mediaFile: null,
+  imageUrl: "",
   showNumber: "",
   eventYear: "",
   playlistUrl: "",
@@ -65,6 +64,7 @@ const initialForm = {
 };
 
 const fieldClass = "mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-text outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20";
+const maxEmbeddedImageSize = 2 * 1024 * 1024;
 
 function createInitialForm(areaValue = "CINEMA_DITADURA", typeValue) {
   const area = contentAreas.find((item) => item.value === areaValue) || contentAreas[0];
@@ -73,7 +73,6 @@ function createInitialForm(areaValue = "CINEMA_DITADURA", typeValue) {
     ...initialForm,
     area: area.value,
     type,
-    mediaFile: null,
     sessions: [{ ...emptySession }],
   };
 }
@@ -92,7 +91,7 @@ function formFromContent(content) {
     description: content.description || "",
     externalUrl: content.externalUrl || "",
     fileUrl: content.fileUrl || "",
-    mediaFile: metadata.mediaFile || null,
+    imageUrl: metadata.imageUrl || "",
     showNumber: metadata.showNumber || "",
     eventYear: metadata.eventYear || metadata.showYear || metadata.year || "",
     playlistUrl: metadata.playlistUrl || content.externalUrl || "",
@@ -154,6 +153,34 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
     return (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
   }
 
+  function updateImageUrl(value) {
+    setForm((current) => ({ ...current, imageUrl: value }));
+  }
+
+  function updateImageFile(file) {
+    setStatus(null);
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setStatus({ ok: false, message: "Selecione apenas arquivos de imagem." });
+      return;
+    }
+
+    if (file.size > maxEmbeddedImageSize) {
+      setStatus({ ok: false, message: "Esta imagem esta muito pesada. Use uma URL publica ou escolha uma imagem com ate 2 MB." });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") updateImageUrl(reader.result);
+    };
+    reader.onerror = () => {
+      setStatus({ ok: false, message: "Nao foi possivel carregar esta imagem. Tente usar uma URL publica." });
+    };
+    reader.readAsDataURL(file);
+  }
+
   function updateArea(event) {
     const area = contentAreas.find((item) => item.value === event.target.value);
     setForm((current) => ({ ...current, area: area.value, type: area.types[0] }));
@@ -189,21 +216,6 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
     }));
   }
 
-  function updateMediaFile(file) {
-    setForm((current) => ({
-      ...current,
-      mediaFile: file ? { name: file.name, type: file.type || "application/octet-stream", size: file.size } : null,
-    }));
-  }
-
-  function updateSessionFile(index, file) {
-    updateSession(
-      index,
-      "archiveFile",
-      file ? { name: file.name, type: file.type || "application/octet-stream", size: file.size } : null,
-    );
-  }
-
   function addSession() {
     setForm((current) => ({ ...current, sessions: [...current.sessions, { ...emptySession }] }));
   }
@@ -229,6 +241,7 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
       metadata.showNumber = form.showNumber.trim();
       metadata.showSlug = showSlug(form.showNumber);
       metadata.eventYear = form.eventYear.trim();
+      metadata.imageUrl = form.imageUrl.trim() || null;
       metadata.playlistUrl = form.playlistUrl.trim() || null;
       metadata.sessions = form.sessions
         .map((session) => ({
@@ -237,12 +250,11 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
           direction: session.direction.trim() || null,
           sessionUrl: session.sessionUrl.trim() || null,
           archiveFilmUrl: session.archiveFilmUrl.trim() || null,
-          archiveFile: session.archiveFile,
         }))
-        .filter((session) => session.date || session.title || session.sessionUrl || session.archiveFilmUrl || session.archiveFile);
+        .filter((session) => session.date || session.title || session.sessionUrl || session.archiveFilmUrl);
     } else {
       if (isEvent) metadata.eventYear = form.eventYear.trim();
-      if (form.mediaFile) metadata.mediaFile = form.mediaFile;
+      metadata.imageUrl = form.imageUrl.trim() || null;
     }
 
     return {
@@ -251,7 +263,7 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
       researcherMemberId: form.researcherMemberId && !form.researcherMemberId.startsWith("name:") ? form.researcherMemberId : null,
       type: form.type,
       description: form.description,
-      externalUrl: isCinemaShow ? form.playlistUrl : null,
+      externalUrl: isCinemaShow ? form.playlistUrl : form.fileUrl,
       fileUrl: form.fileUrl,
       metadata,
     };
@@ -314,8 +326,9 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
           <CinemaShowFields
             form={form}
             update={update}
+            updateImageUrl={updateImageUrl}
+            updateImageFile={updateImageFile}
             updateSession={updateSession}
-            updateSessionFile={updateSessionFile}
             addSession={addSession}
             removeSession={removeSession}
           />
@@ -327,13 +340,16 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
                 <input className={fieldClass} required inputMode="numeric" maxLength={4} placeholder="2026" value={form.eventYear} onChange={update("eventYear")} />
               </label>
             )}
-            <label className="font-semibold md:col-span-2">URL do arquivo ou midia<input className={fieldClass} type="url" placeholder="https://..." value={form.fileUrl} onChange={update("fileUrl")} /></label>
-            <FileUploadBox
+            <label className="font-semibold md:col-span-2">
+              {isEvent ? "URL do evento" : "URL do conteudo, arquivo ou midia"}
+              <input className={fieldClass} type="url" placeholder="https://..." value={form.fileUrl} onChange={update("fileUrl")} />
+            </label>
+            <ImageSourceField
               className="md:col-span-2"
-              label="Arquivo do PC"
-              accept="image/*,application/pdf,audio/*,video/*,.doc,.docx,.odt,.ppt,.pptx,.xls,.xlsx"
-              selectedFile={form.mediaFile}
-              onChange={updateMediaFile}
+              label="Imagem"
+              value={form.imageUrl}
+              onUrlChange={updateImageUrl}
+              onFileChange={updateImageFile}
             />
           </>
         )}
@@ -348,30 +364,45 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
   );
 }
 
-function FileUploadBox({ label, accept, selectedFile, onChange, className = "" }) {
+function ImageSourceField({ label, value, onUrlChange, onFileChange, className = "" }) {
+  const hasEmbeddedImage = value?.startsWith("data:image/");
+
   return (
-    <label className={`block font-semibold ${className}`}>
-      {label}
-      <span className="mt-2 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/50 bg-primary/5 px-5 py-8 text-center transition hover:border-primary hover:bg-primary/10 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
-        <FolderUp className="text-primary" size={36} aria-hidden="true" />
-        <span className="mt-3 text-base font-semibold text-text">
-          {selectedFile ? selectedFile.name : "Escolher arquivo do computador"}
-        </span>
-        <span className="mt-2 max-w-xl text-sm font-normal leading-6 text-muted">
-          Clique na pasta para selecionar um arquivo. Ele sera registrado no cadastro e, para ficar disponivel no site, precisara ser enviado para um armazenamento publico.
-        </span>
+    <div className={`font-semibold ${className}`}>
+      <label>
+        {label} por URL
         <input
-          className="sr-only"
-          type="file"
-          accept={accept}
-          onChange={(event) => onChange(event.target.files?.[0] || null)}
+          className={fieldClass}
+          type={hasEmbeddedImage ? "text" : "url"}
+          placeholder="https://..."
+          value={value}
+          onChange={(event) => onUrlChange(event.target.value)}
         />
-      </span>
-    </label>
+      </label>
+
+      <label className="mt-3 block">
+        Ou selecionar imagem do PC
+        <span className="mt-2 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/50 bg-primary/5 px-5 py-7 text-center transition hover:border-primary hover:bg-primary/10 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+          <FolderUp className="text-primary" size={34} aria-hidden="true" />
+          <span className="mt-3 text-base font-semibold text-text">
+            Escolher imagem do computador
+          </span>
+          <span className="mt-2 max-w-xl text-sm font-normal leading-6 text-muted">
+            Use JPG, PNG ou WEBP. Para imagens muito grandes, prefira uma URL publica.
+          </span>
+          <input
+            className="sr-only"
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/gif"
+            onChange={(event) => onFileChange(event.target.files?.[0] || null)}
+          />
+        </span>
+      </label>
+    </div>
   );
 }
 
-function CinemaShowFields({ form, update, updateSession, updateSessionFile, addSession, removeSession }) {
+function CinemaShowFields({ form, update, updateImageUrl, updateImageFile, updateSession, addSession, removeSession }) {
   return (
     <section className="md:col-span-2 rounded-2xl border border-primary/30 bg-primary/5 p-5">
       <div className="grid gap-5 md:grid-cols-2">
@@ -387,12 +418,18 @@ function CinemaShowFields({ form, update, updateSession, updateSessionFile, addS
           Link da playlist
           <input className={fieldClass} type="url" placeholder="https://youtube.com/playlist?list=..." value={form.playlistUrl} onChange={update("playlistUrl")} />
         </label>
+        <ImageSourceField
+          label="Imagem da mostra"
+          value={form.imageUrl}
+          onUrlChange={updateImageUrl}
+          onFileChange={updateImageFile}
+        />
       </div>
 
       <div className="mt-7 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <h3 className="font-title text-2xl text-text">Calendario com sessoes</h3>
-          <p className="mt-1 text-sm text-muted">Adicione cada sessao com data, filme, link da sessao e material do filme para o acervo.</p>
+          <p className="mt-1 text-sm text-muted">Adicione cada sessao com data, filme, link da sessao e URL publica do filme para o acervo.</p>
         </div>
         <Button type="button" variant="outline" className="self-start" onClick={addSession}><Plus size={16} aria-hidden="true" /> Adicionar sessao</Button>
       </div>
@@ -417,13 +454,6 @@ function CinemaShowFields({ form, update, updateSession, updateSessionFile, addS
               <label className="font-semibold md:col-span-2">Direcao/debate<input className={fieldClass} value={session.direction} onChange={(event) => updateSession(index, "direction", event.target.value)} /></label>
               <label className="font-semibold md:col-span-2">Link da sessao<input className={fieldClass} type="url" placeholder="https://..." value={session.sessionUrl} onChange={(event) => updateSession(index, "sessionUrl", event.target.value)} /></label>
               <label className="font-semibold md:col-span-2">URL do filme para o acervo<input className={fieldClass} type="url" placeholder="https://..." value={session.archiveFilmUrl} onChange={(event) => updateSession(index, "archiveFilmUrl", event.target.value)} /></label>
-              <FileUploadBox
-                className="md:col-span-2"
-                label="Arquivo do PC para o acervo"
-                accept="video/mp4,video/webm,video/ogg,video/quicktime,.mp4,.webm,.ogv,.mov,.m4v,.avi,.mkv"
-                selectedFile={session.archiveFile}
-                onChange={(file) => updateSessionFile(index, file)}
-              />
             </div>
           </article>
         ))}
@@ -477,7 +507,8 @@ function contentBelongsToArea(content, area) {
 function ContentPreviewModal({ content, onClose, onEdit, user }) {
   const isCoordinator = user.role === "COORDINATOR";
   const sessions = Array.isArray(content.metadata?.sessions) ? content.metadata.sessions : [];
-  const mediaFile = content.metadata?.mediaFile;
+  const imageUrl = content.metadata?.imageUrl;
+  const hasDifferentFileUrl = content.fileUrl && content.fileUrl !== content.externalUrl;
 
   return (
     <Modal onClose={onClose} size="max-w-5xl">
@@ -491,6 +522,12 @@ function ContentPreviewModal({ content, onClose, onEdit, user }) {
         </div>
       </article>
 
+      {imageUrl && (
+        <figure className="mt-8 overflow-hidden rounded-2xl border border-border bg-card">
+          <img className="max-h-[420px] w-full object-cover" src={imageUrl} alt="" loading="lazy" />
+        </figure>
+      )}
+
       {content.description && (
         <section className="mt-8 rounded-2xl border border-border bg-card p-5">
           <h3 className="font-title text-2xl">Descricao</h3>
@@ -498,14 +535,14 @@ function ContentPreviewModal({ content, onClose, onEdit, user }) {
         </section>
       )}
 
-      {(content.externalUrl || content.fileUrl || content.metadata?.playlistUrl || mediaFile) && (
+      {(content.externalUrl || hasDifferentFileUrl || content.metadata?.playlistUrl || imageUrl) && (
         <section className="mt-6 rounded-2xl border border-border bg-card p-5">
-          <h3 className="font-title text-2xl">Links e arquivos</h3>
+          <h3 className="font-title text-2xl">Links publicos</h3>
           <div className="mt-4 flex flex-wrap gap-3">
             {content.externalUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={content.externalUrl} target="_blank" rel="noreferrer">Abrir link externo</a>}
-            {content.fileUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={content.fileUrl} target="_blank" rel="noreferrer">Abrir arquivo ou midia</a>}
+            {hasDifferentFileUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={content.fileUrl} target="_blank" rel="noreferrer">Abrir arquivo ou midia</a>}
             {content.metadata?.playlistUrl && content.metadata.playlistUrl !== content.externalUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={content.metadata.playlistUrl} target="_blank" rel="noreferrer">Abrir playlist</a>}
-            {mediaFile && <span className="rounded-xl border border-border px-4 py-3 text-sm text-muted">Arquivo selecionado: <strong className="text-text">{mediaFile.name}</strong></span>}
+            {imageUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={imageUrl} target="_blank" rel="noreferrer">Abrir imagem</a>}
           </div>
         </section>
       )}
@@ -525,7 +562,6 @@ function ContentPreviewModal({ content, onClose, onEdit, user }) {
                 <div className="mt-3 flex flex-wrap gap-2">
                   {session.sessionUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={session.sessionUrl} target="_blank" rel="noreferrer">Abrir sessao</a>}
                   {session.archiveFilmUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={session.archiveFilmUrl} target="_blank" rel="noreferrer">Abrir filme no acervo</a>}
-                  {session.archiveFile && <span className="rounded-xl border border-border px-3 py-2 text-sm text-muted">Arquivo: <strong className="text-text">{session.archiveFile.name}</strong></span>}
                 </div>
               </article>
             ))}
