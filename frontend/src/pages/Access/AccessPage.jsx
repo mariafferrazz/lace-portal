@@ -900,11 +900,12 @@ function PendingApprovals({ contents, refresh, onEdit, onOpen }) {
   );
 }
 
-function EditorialDashboard({ user, contents, refresh, teamMembers }) {
+function EditorialDashboard({ user, contents, refresh, teamMembers, ensureTeamMembers }) {
   const [activeArea, setActiveArea] = useState(null);
   const [addDefaults, setAddDefaults] = useState(null);
   const [editingContent, setEditingContent] = useState(null);
   const [previewContent, setPreviewContent] = useState(null);
+  const [loadingContentId, setLoadingContentId] = useState("");
   const areaCounts = useMemo(
     () => Object.fromEntries(contentAreas.map((area) => [
       area.value,
@@ -913,9 +914,34 @@ function EditorialDashboard({ user, contents, refresh, teamMembers }) {
     [contents],
   );
 
+  const getFullContent = useCallback(async (content) => {
+    if (!content?.summaryOnly) return content;
+    setLoadingContentId(content.id);
+    try {
+      const { data } = await api.get(`/contents/${content.id}`);
+      return data.content || content;
+    } finally {
+      setLoadingContentId("");
+    }
+  }, []);
+
+  const addContent = useCallback(async (defaults = createInitialForm()) => {
+    await ensureTeamMembers();
+    setAddDefaults(defaults);
+  }, [ensureTeamMembers]);
+
+  const editContent = useCallback(async (content) => {
+    await ensureTeamMembers();
+    setEditingContent(await getFullContent(content));
+  }, [ensureTeamMembers, getFullContent]);
+
+  const openContent = useCallback(async (content) => {
+    setPreviewContent(await getFullContent(content));
+  }, [getFullContent]);
+
   return (
     <>
-      {user.role === "COORDINATOR" && <PendingApprovals contents={contents} refresh={refresh} onEdit={setEditingContent} onOpen={setPreviewContent} />}
+      {user.role === "COORDINATOR" && <PendingApprovals contents={contents} refresh={refresh} onEdit={editContent} onOpen={openContent} />}
 
       <section className="rounded-3xl border border-border bg-card p-6 md:p-9">
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
@@ -926,7 +952,7 @@ function EditorialDashboard({ user, contents, refresh, teamMembers }) {
               <p className="mt-1 text-muted">Escolha uma area editorial para ver os tipos de conteudo.</p>
             </div>
           </div>
-          <Button type="button" className="inline-flex min-w-56 flex-nowrap items-center justify-center gap-2 whitespace-nowrap" onClick={() => setAddDefaults(createInitialForm())}><Plus className="shrink-0" size={17} aria-hidden="true" /> <span>Adicionar conteudo</span></Button>
+          <Button type="button" className="inline-flex min-w-56 flex-nowrap items-center justify-center gap-2 whitespace-nowrap" onClick={() => addContent(createInitialForm())}><Plus className="shrink-0" size={17} aria-hidden="true" /> <span>Adicionar conteudo</span></Button>
         </div>
 
         <div className="mt-8 grid gap-5 md:grid-cols-2">
@@ -958,10 +984,16 @@ function EditorialDashboard({ user, contents, refresh, teamMembers }) {
           user={user}
           refresh={refresh}
           onClose={() => setActiveArea(null)}
-          onAddContent={(areaValue, typeValue) => setAddDefaults(createInitialForm(areaValue, typeValue))}
-          onEditContent={setEditingContent}
-          onOpenContent={setPreviewContent}
+          onAddContent={(areaValue, typeValue) => addContent(createInitialForm(areaValue, typeValue))}
+          onEditContent={editContent}
+          onOpenContent={openContent}
         />
+      )}
+
+      {loadingContentId && (
+        <div className="fixed inset-x-0 bottom-5 z-[80] mx-auto w-fit rounded-full border border-primary/40 bg-card px-4 py-2 text-sm font-semibold text-primary shadow-xl">
+          Carregando conteudo...
+        </div>
       )}
 
       {addDefaults && (
@@ -1014,10 +1046,10 @@ export default function AccessPage() {
       setDashboardError("");
       let data;
       try {
-        ({ data } = await api.get("/contents/manage"));
+        ({ data } = await api.get("/contents/manage", { params: { summary: "1" } }));
       } catch (error) {
         await new Promise((resolve) => setTimeout(resolve, 600));
-        ({ data } = await api.get("/contents/manage"));
+        ({ data } = await api.get("/contents/manage", { params: { summary: "1" } }));
       }
       setContents(data.contents || []);
     } catch (error) {
@@ -1031,26 +1063,31 @@ export default function AccessPage() {
     try {
       const { data } = await api.get("/team");
       setTeamMembers(data.members || []);
+      return data.members || [];
     } catch {
       setTeamMembers([]);
+      return [];
     }
   }, []);
+
+  const ensureTeamMembers = useCallback(async () => {
+    if (teamMembers.length) return teamMembers;
+    return loadTeamMembers();
+  }, [loadTeamMembers, teamMembers]);
 
   useEffect(() => {
     api.get("/auth/me")
       .then(async ({ data }) => {
         setUser(data.user);
         await loadContents();
-        await loadTeamMembers();
       })
       .catch(() => setUser(null))
       .finally(() => setChecking(false));
-  }, [loadContents, loadTeamMembers]);
+  }, [loadContents]);
 
   function handleLogin(authenticatedUser) {
     setUser(authenticatedUser);
     loadContents();
-    loadTeamMembers();
   }
 
   async function logout() {
@@ -1075,7 +1112,7 @@ export default function AccessPage() {
               A sessao administrativa nao foi confirmada agora. Entre novamente se esta mensagem continuar aparecendo.
             </p>
           )}
-          <EditorialDashboard user={user} contents={contents} refresh={loadContents} teamMembers={teamMembers} />
+          <EditorialDashboard user={user} contents={contents} refresh={loadContents} teamMembers={teamMembers} ensureTeamMembers={ensureTeamMembers} />
         </>}
       </Container>
     </main>

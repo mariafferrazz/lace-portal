@@ -15,7 +15,24 @@ function parseMetadata(value) {
   }
 }
 
-async function listManageContents() {
+async function listManageContents(summaryOnly = false) {
+  if (summaryOnly) {
+    const rows = await prisma.$queryRaw`
+      SELECT id, title, type, researcherName, researcherMemberId, published, createdById, metadata, createdAt, updatedAt
+      FROM Content
+      ORDER BY createdAt DESC
+    `;
+    return rows.map((row) => ({
+      ...row,
+      description: null,
+      fileUrl: null,
+      externalUrl: null,
+      metadata: parseMetadata(row.metadata),
+      published: Boolean(row.published),
+      summaryOnly: true,
+    }));
+  }
+
   const rows = await prisma.$queryRaw`
     SELECT id, title, description, type, researcherName, researcherMemberId, fileUrl, externalUrl, metadata, published, createdById, createdAt, updatedAt
     FROM Content
@@ -25,6 +42,7 @@ async function listManageContents() {
     ...row,
     metadata: parseMetadata(row.metadata),
     published: Boolean(row.published),
+    summaryOnly: false,
   }));
 }
 
@@ -92,7 +110,7 @@ router.get("/navigation", async (_req, res) => {
 
 router.get("/manage", requireAuth, async (req, res) => {
   try {
-    const contents = await listManageContents();
+    const contents = await listManageContents(req.query.summary === "1");
     let users = [];
     let members = [];
     try {
@@ -119,6 +137,32 @@ router.get("/manage", requireAuth, async (req, res) => {
     });
     res.json({ contents, adminFallback: true });
   }
+});
+
+router.get("/:id", requireAuth, async (req, res) => {
+  const rows = await prisma.$queryRaw`
+    SELECT id, title, description, type, researcherName, researcherMemberId, fileUrl, externalUrl, metadata, published, createdById, createdAt, updatedAt
+    FROM Content
+    WHERE id = ${req.params.id}
+    LIMIT 1
+  `;
+  const content = rows[0];
+  if (!content) return res.status(404).json({ error: "Conteudo nao encontrado." });
+
+  const [users, members] = await Promise.all([
+    prisma.user.findMany({ select: { id: true, name: true, email: true, role: true } }),
+    prisma.teamMember.findMany({ select: { id: true, name: true, role: true } }),
+  ]);
+  const [hydrated] = attachContentRelations([
+    {
+      ...content,
+      metadata: parseMetadata(content.metadata),
+      published: Boolean(content.published),
+      summaryOnly: false,
+    },
+  ], users, members);
+
+  res.json({ content: hydrated });
 });
 
 router.post("/", requireAuth, async (req, res) => {
