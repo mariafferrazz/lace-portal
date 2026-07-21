@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { CheckCircle2, Database, LogOut, Plus, ShieldCheck, Trash2, Upload } from "lucide-react";
+import { CheckCircle2, Database, FolderUp, LogOut, Plus, ShieldCheck, Trash2, Upload } from "lucide-react";
 import Container from "../../components/ui/Container";
 import Button from "../../components/ui/Button";
 import api, { apiError } from "../../services/api";
@@ -33,7 +33,7 @@ const emptySession = {
   title: "",
   direction: "",
   sessionUrl: "",
-  archiveHtmlOrUrl: "",
+  archiveFilmUrl: "",
   archiveFile: null,
 };
 
@@ -121,8 +121,7 @@ function ContentForm({ onCreated }) {
     }));
   }
 
-  function updateMediaFile(event) {
-    const file = event.target.files?.[0];
+  function updateMediaFile(file) {
     setForm((current) => ({
       ...current,
       mediaFile: file ? { name: file.name, type: file.type || "application/octet-stream", size: file.size } : null,
@@ -164,10 +163,10 @@ function ContentForm({ onCreated }) {
           title: session.title.trim(),
           direction: session.direction.trim() || null,
           sessionUrl: session.sessionUrl.trim() || null,
-          archiveHtmlOrUrl: session.archiveHtmlOrUrl.trim() || null,
+          archiveFilmUrl: session.archiveFilmUrl.trim() || null,
           archiveFile: session.archiveFile,
         }))
-        .filter((session) => session.date || session.title || session.sessionUrl || session.archiveHtmlOrUrl || session.archiveFile);
+        .filter((session) => session.date || session.title || session.sessionUrl || session.archiveFilmUrl || session.archiveFile);
     } else if (form.mediaFile) {
       metadata.mediaFile = form.mediaFile;
     }
@@ -232,20 +231,13 @@ function ContentForm({ onCreated }) {
         ) : (
           <>
             <label className="font-semibold md:col-span-2">URL do arquivo ou midia<input className={fieldClass} type="url" placeholder="https://..." value={form.fileUrl} onChange={update("fileUrl")} /></label>
-            <label className="font-semibold md:col-span-2">
-              Arquivo do PC
-              <input
-                className={fieldClass}
-                type="file"
-                accept="image/*,application/pdf,audio/*,video/*,.doc,.docx,.odt,.ppt,.pptx,.xls,.xlsx"
-                onChange={updateMediaFile}
-              />
-              {form.mediaFile && (
-                <span className="mt-2 block text-sm text-muted">
-                  Selecionado: {form.mediaFile.name}. Para publicar o arquivo no site, ele ainda precisara ser enviado para um armazenamento publico.
-                </span>
-              )}
-            </label>
+            <FileUploadBox
+              className="md:col-span-2"
+              label="Arquivo do PC"
+              accept="image/*,application/pdf,audio/*,video/*,.doc,.docx,.odt,.ppt,.pptx,.xls,.xlsx"
+              selectedFile={form.mediaFile}
+              onChange={updateMediaFile}
+            />
           </>
         )}
 
@@ -256,6 +248,29 @@ function ContentForm({ onCreated }) {
         </div>
       </form>
     </section>
+  );
+}
+
+function FileUploadBox({ label, accept, selectedFile, onChange, className = "" }) {
+  return (
+    <label className={`block font-semibold ${className}`}>
+      {label}
+      <span className="mt-2 flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/50 bg-primary/5 px-5 py-8 text-center transition hover:border-primary hover:bg-primary/10 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+        <FolderUp className="text-primary" size={36} aria-hidden="true" />
+        <span className="mt-3 text-base font-semibold text-text">
+          {selectedFile ? selectedFile.name : "Escolher arquivo do computador"}
+        </span>
+        <span className="mt-2 max-w-xl text-sm font-normal leading-6 text-muted">
+          Clique na pasta para selecionar um arquivo. Ele sera registrado no cadastro e, para ficar disponivel no site, precisara ser enviado para um armazenamento publico.
+        </span>
+        <input
+          className="sr-only"
+          type="file"
+          accept={accept}
+          onChange={(event) => onChange(event.target.files?.[0] || null)}
+        />
+      </span>
+    </label>
   );
 }
 
@@ -300,29 +315,14 @@ function CinemaShowFields({ form, update, updateSession, updateSessionFile, addS
               <label className="font-semibold">Titulo do filme/sessao<input className={fieldClass} value={session.title} onChange={(event) => updateSession(index, "title", event.target.value)} /></label>
               <label className="font-semibold md:col-span-2">Direcao/debate<input className={fieldClass} value={session.direction} onChange={(event) => updateSession(index, "direction", event.target.value)} /></label>
               <label className="font-semibold md:col-span-2">Link da sessao<input className={fieldClass} type="url" placeholder="https://..." value={session.sessionUrl} onChange={(event) => updateSession(index, "sessionUrl", event.target.value)} /></label>
-              <label className="font-semibold md:col-span-2">
-                HTML ou URL do filme para o acervo
-                <textarea
-                  className={`${fieldClass} min-h-28 resize-y`}
-                  placeholder="<iframe ...></iframe> ou https://..."
-                  value={session.archiveHtmlOrUrl}
-                  onChange={(event) => updateSession(index, "archiveHtmlOrUrl", event.target.value)}
-                />
-              </label>
-              <label className="font-semibold md:col-span-2">
-                Arquivo do PC para o acervo
-                <input
-                  className={fieldClass}
-                  type="file"
-                  accept="video/mp4,video/webm,video/ogg,video/quicktime,.mp4,.webm,.ogv,.mov,.m4v,.avi,.mkv,.html,.htm"
-                  onChange={(event) => updateSessionFile(index, event.target.files?.[0] || null)}
-                />
-                {session.archiveFile && (
-                  <span className="mt-2 block text-sm text-muted">
-                    Selecionado: {session.archiveFile.name}. Para o filme ficar disponivel no site, esse arquivo ainda precisara ser enviado para um armazenamento publico.
-                  </span>
-                )}
-              </label>
+              <label className="font-semibold md:col-span-2">URL do filme para o acervo<input className={fieldClass} type="url" placeholder="https://..." value={session.archiveFilmUrl} onChange={(event) => updateSession(index, "archiveFilmUrl", event.target.value)} /></label>
+              <FileUploadBox
+                className="md:col-span-2"
+                label="Arquivo do PC para o acervo"
+                accept="video/mp4,video/webm,video/ogg,video/quicktime,.mp4,.webm,.ogv,.mov,.m4v,.avi,.mkv"
+                selectedFile={session.archiveFile}
+                onChange={(file) => updateSessionFile(index, file)}
+              />
             </div>
           </article>
         ))}
