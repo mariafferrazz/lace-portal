@@ -71,6 +71,8 @@ COORDINATOR_NOTIFY_WEBHOOK_URL=https://script.google.com/macros/s/SEU_DEPLOY_ID/
 
 Use um endpoint seguro, como o Google Apps Script ja usado no formulario de contato. Se essa URL nao estiver configurada, o envio continua funcionando, mas o backend apenas registra no log que a notificacao nao foi enviada.
 
+O arquivo `scripts/google-apps-script-contact.js` tambem precisa estar publicado no Google Apps Script. Ele aceita o formulario de contato e as notificacoes do dashboard. Para notificacoes da coordenacao, o script permite envio para `joanadferraz@gmail.com`; depois de alterar o script, clique em **Implantar > Gerenciar implantacoes > Editar > Nova versao > Implantar** e mantenha a URL `/exec` em `COORDINATOR_NOTIFY_WEBHOOK_URL`.
+
 Tambem configure as contas iniciais usadas pelo seed:
 
 ```env

@@ -1,4 +1,8 @@
-const RECIPIENT = "lab.lace.uff@gmail.com";
+const DEFAULT_RECIPIENT = "lab.lace.uff@gmail.com";
+const ALLOWED_RECIPIENTS = [
+  DEFAULT_RECIPIENT,
+  "joanadferraz@gmail.com",
+];
 
 function doPost(event) {
   try {
@@ -7,15 +11,20 @@ function doPost(event) {
     const email = sanitize(data.email);
     const message = sanitize(data.message);
     const source = sanitize(data.source || "lablace.com.br");
+    const requestedRecipient = sanitize(data.to || data.recipient || data.emailTo);
+    const recipient = ALLOWED_RECIPIENTS.includes(requestedRecipient)
+      ? requestedRecipient
+      : DEFAULT_RECIPIENT;
+    const subject = sanitize(data.subject) || `Contato pelo portal LACE - ${name}`;
 
     if (!name || !email || !message) {
-      return jsonResponse({ ok: false, error: "Nome, e-mail e mensagem são obrigatórios." });
+      return jsonResponse({ ok: false, error: "Nome, e-mail e mensagem sao obrigatorios." });
     }
 
     MailApp.sendEmail({
-      to: RECIPIENT,
+      to: recipient,
       replyTo: email,
-      subject: `Contato pelo portal LACE - ${name}`,
+      subject,
       body: [
         `Nome: ${name}`,
         `E-mail: ${email}`,
@@ -26,7 +35,7 @@ function doPost(event) {
       ].join("\n"),
     });
 
-    return jsonResponse({ ok: true });
+    return jsonResponse({ ok: true, recipient });
   } catch (error) {
     return jsonResponse({ ok: false, error: error.message });
   }

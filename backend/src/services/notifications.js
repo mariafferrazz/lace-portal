@@ -22,9 +22,10 @@ async function notifyCoordinatorContentChange({ content, user, action = "created
 
   const payload = {
     to: COORDINATOR_EMAIL,
-    email: COORDINATOR_EMAIL,
+    email: user.email,
     subject: action === "updated" ? "LACE: conteudo atualizado para revisao" : "LACE: novo conteudo para aprovacao",
     name: "Dashboard LACE",
+    source: "dashboard.lablace.com.br",
     message: buildContentMessage(content, user, action),
     content: {
       id: content.id,
