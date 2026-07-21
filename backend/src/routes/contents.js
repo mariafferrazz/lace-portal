@@ -6,57 +6,43 @@ const { notifyCoordinatorContentChange } = require("../services/notifications");
 const router = express.Router();
 const contentTypes = new Set(["FILM", "GLOSSARY", "CINEMA_SHOW", "ARTICLE", "RESEARCH", "TRANSLATION", "VIRAL_ESCAPE_LINES", "INTERVIEW", "PODCAST", "EVENT", "OTHER"]);
 
-function parseMetadata(value) {
-  if (!value || typeof value !== "string") return value || null;
-  try {
-    return JSON.parse(value);
-  } catch {
-    return null;
-  }
-}
-
 async function listManageContents(summaryOnly = false) {
   if (summaryOnly) {
-    const rows = await prisma.$queryRaw`
-      SELECT id, title, type, researcherName, researcherMemberId, published, createdById, metadata, createdAt, updatedAt
-      FROM Content
-      ORDER BY createdAt DESC
-    `;
-    return rows.map((row) => ({
-      ...row,
+    return prisma.content.findMany({
+      select: {
+        id: true,
+        title: true,
+        type: true,
+        researcherName: true,
+        researcherMemberId: true,
+        metadata: true,
+        published: true,
+        createdById: true,
+        createdAt: true,
+        updatedAt: true,
+        createdBy: { select: { id: true, name: true, role: true } },
+        researcherMember: { select: { id: true, name: true, role: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    }).then((contents) => contents.map((content) => ({
+      ...content,
       description: null,
       fileUrl: null,
       externalUrl: null,
-      metadata: parseMetadata(row.metadata),
-      published: Boolean(row.published),
       summaryOnly: true,
-    }));
+    })));
   }
 
-  const rows = await prisma.$queryRaw`
-    SELECT id, title, description, type, researcherName, researcherMemberId, fileUrl, externalUrl, metadata, published, createdById, createdAt, updatedAt
-    FROM Content
-    ORDER BY createdAt DESC
-  `;
-  return rows.map((row) => ({
-    ...row,
-    metadata: parseMetadata(row.metadata),
-    published: Boolean(row.published),
-    summaryOnly: false,
-  }));
-}
-
-function attachContentRelations(contents, users = [], members = []) {
-  const usersById = new Map(users.map((user) => [user.id, user]));
-  const membersById = new Map(members.map((member) => [member.id, member]));
-
-  return contents.map((content) => ({
+  return prisma.content.findMany({
+    include: {
+      createdBy: { select: { id: true, name: true, role: true } },
+      researcherMember: { select: { id: true, name: true, role: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  }).then((contents) => contents.map((content) => ({
     ...content,
-    createdBy: usersById.get(content.createdById) || content.createdBy || null,
-    researcherMember: content.researcherMemberId
-      ? membersById.get(content.researcherMemberId) || content.researcherMember || null
-      : content.researcherMember || null,
-  }));
+    summaryOnly: false,
+  })));
 }
 
 function parseContent(body, partial = false) {
@@ -111,20 +97,7 @@ router.get("/navigation", async (_req, res) => {
 router.get("/manage", requireAuth, async (req, res) => {
   try {
     const contents = await listManageContents(req.query.summary === "1");
-    let users = [];
-    let members = [];
-    try {
-      users = await prisma.user.findMany({ select: { id: true, name: true, email: true, role: true } });
-    } catch (error) {
-      console.error("Erro ao listar usuarios para o painel:", error);
-    }
-    try {
-      members = await prisma.teamMember.findMany({ select: { id: true, name: true, role: true } });
-    } catch (error) {
-      console.error("Erro ao listar equipe para o painel:", error);
-    }
-
-    res.json({ contents: attachContentRelations(contents, users, members), adminFallback: false });
+    res.json({ contents, adminFallback: false });
   } catch (error) {
     console.error("Erro ao listar painel administrativo. Usando acervo publicado:", error);
     const contents = await prisma.content.findMany({
@@ -140,29 +113,15 @@ router.get("/manage", requireAuth, async (req, res) => {
 });
 
 router.get("/:id", requireAuth, async (req, res) => {
-  const rows = await prisma.$queryRaw`
-    SELECT id, title, description, type, researcherName, researcherMemberId, fileUrl, externalUrl, metadata, published, createdById, createdAt, updatedAt
-    FROM Content
-    WHERE id = ${req.params.id}
-    LIMIT 1
-  `;
-  const content = rows[0];
-  if (!content) return res.status(404).json({ error: "Conteudo nao encontrado." });
-
-  const [users, members] = await Promise.all([
-    prisma.user.findMany({ select: { id: true, name: true, email: true, role: true } }),
-    prisma.teamMember.findMany({ select: { id: true, name: true, role: true } }),
-  ]);
-  const [hydrated] = attachContentRelations([
-    {
-      ...content,
-      metadata: parseMetadata(content.metadata),
-      published: Boolean(content.published),
-      summaryOnly: false,
+  const content = await prisma.content.findUnique({
+    where: { id: req.params.id },
+    include: {
+      createdBy: { select: { id: true, name: true, role: true } },
+      researcherMember: { select: { id: true, name: true, role: true } },
     },
-  ], users, members);
-
-  res.json({ content: hydrated });
+  });
+  if (!content) return res.status(404).json({ error: "Conteudo nao encontrado." });
+  res.json({ content: { ...content, summaryOnly: false } });
 });
 
 router.post("/", requireAuth, async (req, res) => {
