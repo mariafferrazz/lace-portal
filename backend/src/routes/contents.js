@@ -3,7 +3,7 @@ const prisma = require("../db");
 const { requireAuth, requireCoordinator } = require("../middleware/auth");
 
 const router = express.Router();
-const contentTypes = new Set(["FILM", "GLOSSARY", "ARTICLE", "RESEARCH", "TRANSLATION", "VIRAL_ESCAPE_LINES", "INTERVIEW", "PODCAST", "EVENT", "OTHER"]);
+const contentTypes = new Set(["FILM", "GLOSSARY", "CINEMA_SHOW", "ARTICLE", "RESEARCH", "TRANSLATION", "VIRAL_ESCAPE_LINES", "INTERVIEW", "PODCAST", "EVENT", "OTHER"]);
 
 function parseContent(body, partial = false) {
   const data = {};

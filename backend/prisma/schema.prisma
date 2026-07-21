@@ -14,6 +14,7 @@ enum Role {
 enum ContentType {
   FILM
   GLOSSARY
+  CINEMA_SHOW
   ARTICLE
   RESEARCH
   TRANSLATION
