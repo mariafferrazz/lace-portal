@@ -999,7 +999,13 @@ export default function AccessPage() {
   const loadContents = useCallback(async () => {
     try {
       setDashboardError("");
-      const { data } = await api.get("/contents/manage");
+      let data;
+      try {
+        ({ data } = await api.get("/contents/manage"));
+      } catch (error) {
+        await new Promise((resolve) => setTimeout(resolve, 600));
+        ({ data } = await api.get("/contents/manage"));
+      }
       setContents(data.contents || []);
     } catch (error) {
       setDashboardError(apiError(error));
@@ -1053,7 +1059,7 @@ export default function AccessPage() {
           </header>
           {dashboardError && (
             <p className="mb-6 rounded-2xl border border-primary/40 bg-primary/10 p-4 text-sm font-semibold text-primary" role="status">
-              A rota administrativa nao respondeu agora. Mostrando o acervo publicado enquanto o backend atualiza.
+              A sessao administrativa nao foi confirmada agora. Entre novamente se esta mensagem continuar aparecendo.
             </p>
           )}
           <EditorialDashboard user={user} contents={contents} refresh={loadContents} teamMembers={teamMembers} />

@@ -6,6 +6,13 @@ const { requireAuth } = require("../middleware/auth");
 
 const router = express.Router();
 const publicUser = { id: true, name: true, email: true, role: true };
+const isProduction = process.env.NODE_ENV === "production";
+const sessionCookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
+  path: "/",
+};
 
 router.post("/login", async (req, res) => {
   const email = String(req.body.email || "").trim().toLowerCase();
@@ -19,17 +26,14 @@ router.post("/login", async (req, res) => {
 
   const token = jwt.sign({ sub: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "8h" });
   res.cookie("lace_session", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    ...sessionCookieOptions,
     maxAge: 8 * 60 * 60 * 1000,
-    path: "/",
   });
   res.json({ user: Object.fromEntries(Object.keys(publicUser).map((key) => [key, user[key]])) });
 });
 
 router.post("/logout", (_req, res) => {
-  res.clearCookie("lace_session", { httpOnly: true, sameSite: "strict", path: "/" });
+  res.clearCookie("lace_session", sessionCookieOptions);
   res.status(204).end();
 });
 
