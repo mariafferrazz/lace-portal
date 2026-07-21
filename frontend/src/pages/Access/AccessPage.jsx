@@ -429,7 +429,75 @@ function contentBelongsToArea(content, area) {
   return area.types.includes(content.type) && areaForType(content.type)?.value === area.value;
 }
 
-function ContentCard({ content, user, refresh, onEdit }) {
+function ContentPreviewModal({ content, onClose, onEdit, user }) {
+  const isCoordinator = user.role === "COORDINATOR";
+  const sessions = Array.isArray(content.metadata?.sessions) ? content.metadata.sessions : [];
+  const mediaFile = content.metadata?.mediaFile;
+
+  return (
+    <Modal onClose={onClose} size="max-w-5xl">
+      <article className="pr-14">
+        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">{contentAreaLabel(content)} - {typeLabel(content.type)}</p>
+        <h2 className="mt-3 font-title text-4xl md:text-5xl">{content.title}</h2>
+        <div className="mt-4 flex flex-wrap gap-2 text-sm text-muted">
+          <span>Pesquisador(a): <strong className="text-text">{content.researcherName}</strong></span>
+          <span>Enviado por {content.createdBy?.name || "usuario do LACE"}</span>
+          <span className={content.published ? "font-bold text-green-700 dark:text-green-300" : "font-bold text-primary"}>{content.published ? "Publicado" : "Em revisao"}</span>
+        </div>
+      </article>
+
+      {content.description && (
+        <section className="mt-8 rounded-2xl border border-border bg-card p-5">
+          <h3 className="font-title text-2xl">Descricao</h3>
+          <div className="mt-3 whitespace-pre-line leading-7 text-muted">{content.description}</div>
+        </section>
+      )}
+
+      {(content.externalUrl || content.fileUrl || content.metadata?.playlistUrl || mediaFile) && (
+        <section className="mt-6 rounded-2xl border border-border bg-card p-5">
+          <h3 className="font-title text-2xl">Links e arquivos</h3>
+          <div className="mt-4 flex flex-wrap gap-3">
+            {content.externalUrl && <a className="rounded-xl border border-border px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary" href={content.externalUrl} target="_blank" rel="noreferrer">Abrir link externo</a>}
+            {content.fileUrl && <a className="rounded-xl border border-border px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary" href={content.fileUrl} target="_blank" rel="noreferrer">Abrir arquivo ou midia</a>}
+            {content.metadata?.playlistUrl && content.metadata.playlistUrl !== content.externalUrl && <a className="rounded-xl border border-border px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary" href={content.metadata.playlistUrl} target="_blank" rel="noreferrer">Abrir playlist</a>}
+            {mediaFile && <span className="rounded-xl border border-border px-4 py-3 text-sm text-muted">Arquivo selecionado: <strong className="text-text">{mediaFile.name}</strong></span>}
+          </div>
+        </section>
+      )}
+
+      {content.type === "CINEMA_SHOW" && (
+        <section className="mt-6 rounded-2xl border border-border bg-card p-5">
+          <h3 className="font-title text-2xl">Mostra Cinema e Ditadura</h3>
+          <p className="mt-2 text-muted">Numeracao: <strong className="text-text">{content.metadata?.showNumber || "Sem numeracao"}</strong></p>
+          <div className="mt-5 space-y-4">
+            {sessions.length === 0 ? (
+              <p className="text-muted">Nenhuma sessao cadastrada.</p>
+            ) : sessions.map((session, index) => (
+              <article key={`${session.title}-${index}`} className="rounded-2xl border border-border bg-background p-4">
+                <p className="text-xs font-bold uppercase tracking-widest text-primary">Sessao {index + 1}</p>
+                <h4 className="mt-1 font-title text-2xl">{session.title || "Sem titulo"}</h4>
+                <p className="mt-2 text-sm text-muted">{session.date || "Sem data"}{session.direction ? ` - ${session.direction}` : ""}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {session.sessionUrl && <a className="rounded-xl border border-border px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary" href={session.sessionUrl} target="_blank" rel="noreferrer">Abrir sessao</a>}
+                  {session.archiveFilmUrl && <a className="rounded-xl border border-border px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary" href={session.archiveFilmUrl} target="_blank" rel="noreferrer">Abrir filme no acervo</a>}
+                  {session.archiveFile && <span className="rounded-xl border border-border px-3 py-2 text-sm text-muted">Arquivo: <strong className="text-text">{session.archiveFile.name}</strong></span>}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {isCoordinator && (
+        <div className="mt-7">
+          <Button variant="outline" type="button" onClick={() => onEdit(content)}><Pencil className="inline" size={16} /> Editar conteudo</Button>
+        </div>
+      )}
+    </Modal>
+  );
+}
+
+function ContentCard({ content, user, refresh, onEdit, onOpen }) {
   const isCoordinator = user.role === "COORDINATOR";
   const isReadOnly = content.readOnly;
 
@@ -461,7 +529,7 @@ function ContentCard({ content, user, refresh, onEdit }) {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className={`rounded-full px-3 py-1 text-xs font-bold ${content.published ? "bg-green-600/15 text-green-700 dark:text-green-300" : "bg-primary/10 text-primary"}`}>{isReadOnly ? "No site" : content.published ? "Publicado" : "Em revisao"}</span>
-          {content.externalUrl && <a className="rounded-xl border border-border px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary" href={content.externalUrl}>Abrir pagina</a>}
+          <button className="rounded-xl border border-border px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary" type="button" onClick={() => onOpen(content)}>Abrir pagina</button>
           {isCoordinator && !isReadOnly && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => onEdit(content)}><Pencil className="inline" size={15} /> Editar</Button>}
           {isCoordinator && !isReadOnly && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={publish}>{content.published ? "Retirar" : <><CheckCircle2 className="inline" size={15} /> Publicar</>}</Button>}
           {isCoordinator && !isReadOnly && <button className="cursor-pointer rounded-xl border border-red-500/40 p-2 text-red-700 transition hover:bg-red-500/10 dark:text-red-300" type="button" aria-label={`Excluir ${content.title}`} onClick={remove}><Trash2 size={18} /></button>}
@@ -471,7 +539,7 @@ function ContentCard({ content, user, refresh, onEdit }) {
   );
 }
 
-function AreaModal({ area, contents, user, refresh, onClose, onAddContent, onEditContent }) {
+function AreaModal({ area, contents, user, refresh, onClose, onAddContent, onEditContent, onOpenContent }) {
   const [selectedType, setSelectedType] = useState(area.types[0]);
 
   const areaContents = contents.filter((content) => contentBelongsToArea(content, area));
@@ -509,14 +577,23 @@ function AreaModal({ area, contents, user, refresh, onClose, onAddContent, onEdi
             <p className="mt-2 text-muted">Use o botao acima para cadastrar o primeiro item.</p>
           </div>
         ) : (
-          visibleContents.map((content) => <ContentCard key={content.id} content={content} user={user} refresh={refresh} onEdit={onEditContent} />)
+          visibleContents.map((content) => (
+            <ContentCard
+              key={content.id}
+              content={content}
+              user={user}
+              refresh={refresh}
+              onEdit={onEditContent}
+              onOpen={onOpenContent}
+            />
+          ))
         )}
       </div>
     </Modal>
   );
 }
 
-function PendingApprovals({ contents, refresh, onEdit }) {
+function PendingApprovals({ contents, refresh, onEdit, onOpen }) {
   const pending = contents.filter((content) => !content.published);
   if (pending.length === 0) return null;
 
@@ -545,6 +622,7 @@ function PendingApprovals({ contents, refresh, onEdit }) {
               <p className="mt-1 text-sm text-muted">Enviado por {content.createdBy?.name || "usuario do LACE"} - Pesquisador(a): <strong className="text-text">{content.researcherName}</strong></p>
             </div>
             <div className="flex flex-wrap gap-2">
+              <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => onOpen(content)}>Abrir pagina</Button>
               <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => onEdit(content)}><Pencil className="inline" size={15} /> Editar</Button>
               <Button className="px-3 py-2 text-sm" type="button" onClick={() => approve(content)}><CheckCircle2 className="inline" size={15} /> Publicar</Button>
             </div>
@@ -560,10 +638,11 @@ function EditorialDashboard({ user, contents, refresh }) {
   const [activeArea, setActiveArea] = useState(null);
   const [addDefaults, setAddDefaults] = useState(null);
   const [editingContent, setEditingContent] = useState(null);
+  const [previewContent, setPreviewContent] = useState(null);
 
   return (
     <>
-      {user.role === "COORDINATOR" && <PendingApprovals contents={contents} refresh={refresh} onEdit={setEditingContent} />}
+      {user.role === "COORDINATOR" && <PendingApprovals contents={contents} refresh={refresh} onEdit={setEditingContent} onOpen={setPreviewContent} />}
 
       <section className="rounded-3xl border border-border bg-card p-6 md:p-9">
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
@@ -608,6 +687,7 @@ function EditorialDashboard({ user, contents, refresh }) {
           onClose={() => setActiveArea(null)}
           onAddContent={(areaValue, typeValue) => setAddDefaults(createInitialForm(areaValue, typeValue))}
           onEditContent={setEditingContent}
+          onOpenContent={setPreviewContent}
         />
       )}
 
@@ -630,6 +710,18 @@ function EditorialDashboard({ user, contents, refresh }) {
             onClose={() => setEditingContent(null)}
           />
         </Modal>
+      )}
+
+      {previewContent && (
+        <ContentPreviewModal
+          content={previewContent}
+          user={user}
+          onClose={() => setPreviewContent(null)}
+          onEdit={(content) => {
+            setPreviewContent(null);
+            setEditingContent(content);
+          }}
+        />
       )}
     </>
   );
