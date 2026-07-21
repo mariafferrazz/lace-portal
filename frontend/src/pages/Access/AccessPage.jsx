@@ -993,23 +993,36 @@ export default function AccessPage() {
   const [user, setUser] = useState(null);
   const [contents, setContents] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
+  const [dashboardError, setDashboardError] = useState("");
   const [checking, setChecking] = useState(true);
 
   const loadContents = useCallback(async () => {
-    const { data } = await api.get("/contents/manage");
-    setContents(data.contents);
+    try {
+      setDashboardError("");
+      const { data } = await api.get("/contents/manage");
+      setContents(data.contents || []);
+    } catch (error) {
+      setDashboardError(apiError(error));
+      const { data } = await api.get("/contents");
+      setContents(data.contents || []);
+    }
   }, []);
 
   const loadTeamMembers = useCallback(async () => {
-    const { data } = await api.get("/team");
-    setTeamMembers(data.members || []);
+    try {
+      const { data } = await api.get("/team");
+      setTeamMembers(data.members || []);
+    } catch {
+      setTeamMembers([]);
+    }
   }, []);
 
   useEffect(() => {
     api.get("/auth/me")
       .then(async ({ data }) => {
         setUser(data.user);
-        await Promise.all([loadContents(), loadTeamMembers()]);
+        await loadContents();
+        await loadTeamMembers();
       })
       .catch(() => setUser(null))
       .finally(() => setChecking(false));
@@ -1017,10 +1030,8 @@ export default function AccessPage() {
 
   function handleLogin(authenticatedUser) {
     setUser(authenticatedUser);
-    Promise.all([loadContents(), loadTeamMembers()]).catch(() => {
-      setContents([]);
-      setTeamMembers([]);
-    });
+    loadContents();
+    loadTeamMembers();
   }
 
   async function logout() {
@@ -1040,6 +1051,11 @@ export default function AccessPage() {
             <div><p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">Painel LACE</p><h1 className="mt-2 font-title text-4xl md:text-5xl">Ola, {user.name}</h1><p className="mt-2 text-muted">{user.role === "COORDINATOR" ? "Acesso de coordenacao" : "Acesso de pesquisadores e estudantes"}</p></div>
             <Button variant="dark" type="button" onClick={logout}><LogOut className="inline" size={17} /> Sair</Button>
           </header>
+          {dashboardError && (
+            <p className="mb-6 rounded-2xl border border-primary/40 bg-primary/10 p-4 text-sm font-semibold text-primary" role="status">
+              A rota administrativa nao respondeu agora. Mostrando o acervo publicado enquanto o backend atualiza.
+            </p>
+          )}
           <EditorialDashboard user={user} contents={contents} refresh={loadContents} teamMembers={teamMembers} />
         </>}
       </Container>
