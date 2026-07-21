@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ExternalLink } from "lucide-react";
 
 const slugify = (value) =>
   value
@@ -21,7 +21,7 @@ const contributionTypeLabels = {
   EVENT: "Evento",
 };
 
-export default function TeamCard({ name, role, bio, contributions = [] }) {
+export default function TeamCard({ name, role, bio, profileUrl, contributions = [] }) {
   const [open, setOpen] = useState(false);
   const contentId = useId();
 
@@ -44,6 +44,16 @@ export default function TeamCard({ name, role, bio, contributions = [] }) {
       {open && (
         <div id={contentId} className="overflow-hidden">
           <p className="mt-6 border-t border-border pt-5 leading-7 text-muted">{bio}</p>
+          {profileUrl && (
+            <a
+              className="mt-5 inline-flex items-center gap-2 rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              href={profileUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Currículo / perfil <ExternalLink size={16} aria-hidden="true" />
+            </a>
+          )}
           {contributions.length > 0 && (
             <section className="mt-6 border-t border-border pt-5">
               <h4 className="font-title text-2xl text-text">Contribuições</h4>

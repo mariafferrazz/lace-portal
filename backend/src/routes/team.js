@@ -45,6 +45,7 @@ router.get("/", async (_req, res) => {
       name: member.name,
       role: member.role,
       bio: member.bio,
+      profileUrl: member.profileUrl,
       group: member.group,
       contributions: contributions.map((content) => ({
         id: content.id,

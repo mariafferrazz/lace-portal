@@ -38,12 +38,21 @@ async function main() {
   console.log("Contas iniciais configuradas.");
 
   let teamCount = 0;
+  const teamSeedNames = teamSeeds.map((member) => member.name);
+
+  await prisma.teamMember.deleteMany({
+    where: {
+      name: { notIn: teamSeedNames },
+    },
+  });
+
   for (const member of teamSeeds) {
     await prisma.teamMember.upsert({
       where: { name: member.name },
       update: {
         role: member.role,
         bio: member.bio,
+        profileUrl: member.profileUrl || null,
         group: member.group,
         sortOrder: member.sortOrder,
         active: true,
@@ -52,6 +61,7 @@ async function main() {
         name: member.name,
         role: member.role,
         bio: member.bio,
+        profileUrl: member.profileUrl || null,
         group: member.group,
         sortOrder: member.sortOrder,
       },

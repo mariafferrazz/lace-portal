@@ -42,6 +42,7 @@ model TeamMember {
   name      String    @unique
   role      String
   bio       String    @db.Text
+  profileUrl String?  @db.Text
   group     String
   sortOrder Int       @default(0)
   active    Boolean   @default(true)
