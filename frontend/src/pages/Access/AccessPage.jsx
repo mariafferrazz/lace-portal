@@ -44,7 +44,9 @@ const emptySession = {
   title: "",
   direction: "",
   sessionUrl: "",
+  sessionUrls: [""],
   archiveFilmUrl: "",
+  archiveFilmUrls: [""],
 };
 
 const initialForm = {
@@ -56,15 +58,27 @@ const initialForm = {
   description: "",
   externalUrl: "",
   fileUrl: "",
+  fileUrls: [""],
   imageUrl: "",
+  imageUrls: [""],
   showNumber: "",
   eventYear: "",
   playlistUrl: "",
+  playlistUrls: [""],
   sessions: [{ ...emptySession }],
 };
 
 const fieldClass = "mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-text outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20";
 const maxEmbeddedImageSize = 2 * 1024 * 1024;
+
+const cleanUrlList = (urls) => urls.map((url) => url.trim()).filter(Boolean);
+
+const ensureUrlList = (...values) => {
+  const urls = values.flat().filter(Boolean);
+  return urls.length ? urls : [""];
+};
+
+const uniqueUrls = (...values) => [...new Set(cleanUrlList(values.flat().filter(Boolean)))];
 
 function createInitialForm(areaValue = "CINEMA_DITADURA", typeValue) {
   const area = contentAreas.find((item) => item.value === areaValue) || contentAreas[0];
@@ -91,12 +105,20 @@ function formFromContent(content) {
     description: content.description || "",
     externalUrl: content.externalUrl || "",
     fileUrl: content.fileUrl || "",
+    fileUrls: ensureUrlList(metadata.fileUrls, content.fileUrl || content.externalUrl),
     imageUrl: metadata.imageUrl || "",
+    imageUrls: ensureUrlList(metadata.imageUrls, metadata.imageUrl),
     showNumber: metadata.showNumber || "",
     eventYear: metadata.eventYear || metadata.showYear || metadata.year || "",
     playlistUrl: metadata.playlistUrl || content.externalUrl || "",
+    playlistUrls: ensureUrlList(metadata.playlistUrls, metadata.playlistUrl || content.externalUrl),
     sessions: Array.isArray(metadata.sessions) && metadata.sessions.length
-      ? metadata.sessions.map((session) => ({ ...emptySession, ...session }))
+      ? metadata.sessions.map((session) => ({
+        ...emptySession,
+        ...session,
+        sessionUrls: ensureUrlList(session.sessionUrls, session.sessionUrl),
+        archiveFilmUrls: ensureUrlList(session.archiveFilmUrls, session.archiveFilmUrl),
+      }))
       : [{ ...emptySession }],
   };
 }
@@ -154,7 +176,26 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
   }
 
   function updateImageUrl(value) {
-    setForm((current) => ({ ...current, imageUrl: value }));
+    setForm((current) => ({ ...current, imageUrl: value, imageUrls: ensureUrlList(value, current.imageUrls.slice(1)) }));
+  }
+
+  function updateUrlList(field, index, value) {
+    setForm((current) => {
+      const urls = [...current[field]];
+      urls[index] = value;
+      return { ...current, [field]: urls, [field.replace(/s$/, "")]: urls[0] || "" };
+    });
+  }
+
+  function addUrl(field) {
+    setForm((current) => ({ ...current, [field]: [...current[field], ""] }));
+  }
+
+  function removeUrl(field, index) {
+    setForm((current) => {
+      const urls = current[field].length === 1 ? [""] : current[field].filter((_, urlIndex) => urlIndex !== index);
+      return { ...current, [field]: urls, [field.replace(/s$/, "")]: urls[0] || "" };
+    });
   }
 
   function updateImageFile(file) {
@@ -216,6 +257,38 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
     }));
   }
 
+  function updateSessionUrlList(sessionIndex, field, urlIndex, value) {
+    setForm((current) => ({
+      ...current,
+      sessions: current.sessions.map((session, index) => {
+        if (index !== sessionIndex) return session;
+        const urls = [...session[field]];
+        urls[urlIndex] = value;
+        return { ...session, [field]: urls, [field.replace(/s$/, "")]: urls[0] || "" };
+      }),
+    }));
+  }
+
+  function addSessionUrl(sessionIndex, field) {
+    setForm((current) => ({
+      ...current,
+      sessions: current.sessions.map((session, index) =>
+        index === sessionIndex ? { ...session, [field]: [...session[field], ""] } : session,
+      ),
+    }));
+  }
+
+  function removeSessionUrl(sessionIndex, field, urlIndex) {
+    setForm((current) => ({
+      ...current,
+      sessions: current.sessions.map((session, index) => {
+        if (index !== sessionIndex) return session;
+        const urls = session[field].length === 1 ? [""] : session[field].filter((_, indexToRemove) => indexToRemove !== urlIndex);
+        return { ...session, [field]: urls, [field.replace(/s$/, "")]: urls[0] || "" };
+      }),
+    }));
+  }
+
   function addSession() {
     setForm((current) => ({ ...current, sessions: [...current.sessions, { ...emptySession }] }));
   }
@@ -230,6 +303,9 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
   }
 
   function buildPayload() {
+    const fileUrls = cleanUrlList(form.fileUrls);
+    const imageUrls = cleanUrlList(form.imageUrls);
+    const playlistUrls = cleanUrlList(form.playlistUrls);
     const metadata = {
       editorialArea: form.area,
     };
@@ -241,20 +317,26 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
       metadata.showNumber = form.showNumber.trim();
       metadata.showSlug = showSlug(form.showNumber);
       metadata.eventYear = form.eventYear.trim();
-      metadata.imageUrl = form.imageUrl.trim() || null;
-      metadata.playlistUrl = form.playlistUrl.trim() || null;
+      metadata.imageUrl = imageUrls[0] || null;
+      metadata.imageUrls = imageUrls;
+      metadata.playlistUrl = playlistUrls[0] || null;
+      metadata.playlistUrls = playlistUrls;
       metadata.sessions = form.sessions
         .map((session) => ({
           date: session.date.trim(),
           title: session.title.trim(),
           direction: session.direction.trim() || null,
-          sessionUrl: session.sessionUrl.trim() || null,
-          archiveFilmUrl: session.archiveFilmUrl.trim() || null,
+          sessionUrl: cleanUrlList(session.sessionUrls)[0] || null,
+          sessionUrls: cleanUrlList(session.sessionUrls),
+          archiveFilmUrl: cleanUrlList(session.archiveFilmUrls)[0] || null,
+          archiveFilmUrls: cleanUrlList(session.archiveFilmUrls),
         }))
         .filter((session) => session.date || session.title || session.sessionUrl || session.archiveFilmUrl);
     } else {
       if (isEvent) metadata.eventYear = form.eventYear.trim();
-      metadata.imageUrl = form.imageUrl.trim() || null;
+      metadata.imageUrl = imageUrls[0] || null;
+      metadata.imageUrls = imageUrls;
+      metadata.fileUrls = fileUrls;
     }
 
     return {
@@ -263,8 +345,8 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
       researcherMemberId: form.researcherMemberId && !form.researcherMemberId.startsWith("name:") ? form.researcherMemberId : null,
       type: form.type,
       description: form.description,
-      externalUrl: isCinemaShow ? form.playlistUrl : form.fileUrl,
-      fileUrl: form.fileUrl,
+      externalUrl: isCinemaShow ? playlistUrls[0] || "" : fileUrls[0] || "",
+      fileUrl: fileUrls[0] || "",
       metadata,
     };
   }
@@ -326,11 +408,16 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
           <CinemaShowFields
             form={form}
             update={update}
-            updateImageUrl={updateImageUrl}
             updateImageFile={updateImageFile}
             updateSession={updateSession}
+            updateSessionUrlList={updateSessionUrlList}
+            addSessionUrl={addSessionUrl}
+            removeSessionUrl={removeSessionUrl}
             addSession={addSession}
             removeSession={removeSession}
+            updateUrlList={updateUrlList}
+            addUrl={addUrl}
+            removeUrl={removeUrl}
           />
         ) : (
           <>
@@ -340,15 +427,21 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
                 <input className={fieldClass} required inputMode="numeric" maxLength={4} placeholder="2026" value={form.eventYear} onChange={update("eventYear")} />
               </label>
             )}
-            <label className="font-semibold md:col-span-2">
-              {isEvent ? "URL do evento" : "URL do conteudo, arquivo ou midia"}
-              <input className={fieldClass} type="url" placeholder="https://..." value={form.fileUrl} onChange={update("fileUrl")} />
-            </label>
+            <MultiUrlField
+              className="md:col-span-2"
+              label={isEvent ? "URL do evento" : "URL do conteudo, arquivo ou midia"}
+              values={form.fileUrls}
+              onChange={(index, value) => updateUrlList("fileUrls", index, value)}
+              onAdd={() => addUrl("fileUrls")}
+              onRemove={(index) => removeUrl("fileUrls", index)}
+            />
             <ImageSourceField
               className="md:col-span-2"
               label="Imagem"
-              value={form.imageUrl}
-              onUrlChange={updateImageUrl}
+              values={form.imageUrls}
+              onUrlChange={(index, value) => updateUrlList("imageUrls", index, value)}
+              onUrlAdd={() => addUrl("imageUrls")}
+              onUrlRemove={(index) => removeUrl("imageUrls", index)}
               onFileChange={updateImageFile}
             />
           </>
@@ -364,21 +457,55 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
   );
 }
 
-function ImageSourceField({ label, value, onUrlChange, onFileChange, className = "" }) {
-  const hasEmbeddedImage = value?.startsWith("data:image/");
+function MultiUrlField({ label, values, onChange, onAdd, onRemove, className = "", inputType = "url" }) {
+  return (
+    <div className={`font-semibold ${className}`}>
+      <div className="flex items-center justify-between gap-3">
+        <span>{label}</span>
+        <button
+          type="button"
+          className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-primary/60 px-3 py-1 text-xs font-bold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary"
+          onClick={onAdd}
+        >
+          <Plus size={14} aria-hidden="true" /> URL
+        </button>
+      </div>
+      <div className="mt-2 space-y-2">
+        {values.map((value, index) => (
+          <div key={index} className="flex gap-2">
+            <input
+              className={fieldClass}
+              type={value?.startsWith("data:image/") ? "text" : inputType}
+              placeholder="https://..."
+              value={value}
+              onChange={(event) => onChange(index, event.target.value)}
+            />
+            <button
+              type="button"
+              className="mt-2 grid size-12 shrink-0 cursor-pointer place-items-center rounded-xl border border-red-500/40 text-red-700 transition hover:border-red-500 hover:bg-red-600 hover:text-white dark:text-red-300"
+              onClick={() => onRemove(index)}
+              aria-label={`Remover URL ${index + 1}`}
+            >
+              <X size={16} aria-hidden="true" />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ImageSourceField({ label, values, onUrlChange, onUrlAdd, onUrlRemove, onFileChange, className = "" }) {
 
   return (
     <div className={`font-semibold ${className}`}>
-      <label>
-        {label} por URL
-        <input
-          className={fieldClass}
-          type={hasEmbeddedImage ? "text" : "url"}
-          placeholder="https://..."
-          value={value}
-          onChange={(event) => onUrlChange(event.target.value)}
-        />
-      </label>
+      <MultiUrlField
+        label={`${label} por URL`}
+        values={values}
+        onChange={onUrlChange}
+        onAdd={onUrlAdd}
+        onRemove={onUrlRemove}
+      />
 
       <label className="mt-3 block">
         Ou selecionar imagem do PC
@@ -402,7 +529,20 @@ function ImageSourceField({ label, value, onUrlChange, onFileChange, className =
   );
 }
 
-function CinemaShowFields({ form, update, updateImageUrl, updateImageFile, updateSession, addSession, removeSession }) {
+function CinemaShowFields({
+  form,
+  update,
+  updateImageFile,
+  updateSession,
+  updateSessionUrlList,
+  addSessionUrl,
+  removeSessionUrl,
+  addSession,
+  removeSession,
+  updateUrlList,
+  addUrl,
+  removeUrl,
+}) {
   return (
     <section className="md:col-span-2 rounded-2xl border border-primary/30 bg-primary/5 p-5">
       <div className="grid gap-5 md:grid-cols-2">
@@ -414,14 +554,19 @@ function CinemaShowFields({ form, update, updateImageUrl, updateImageFile, updat
           Ano da mostra *
           <input className={fieldClass} required inputMode="numeric" maxLength={4} placeholder="2026" value={form.eventYear} onChange={update("eventYear")} />
         </label>
-        <label className="font-semibold">
-          Link da playlist
-          <input className={fieldClass} type="url" placeholder="https://youtube.com/playlist?list=..." value={form.playlistUrl} onChange={update("playlistUrl")} />
-        </label>
+        <MultiUrlField
+          label="Link da playlist"
+          values={form.playlistUrls}
+          onChange={(index, value) => updateUrlList("playlistUrls", index, value)}
+          onAdd={() => addUrl("playlistUrls")}
+          onRemove={(index) => removeUrl("playlistUrls", index)}
+        />
         <ImageSourceField
           label="Imagem da mostra"
-          value={form.imageUrl}
-          onUrlChange={updateImageUrl}
+          values={form.imageUrls}
+          onUrlChange={(index, value) => updateUrlList("imageUrls", index, value)}
+          onUrlAdd={() => addUrl("imageUrls")}
+          onUrlRemove={(index) => removeUrl("imageUrls", index)}
           onFileChange={updateImageFile}
         />
       </div>
@@ -452,8 +597,22 @@ function CinemaShowFields({ form, update, updateImageUrl, updateImageFile, updat
               <label className="font-semibold">Data<input className={fieldClass} placeholder="20/09/2026" value={session.date} onChange={(event) => updateSession(index, "date", event.target.value)} /></label>
               <label className="font-semibold">Titulo do filme/sessao<input className={fieldClass} value={session.title} onChange={(event) => updateSession(index, "title", event.target.value)} /></label>
               <label className="font-semibold md:col-span-2">Direcao/debate<input className={fieldClass} value={session.direction} onChange={(event) => updateSession(index, "direction", event.target.value)} /></label>
-              <label className="font-semibold md:col-span-2">Link da sessao<input className={fieldClass} type="url" placeholder="https://..." value={session.sessionUrl} onChange={(event) => updateSession(index, "sessionUrl", event.target.value)} /></label>
-              <label className="font-semibold md:col-span-2">URL do filme para o acervo<input className={fieldClass} type="url" placeholder="https://..." value={session.archiveFilmUrl} onChange={(event) => updateSession(index, "archiveFilmUrl", event.target.value)} /></label>
+              <MultiUrlField
+                className="md:col-span-2"
+                label="Link da sessao"
+                values={session.sessionUrls}
+                onChange={(urlIndex, value) => updateSessionUrlList(index, "sessionUrls", urlIndex, value)}
+                onAdd={() => addSessionUrl(index, "sessionUrls")}
+                onRemove={(urlIndex) => removeSessionUrl(index, "sessionUrls", urlIndex)}
+              />
+              <MultiUrlField
+                className="md:col-span-2"
+                label="URL do filme para o acervo"
+                values={session.archiveFilmUrls}
+                onChange={(urlIndex, value) => updateSessionUrlList(index, "archiveFilmUrls", urlIndex, value)}
+                onAdd={() => addSessionUrl(index, "archiveFilmUrls")}
+                onRemove={(urlIndex) => removeSessionUrl(index, "archiveFilmUrls", urlIndex)}
+              />
             </div>
           </article>
         ))}
@@ -507,8 +666,10 @@ function contentBelongsToArea(content, area) {
 function ContentPreviewModal({ content, onClose, onEdit, user }) {
   const isCoordinator = user.role === "COORDINATOR";
   const sessions = Array.isArray(content.metadata?.sessions) ? content.metadata.sessions : [];
-  const imageUrl = content.metadata?.imageUrl;
-  const hasDifferentFileUrl = content.fileUrl && content.fileUrl !== content.externalUrl;
+  const fileUrls = uniqueUrls(content.metadata?.fileUrls, content.fileUrl, content.externalUrl);
+  const playlistUrls = uniqueUrls(content.metadata?.playlistUrls, content.metadata?.playlistUrl);
+  const imageUrls = uniqueUrls(content.metadata?.imageUrls, content.metadata?.imageUrl);
+  const imageUrl = imageUrls[0];
 
   return (
     <Modal onClose={onClose} size="max-w-5xl">
@@ -535,14 +696,13 @@ function ContentPreviewModal({ content, onClose, onEdit, user }) {
         </section>
       )}
 
-      {(content.externalUrl || hasDifferentFileUrl || content.metadata?.playlistUrl || imageUrl) && (
+      {(fileUrls.length > 0 || playlistUrls.length > 0 || imageUrls.length > 0) && (
         <section className="mt-6 rounded-2xl border border-border bg-card p-5">
           <h3 className="font-title text-2xl">Links publicos</h3>
           <div className="mt-4 flex flex-wrap gap-3">
-            {content.externalUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={content.externalUrl} target="_blank" rel="noreferrer">Abrir link externo</a>}
-            {hasDifferentFileUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={content.fileUrl} target="_blank" rel="noreferrer">Abrir arquivo ou midia</a>}
-            {content.metadata?.playlistUrl && content.metadata.playlistUrl !== content.externalUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={content.metadata.playlistUrl} target="_blank" rel="noreferrer">Abrir playlist</a>}
-            {imageUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={imageUrl} target="_blank" rel="noreferrer">Abrir imagem</a>}
+            {fileUrls.map((url, index) => <a key={`file-${url}`} className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={url} target="_blank" rel="noreferrer">Abrir URL {fileUrls.length > 1 ? index + 1 : ""}</a>)}
+            {playlistUrls.map((url, index) => <a key={`playlist-${url}`} className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={url} target="_blank" rel="noreferrer">Abrir playlist {playlistUrls.length > 1 ? index + 1 : ""}</a>)}
+            {imageUrls.map((url, index) => <a key={`image-${url}`} className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={url} target="_blank" rel="noreferrer">Abrir imagem {imageUrls.length > 1 ? index + 1 : ""}</a>)}
           </div>
         </section>
       )}
@@ -560,8 +720,8 @@ function ContentPreviewModal({ content, onClose, onEdit, user }) {
                 <h4 className="mt-1 font-title text-2xl">{session.title || "Sem titulo"}</h4>
                 <p className="mt-2 text-sm text-muted">{session.date || "Sem data"}{session.direction ? ` - ${session.direction}` : ""}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {session.sessionUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={session.sessionUrl} target="_blank" rel="noreferrer">Abrir sessao</a>}
-                  {session.archiveFilmUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={session.archiveFilmUrl} target="_blank" rel="noreferrer">Abrir filme no acervo</a>}
+                  {uniqueUrls(session.sessionUrls, session.sessionUrl).map((url, urlIndex) => <a key={`session-${url}`} className="cursor-pointer rounded-xl border border-primary/60 px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={url} target="_blank" rel="noreferrer">Abrir sessao {urlIndex + 1}</a>)}
+                  {uniqueUrls(session.archiveFilmUrls, session.archiveFilmUrl).map((url, urlIndex) => <a key={`archive-${url}`} className="cursor-pointer rounded-xl border border-primary/60 px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={url} target="_blank" rel="noreferrer">Abrir filme no acervo {urlIndex + 1}</a>)}
                 </div>
               </article>
             ))}
