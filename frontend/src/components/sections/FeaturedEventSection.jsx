@@ -44,6 +44,44 @@ const highlights = [
       "Agenda de pesquisas comum realizada na Universidade Federal Fluminense, no Campus Gragoatá, em Niterói.",
     to: "/eventos/2023",
   },
+  {
+    image: "https://i.ytimg.com/vi/dsOuU9aKEl8/hqdefault.jpg",
+    imageAlt: "V Mostra Cinema e Ditadura",
+    year: "2023",
+    title: "V MOSTRA CINEMA E DITADURA",
+    description:
+      "Mostra dedicada a filmes e debates sobre memória, gênero, raça, repressão e resistência durante a ditadura empresarial-militar.",
+    to: "/cinema-e-ditadura/v-mostra",
+  },
+  {
+    image:
+      "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000159-cdc6ccdc6e/700/Podcasting.webp?ph=3554c7d1fd",
+    imageAlt: "No Convés da Repressão e Resistência - O podcast do LACE",
+    year: "2022",
+    title: "NO CONVÉS DA REPRESSÃO E RESISTÊNCIA",
+    description:
+      "Podcast do LACE dedicado à memória, à repressão e à resistência dos operários navais durante a ditadura empresarial-militar.",
+    to: "/producao-audiovisual/podcasts",
+  },
+  {
+    image: "https://i.ytimg.com/vi/iuRlQ17bDbM/hqdefault.jpg",
+    imageAlt: "IV Mostra Cinema e Ditadura",
+    year: "2022",
+    title: "IV MOSTRA CINEMA E DITADURA",
+    description:
+      "Programação dedicada a filmes, debates e reflexões sobre memória, violência de Estado e direitos humanos.",
+    to: "/cinema-e-ditadura/iv-mostra",
+  },
+  {
+    image:
+      "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000026-7a51b7a51d/Evento%20III%20Cine%201.jpg?ph=3554c7d1fd",
+    imageAlt: "III Mostra Virtual Cinema e Ditadura",
+    year: "2021",
+    title: "III MOSTRA VIRTUAL CINEMA E DITADURA",
+    description:
+      "Mostra virtual com debates e reflexões sobre temas historicamente ligados à ditadura militar brasileira.",
+    to: "/cinema-e-ditadura/iii-mostra",
+  },
 ];
 
 export default function FeaturedEventSection() {
