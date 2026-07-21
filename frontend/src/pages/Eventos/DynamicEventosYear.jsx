@@ -5,15 +5,18 @@ import { CalendarDays, ExternalLink, Images, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import SocialShare from "../../components/ui/SocialShare";
 import api from "../../services/api";
+import { contentFileUrls, contentImage, contentImageUrls, contentPlaylistUrls, sessionArchiveUrls, sessionWatchUrls } from "../../utils/contentMetadata";
 import { eventYear, showPath } from "../../utils/contentRoutes";
 
+const fallbackImage = "https://i.ytimg.com/vi/iuRlQ17bDbM/hqdefault.jpg";
+
 function eventImage(content) {
-  return content.metadata?.thumbnail || content.metadata?.imageUrl || "https://i.ytimg.com/vi/iuRlQ17bDbM/hqdefault.jpg";
+  return contentImage(content, fallbackImage);
 }
 
 function eventLink(content) {
   if (content.type === "CINEMA_SHOW") return showPath(content);
-  return content.externalUrl || content.fileUrl || "";
+  return contentFileUrls(content)[0] || "";
 }
 
 export default function DynamicEventosYear() {
@@ -93,8 +96,8 @@ export default function DynamicEventosYear() {
         ) : (
           <div className="mt-14 rounded-3xl border border-dashed border-border bg-card/60 p-8 md:p-12">
             <CalendarDays className="text-primary" aria-hidden="true" />
-            <h2 className="mt-5 font-title text-4xl">Eventos em organização</h2>
-            <p className="mt-4 max-w-2xl leading-8 text-muted">Ainda não há conteúdos publicados para {year}.</p>
+            <h2 className="mt-5 font-title text-4xl">Eventos em organizacao</h2>
+            <p className="mt-4 max-w-2xl leading-8 text-muted">Ainda nao ha conteudos publicados para {year}.</p>
           </div>
         )}
       </Container>
@@ -107,6 +110,10 @@ export default function DynamicEventosYear() {
 function EventModal({ content, onClose }) {
   const link = eventLink(content);
   const sessions = Array.isArray(content.metadata?.sessions) ? content.metadata.sessions : [];
+  const imageUrls = contentImageUrls(content);
+  const fileUrls = contentFileUrls(content);
+  const playlistUrls = contentPlaylistUrls(content);
+  const displayImage = imageUrls[0] || eventImage(content);
 
   return createPortal(
     <div
@@ -129,38 +136,83 @@ function EventModal({ content, onClose }) {
         </button>
 
         <section className="grid gap-8 pr-0 lg:grid-cols-[0.9fr_1.1fr] lg:pr-8">
-          <img className="max-h-[620px] w-full rounded-2xl border border-border object-contain" src={eventImage(content)} alt={content.title} decoding="async" />
+          <div className="space-y-4">
+            <img className="max-h-[620px] w-full rounded-2xl border border-border object-contain" src={displayImage} alt={content.title} decoding="async" />
+            {imageUrls.length > 1 && (
+              <div className="grid grid-cols-3 gap-3">
+                {imageUrls.slice(1).map((imageUrl) => (
+                  <a key={imageUrl} href={imageUrl} target="_blank" rel="noreferrer" className="block overflow-hidden rounded-xl border border-border transition hover:border-primary">
+                    <img className="aspect-square w-full object-cover" src={imageUrl} alt="" loading="lazy" decoding="async" />
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">{eventYear(content)}</p>
             <h2 id="dynamic-event-title" className="mt-3 pr-10 font-title text-4xl md:text-5xl">{content.title}</h2>
             {content.description && <p className="mt-5 whitespace-pre-line leading-8 text-muted">{content.description}</p>}
 
-            {sessions.length > 0 && (
-              <section className="mt-8">
-                <h3 className="font-title text-3xl">Sessões</h3>
-                <div className="mt-4 grid gap-3">
-                  {sessions.map((session, index) => (
-                    <article key={`${session.date}-${session.title}-${index}`} className="rounded-2xl border border-border bg-card p-4">
-                      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">{session.date || "Data a confirmar"}</p>
-                      <h4 className="mt-2 font-title text-2xl">{session.title || `Sessão ${index + 1}`}</h4>
-                      {session.direction && <p className="mt-2 text-sm leading-6 text-muted">{session.direction}</p>}
-                    </article>
+            {playlistUrls.length > 0 && (
+              <section className="mt-8 rounded-2xl border border-primary/40 bg-primary/10 p-5">
+                <h3 className="font-title text-3xl">Playlist</h3>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  {playlistUrls.map((url, index) => (
+                    <a key={url} className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={url} target="_blank" rel="noreferrer">
+                      Abrir playlist {playlistUrls.length > 1 ? index + 1 : ""} <ExternalLink size={16} aria-hidden="true" />
+                    </a>
                   ))}
                 </div>
               </section>
             )}
 
-            {link && (
+            {sessions.length > 0 && (
+              <section className="mt-8">
+                <h3 className="font-title text-3xl">Sessoes</h3>
+                <div className="mt-4 grid gap-3">
+                  {sessions.map((session, index) => {
+                    const sessionUrls = sessionWatchUrls(session);
+                    const archiveUrls = sessionArchiveUrls(session);
+
+                    return (
+                      <article key={`${session.date}-${session.title}-${index}`} className="rounded-2xl border border-border bg-card p-4">
+                        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">{session.date || "Data a confirmar"}</p>
+                        <h4 className="mt-2 font-title text-2xl">{session.title || `Sessao ${index + 1}`}</h4>
+                        {session.direction && <p className="mt-2 text-sm leading-6 text-muted">{session.direction}</p>}
+                        {(sessionUrls.length > 0 || archiveUrls.length > 0) && (
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {sessionUrls.map((url, urlIndex) => (
+                              <a key={url} className="inline-flex items-center gap-2 rounded-xl border border-primary px-3 py-2 text-sm font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={url} target="_blank" rel="noreferrer">
+                                Assistir sessao {sessionUrls.length > 1 ? urlIndex + 1 : ""} <ExternalLink size={14} aria-hidden="true" />
+                              </a>
+                            ))}
+                            {archiveUrls.map((url, urlIndex) => (
+                              <a key={url} className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2 text-sm font-semibold text-text transition hover:border-primary hover:text-primary" href={url} target="_blank" rel="noreferrer">
+                                Filme no acervo {archiveUrls.length > 1 ? urlIndex + 1 : ""} <ExternalLink size={14} aria-hidden="true" />
+                              </a>
+                            ))}
+                          </div>
+                        )}
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
+            {(link || fileUrls.length > 0) && (
               <div className="mt-8 flex flex-wrap gap-3">
                 {link.startsWith("/") ? (
                   <Link className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" to={link} onClick={onClose}>
-                    Abrir página <ExternalLink size={16} aria-hidden="true" />
+                    Abrir pagina <ExternalLink size={16} aria-hidden="true" />
                   </Link>
                 ) : (
-                  <a className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={link} target="_blank" rel="noreferrer">
-                    Abrir link <ExternalLink size={16} aria-hidden="true" />
-                  </a>
+                  fileUrls.map((url, index) => (
+                    <a key={url} className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={url} target="_blank" rel="noreferrer">
+                      Abrir link {fileUrls.length > 1 ? index + 1 : ""} <ExternalLink size={16} aria-hidden="true" />
+                    </a>
+                  ))
                 )}
               </div>
             )}

@@ -1,9 +1,11 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, ExternalLink, FileText, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import SocialShare from "../../components/ui/SocialShare";
+import api from "../../services/api";
+import { contentFileUrls } from "../../utils/contentMetadata";
 
 const authors = [
   {
@@ -229,13 +231,55 @@ function authorSlug(name) {
     .replace(/^-|-$/g, "");
 }
 
+function articleFromContent(content) {
+  return {
+    title: content.title,
+    url: contentFileUrls(content)[0] || content.externalUrl || content.fileUrl || "#",
+    note: content.metadata?.note || content.metadata?.authors || content.createdBy?.name,
+    summary: content.description,
+  };
+}
+
+function mergeDynamicAuthors(dynamicContents) {
+  const grouped = new Map(authors.map((author) => [author.name, { ...author, articles: [...author.articles] }]));
+
+  dynamicContents.forEach((content) => {
+    const name = content.metadata?.authorName || content.researcherName || "Equipe LACE";
+    const author = grouped.get(name) || { name, articles: [] };
+    const article = articleFromContent(content);
+    if (!author.articles.some((item) => item.title === article.title)) {
+      author.articles.push(article);
+    }
+    grouped.set(name, author);
+  });
+
+  return [...grouped.values()];
+}
+
 export default function Artigos() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [dynamicContents, setDynamicContents] = useState([]);
+  const allAuthors = useMemo(() => mergeDynamicAuthors(dynamicContents), [dynamicContents]);
   const activeAuthor = useMemo(() => {
     const hash = location.hash.replace("#", "");
-    return hash ? authors.find((item) => authorSlug(item.name) === hash) || null : null;
-  }, [location.hash]);
+    return hash ? allAuthors.find((item) => authorSlug(item.name) === hash) || null : null;
+  }, [allAuthors, location.hash]);
+
+  useEffect(() => {
+    let active = true;
+    api
+      .get("/contents", { params: { type: "ARTICLE" } })
+      .then(({ data }) => {
+        if (active) setDynamicContents(data.contents || []);
+      })
+      .catch(() => {
+        if (active) setDynamicContents([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function setAuthorAndHash(author) {
     navigate(`${location.pathname}${location.search}#${authorSlug(author.name)}`, { replace: true });
@@ -270,13 +314,13 @@ export default function Artigos() {
   function navigateAuthor(direction) {
     if (!activeAuthor) return;
 
-    const currentIndex = authors.findIndex((author) => author.name === activeAuthor.name);
+    const currentIndex = allAuthors.findIndex((author) => author.name === activeAuthor.name);
     const nextIndex =
       direction === "previous"
-        ? (currentIndex - 1 + authors.length) % authors.length
-        : (currentIndex + 1) % authors.length;
+        ? (currentIndex - 1 + allAuthors.length) % allAuthors.length
+        : (currentIndex + 1) % allAuthors.length;
 
-    setAuthorAndHash(authors[nextIndex]);
+    setAuthorAndHash(allAuthors[nextIndex]);
   }
 
   return (
@@ -291,7 +335,7 @@ export default function Artigos() {
         </header>
 
         <section className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Autoras e autores">
-          {authors.map((author) => (
+          {allAuthors.map((author) => (
             <button
               key={author.name}
               className="group inline-flex min-h-20 w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border border-border bg-card px-5 py-4 text-left font-semibold text-text transition hover:border-primary hover:bg-primary-fill hover:text-on-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
@@ -308,8 +352,8 @@ export default function Artigos() {
       {activeAuthor && (
         <AuthorModal
           author={activeAuthor}
-          authorPosition={authors.findIndex((item) => item.name === activeAuthor.name) + 1}
-          authorCount={authors.length}
+          authorPosition={allAuthors.findIndex((item) => item.name === activeAuthor.name) + 1}
+          authorCount={allAuthors.length}
           onClose={closeAuthor}
           onNavigate={navigateAuthor}
         />

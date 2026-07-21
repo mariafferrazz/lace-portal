@@ -6,6 +6,7 @@ import Button from "../ui/Button";
 import ContentCredit from "../ui/ContentCredit";
 import SocialShare from "../ui/SocialShare";
 import api from "../../services/api";
+import { contentFileUrls, contentImageUrls } from "../../utils/contentMetadata";
 
 function getSpotifyEmbedUrl(url) {
   const match = url?.match(/open\.spotify\.com\/episode\/([^?]+)/);
@@ -14,6 +15,8 @@ function getSpotifyEmbedUrl(url) {
 
 function mapContentToItem(content) {
   const youtubeId = content.metadata?.youtubeId;
+  const fileUrls = contentFileUrls(content);
+  const imageUrls = contentImageUrls(content);
 
   return {
     id: content.id,
@@ -21,8 +24,9 @@ function mapContentToItem(content) {
     description: content.description || "Conteúdo disponível no acervo do LACE.",
     meta: content.researcherName,
     submittedBy: content.createdBy?.name,
-    href: content.externalUrl || content.fileUrl,
-    thumbnail: content.metadata?.thumbnail || (youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : null),
+    href: fileUrls[0],
+    links: fileUrls,
+    thumbnail: imageUrls[0] || (youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : null),
     youtubeId,
     episodes: content.metadata?.episodes || [],
     episodeReferences: content.metadata?.episodeReferences || {},
@@ -32,7 +36,7 @@ function mapContentToItem(content) {
     platform: content.metadata?.platform,
     authorBio: content.metadata?.authorBio,
     researcherUrl: content.metadata?.researcherUrl || content.metadata?.researcherProfileUrl || content.metadata?.lattesUrl || content.metadata?.curriculumUrl || content.metadata?.linkedinUrl,
-    images: content.metadata?.images || (content.metadata?.thumbnail ? [content.metadata.thumbnail] : []),
+    images: imageUrls,
   };
 }
 

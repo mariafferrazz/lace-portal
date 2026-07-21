@@ -7,6 +7,7 @@ import ContentCredit from "../../components/ui/ContentCredit";
 import SocialShare from "../../components/ui/SocialShare";
 import api from "../../services/api";
 import { getStaticContents } from "../../data/staticContent";
+import { contentFileUrls } from "../../utils/contentMetadata";
 
 const alphabet = ["#", ..."ABCDEFGHIJKLMNOPQRSTUVZ".split("")];
 const initialLetter = (title) => {
@@ -88,6 +89,7 @@ function GlossaryModal({ entry, onClose, onPrevious, onNext, navigationEnabled }
   const [expanded, setExpanded] = useState(false);
   const text = entry.description || "Verbete em preparação.";
   const relatedFilms = entry.metadata?.relatedFilms || [];
+  const sourceUrls = [...new Set([entry.metadata?.sourceUrl, ...contentFileUrls(entry)].filter(Boolean))];
   useEffect(() => {
     const navigate = (event) => {
       if (!navigationEnabled) return;
@@ -106,7 +108,7 @@ function GlossaryModal({ entry, onClose, onPrevious, onNext, navigationEnabled }
     <article className="mx-auto max-w-5xl px-6 py-10 md:px-12 md:py-16"><p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">Verbete</p><h2 id="glossary-title" className="mt-3 font-title text-5xl md:text-7xl">{entry.title}</h2><ContentCredit content={entry} label="Autoria" className="mt-5" />
       <GlossaryText text={expanded ? text : limitWords(text, 180)} inlineImages={entry.metadata?.inlineImages} />
       {text.trim().split(/\s+/).length > 180 && <button className="mt-6 cursor-pointer rounded-xl border border-primary px-5 py-3 font-semibold text-primary hover:bg-primary-fill hover:text-on-primary" onClick={() => setExpanded((value) => !value)}>{expanded ? "Recolher texto" : "Expandir texto completo"}</button>}
-      {entry.metadata?.sourceUrl && <p className="mt-10"><a className="inline-flex items-center gap-2 font-semibold text-primary" href={entry.metadata.sourceUrl} target="_blank" rel="noreferrer">Consultar fonte <ExternalLink size={16} /></a></p>}
+      {sourceUrls.length > 0 && <div className="mt-10 flex flex-wrap gap-3">{sourceUrls.map((url, index) => <a key={url} className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={url} target="_blank" rel="noreferrer">Consultar fonte {sourceUrls.length > 1 ? index + 1 : ""}<ExternalLink size={16} /></a>)}</div>}
       {relatedFilms.length > 0 && <section className="mt-12 border-t border-border pt-8"><h3 className="font-title text-3xl">Filmes relacionados</h3><div className="mt-5 flex flex-wrap gap-3">{relatedFilms.map((film) => <Link key={film.id} className="rounded-xl border border-border bg-card px-4 py-3 font-semibold text-primary hover:border-primary" to={`/cinema-e-ditadura/filmes?filme=${film.id}`}>{film.title}</Link>)}</div></section>}
       {entry.metadata?.authorBio && <section className="mt-12 border-t border-border pt-8"><h3 className="font-title text-3xl">Sobre a autoria</h3><p className="mt-5 leading-7 text-muted"><strong className="text-text">{entry.researcherName}</strong> — {entry.metadata.authorBio}</p></section>}
       {entry.metadata?.references && <section className="mt-12 border-t border-border pt-8"><h3 className="font-title text-3xl">Referências bibliográficas</h3><div className="mt-5 whitespace-pre-line leading-7 text-muted">{entry.metadata.references}</div></section>}

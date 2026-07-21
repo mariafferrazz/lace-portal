@@ -665,6 +665,7 @@ function contentBelongsToArea(content, area) {
 
 function ContentPreviewModal({ content, onClose, onEdit, user }) {
   const isCoordinator = user.role === "COORDINATOR";
+  const canEdit = isCoordinator || content.createdBy?.id === user.id;
   const sessions = Array.isArray(content.metadata?.sessions) ? content.metadata.sessions : [];
   const fileUrls = uniqueUrls(content.metadata?.fileUrls, content.fileUrl, content.externalUrl);
   const playlistUrls = uniqueUrls(content.metadata?.playlistUrls, content.metadata?.playlistUrl);
@@ -729,7 +730,7 @@ function ContentPreviewModal({ content, onClose, onEdit, user }) {
         </section>
       )}
 
-      {isCoordinator && (
+      {canEdit && (
         <div className="mt-7">
           <Button variant="outline" type="button" onClick={() => onEdit(content)}><Pencil className="inline" size={16} /> Editar conteudo</Button>
         </div>
@@ -741,6 +742,7 @@ function ContentPreviewModal({ content, onClose, onEdit, user }) {
 function ContentCard({ content, user, refresh, onEdit, onOpen }) {
   const isCoordinator = user.role === "COORDINATOR";
   const isReadOnly = content.readOnly;
+  const canEdit = !isReadOnly && (isCoordinator || content.createdBy?.id === user.id);
 
   async function publish() {
     await api.patch(`/contents/${content.id}`, { published: !content.published });
@@ -774,7 +776,7 @@ function ContentCard({ content, user, refresh, onEdit, onOpen }) {
             {isReadOnly ? "No site" : content.published ? "Publicado" : "Em revisao"}
           </span>
           <button className="cursor-pointer rounded-xl border border-primary/60 px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" type="button" onClick={() => onOpen(content)}>Abrir pagina</button>
-          {isCoordinator && !isReadOnly && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => onEdit(content)}><Pencil className="inline" size={15} /> Editar</Button>}
+          {canEdit && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => onEdit(content)}><Pencil className="inline" size={15} /> Editar</Button>}
           {isCoordinator && !isReadOnly && !content.published && (
             <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={publish}>
               <CheckCircle2 className="inline" size={15} /> Publicar

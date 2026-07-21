@@ -1,9 +1,11 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, ExternalLink, FileText, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import SocialShare from "../../components/ui/SocialShare";
+import api from "../../services/api";
+import { contentFileUrls, contentImage } from "../../utils/contentMetadata";
 
 const aracruzResearchers = [
   {
@@ -93,13 +95,61 @@ const researches = [
   },
 ];
 
+function researchSlug(title) {
+  return title
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function researchFromContent(content) {
+  return {
+    title: content.title,
+    shortTitle: content.metadata?.shortTitle || content.title,
+    slug: researchSlug(content.title),
+    image: contentImage(content),
+    summary: content.description ? content.description.split(/\n{2,}/).filter(Boolean) : ["Pesquisa em organizacao."],
+    publicReportUrl: contentFileUrls(content)[0],
+  };
+}
+
+function mergeDynamicResearches(dynamicContents) {
+  const grouped = new Map(researches.map((research) => [research.slug, research]));
+
+  dynamicContents.forEach((content) => {
+    const research = researchFromContent(content);
+    if (!grouped.has(research.slug)) grouped.set(research.slug, research);
+  });
+
+  return [...grouped.values()];
+}
+
 export default function Pesquisas() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [dynamicContents, setDynamicContents] = useState([]);
+  const allResearches = useMemo(() => mergeDynamicResearches(dynamicContents), [dynamicContents]);
   const activeResearch = useMemo(() => {
     const hash = location.hash.replace("#", "");
-    return hash ? researches.find((item) => item.slug === hash) || null : null;
-  }, [location.hash]);
+    return hash ? allResearches.find((item) => item.slug === hash) || null : null;
+  }, [allResearches, location.hash]);
+
+  useEffect(() => {
+    let active = true;
+    api
+      .get("/contents", { params: { type: "RESEARCH" } })
+      .then(({ data }) => {
+        if (active) setDynamicContents(data.contents || []);
+      })
+      .catch(() => {
+        if (active) setDynamicContents([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function setResearchAndHash(research) {
     navigate(`${location.pathname}${location.search}#${research.slug}`, { replace: true });
@@ -112,13 +162,13 @@ export default function Pesquisas() {
   function navigateResearch(direction) {
     if (!activeResearch) return;
 
-    const currentIndex = researches.findIndex((research) => research.title === activeResearch.title);
+    const currentIndex = allResearches.findIndex((research) => research.title === activeResearch.title);
     const nextIndex =
       direction === "previous"
-        ? (currentIndex - 1 + researches.length) % researches.length
-        : (currentIndex + 1) % researches.length;
+        ? (currentIndex - 1 + allResearches.length) % allResearches.length
+        : (currentIndex + 1) % allResearches.length;
 
-    setResearchAndHash(researches[nextIndex]);
+    setResearchAndHash(allResearches[nextIndex]);
   }
 
   useEffect(() => {
@@ -151,7 +201,7 @@ export default function Pesquisas() {
         </header>
 
         <section className="mt-12 grid gap-4 sm:grid-cols-2" aria-label="Pesquisas">
-          {researches.map((research) => (
+          {allResearches.map((research) => (
             <button
               key={research.title}
               className="group inline-flex min-h-20 w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border border-border bg-card px-5 py-4 text-left font-semibold text-text transition hover:border-primary hover:bg-primary-fill hover:text-on-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
@@ -168,8 +218,8 @@ export default function Pesquisas() {
       {activeResearch && (
         <ResearchModal
           research={activeResearch}
-          researchPosition={researches.findIndex((item) => item.title === activeResearch.title) + 1}
-          researchCount={researches.length}
+          researchPosition={allResearches.findIndex((item) => item.title === activeResearch.title) + 1}
+          researchCount={allResearches.length}
           onClose={closeResearch}
           onNavigate={navigateResearch}
         />

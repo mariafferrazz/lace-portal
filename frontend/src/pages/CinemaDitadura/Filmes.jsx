@@ -6,6 +6,7 @@ import ContentCredit from "../../components/ui/ContentCredit";
 import SocialShare from "../../components/ui/SocialShare";
 import api from "../../services/api";
 import { getStaticContents } from "../../data/staticContent";
+import { contentFileUrls, contentImage } from "../../utils/contentMetadata";
 
 function limitWords(text, limit = 40) {
   const words = text.trim().split(/\s+/);
@@ -135,7 +136,7 @@ export default function Filmes() {
             {visibleFilms.map((film) => (
               <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-1 hover:border-primary" key={film.id}>
                 <button className="relative cursor-pointer text-left" type="button" onClick={() => setSelectedFilm(film)} aria-label={`Abrir ${film.title}`}>
-                  {film.metadata?.imageUrl ? <img className="aspect-video w-full object-cover" src={film.metadata.imageUrl} alt="" loading="lazy" decoding="async" /> : <div className="grid aspect-video place-items-center bg-surface"><Film className="text-primary" /></div>}
+                  {contentImage(film) ? <img className="aspect-video w-full object-cover" src={contentImage(film)} alt="" loading="lazy" decoding="async" /> : <div className="grid aspect-video place-items-center bg-surface"><Film className="text-primary" /></div>}
                   <span className="absolute inset-0 grid place-items-center bg-black/20 transition group-hover:bg-black/40"><span className="grid size-14 place-items-center rounded-full bg-primary-fill text-on-primary shadow-xl"><Play fill="currentColor" aria-hidden="true" /></span></span>
                 </button>
                 <div className="flex flex-1 flex-col p-6">
@@ -166,7 +167,8 @@ function FilmModal({ film, onClose, onPrevious, onNext, navigationEnabled }) {
   const embedUrl = videoId
     ? `https://www.youtube.com/embed/${videoId}?wmode=opaque&autoplay=1`
     : vimeoId ? `https://player.vimeo.com/video/${vimeoId}?autoplay=1` : null;
-  const previewImage = film.metadata?.imageUrl;
+  const previewImage = contentImage(film);
+  const filmLinks = contentFileUrls(film);
 
   useEffect(() => {
     const navigateWithKeyboard = (event) => {
@@ -223,7 +225,11 @@ function FilmModal({ film, onClose, onPrevious, onNext, navigationEnabled }) {
           </div>
           <div className="mt-6 whitespace-pre-line leading-8 text-muted">{film.description}</div>
           <ContentCredit content={film} label="Pesquisa" className="mt-6" />
-          {film.externalUrl && <a className="mt-6 inline-flex items-center gap-2 font-semibold text-primary" href={film.externalUrl} target="_blank" rel="noreferrer">Abrir no YouTube <ExternalLink size={16} aria-hidden="true" /></a>}
+          {filmLinks.map((url, index) => (
+            <a key={url} className="mr-6 mt-6 inline-flex items-center gap-2 font-semibold text-primary" href={url} target="_blank" rel="noreferrer">
+              Abrir filme {filmLinks.length > 1 ? index + 1 : ""} <ExternalLink size={16} aria-hidden="true" />
+            </a>
+          ))}
           {film.metadata?.website && <a className="ml-6 mt-6 inline-flex items-center gap-2 font-semibold text-primary" href={film.metadata.website} target="_blank" rel="noreferrer">Site do filme <ExternalLink size={16} aria-hidden="true" /></a>}
           <SocialShare title={film.title} url={`/cinema-e-ditadura/filmes?filme=${film.id}`} className="mt-8" />
         </div>

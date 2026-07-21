@@ -38,7 +38,7 @@ router.get("/", async (req, res) => {
   const contents = await prisma.content.findMany({
     where,
     include: {
-      createdBy: { select: { name: true, role: true } },
+      createdBy: { select: { id: true, name: true, role: true } },
       researcherMember: { select: { id: true, name: true, role: true } },
     },
     orderBy: { title: "asc" },
@@ -56,7 +56,7 @@ router.get("/manage", requireAuth, async (req, res) => {
   const contents = await prisma.content.findMany({
     where,
     include: {
-      createdBy: { select: { name: true, email: true, role: true } },
+      createdBy: { select: { id: true, name: true, email: true, role: true } },
       researcherMember: { select: { id: true, name: true, role: true } },
     },
     orderBy: { createdAt: "desc" },
@@ -81,14 +81,24 @@ router.patch("/:id", requireAuth, async (req, res) => {
   try {
     const existing = await prisma.content.findUnique({ where: { id: req.params.id } });
     if (!existing) return res.status(404).json({ error: "Conteudo nao encontrado." });
-    if (req.user.role !== "COORDINATOR") {
-      return res.status(403).json({ error: "Apenas a coordenacao pode editar ou publicar conteudos enviados." });
+    const isCoordinator = req.user.role === "COORDINATOR";
+    const isOwner = existing.createdById === req.user.id;
+    if (!isCoordinator && !isOwner) {
+      return res.status(403).json({ error: "Voce so pode editar conteudos enviados pela sua conta." });
     }
 
     const data = parseContent(req.body, true);
-    if (req.body.published !== undefined) data.published = Boolean(req.body.published);
+    if (req.body.published !== undefined) {
+      if (!isCoordinator) return res.status(403).json({ error: "Apenas a coordenacao pode publicar conteudos." });
+      data.published = Boolean(req.body.published);
+    } else if (!isCoordinator) {
+      data.published = false;
+    }
 
     const content = await prisma.content.update({ where: { id: req.params.id }, data });
+    if (!isCoordinator) {
+      notifyCoordinatorContentChange({ content, user: req.user, action: "updated" }).catch((error) => console.error(error));
+    }
     res.json({ content });
   } catch (error) {
     res.status(400).json({ error: error.message });
