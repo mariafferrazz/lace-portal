@@ -62,28 +62,6 @@ const initialForm = {
   sessions: [{ ...emptySession }],
 };
 
-const existingCinemaShows = [
-  ["VII", "VII Mostra Cinema e Ditadura", "/cinema-e-ditadura/vii-mostra"],
-  ["VI", "VI Mostra Cinema e Ditadura", "/cinema-e-ditadura/vi-mostra"],
-  ["V", "V Mostra Cinema e Ditadura", "/cinema-e-ditadura/v-mostra"],
-  ["IV", "IV Mostra Cinema e Ditadura", "/cinema-e-ditadura/iv-mostra"],
-  ["III", "III Mostra Cinema e Ditadura", "/cinema-e-ditadura/iii-mostra"],
-].map(([showNumber, title, path]) => ({
-  id: `static-cinema-show-${showNumber}`,
-  title,
-  type: "CINEMA_SHOW",
-  researcherName: "LACE",
-  published: true,
-  readOnly: true,
-  externalUrl: path,
-  createdBy: { name: "Site LACE" },
-  metadata: {
-    editorialArea: "CINEMA_DITADURA",
-    editorialAreas: cinemaShowAreas,
-    showNumber,
-  },
-}));
-
 const fieldClass = "mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-text outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20";
 
 function createInitialForm(areaValue = "CINEMA_DITADURA", typeValue) {
@@ -512,7 +490,6 @@ function AreaModal({ area, contents, user, refresh, onClose, onAddContent }) {
 function EditorialDashboard({ user, contents, refresh }) {
   const [activeArea, setActiveArea] = useState(null);
   const [addDefaults, setAddDefaults] = useState(null);
-  const visibleContents = [...existingCinemaShows, ...contents];
 
   return (
     <>
@@ -530,7 +507,7 @@ function EditorialDashboard({ user, contents, refresh }) {
 
         <div className="mt-8 grid gap-5 md:grid-cols-2">
           {contentAreas.map((area) => {
-            const count = visibleContents.filter((content) => contentBelongsToArea(content, area)).length;
+            const count = contents.filter((content) => contentBelongsToArea(content, area)).length;
             return (
               <button
                 key={area.value}
@@ -553,7 +530,7 @@ function EditorialDashboard({ user, contents, refresh }) {
       {activeArea && (
         <AreaModal
           area={activeArea}
-          contents={visibleContents}
+          contents={contents}
           user={user}
           refresh={refresh}
           onClose={() => setActiveArea(null)}

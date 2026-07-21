@@ -1,6 +1,7 @@
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const prisma = require("../src/db");
+const contentSeeds = require("./static-content-seeds.json");
 
 const accounts = [
   { prefix: "COORDINATOR_1", role: "COORDINATOR", required: true },
@@ -9,6 +10,8 @@ const accounts = [
 ];
 
 async function main() {
+  let seedUserEmail = null;
+
   for (const { prefix, role, required } of accounts) {
     const name = process.env[`${prefix}_NAME`];
     const email = process.env[`${prefix}_EMAIL`]?.trim().toLowerCase();
@@ -28,9 +31,48 @@ async function main() {
       update: { name, passwordHash, role, active: true },
       create: { name, email, passwordHash, role },
     });
+    if (!seedUserEmail && role === "COORDINATOR") seedUserEmail = email;
   }
 
   console.log("Contas iniciais configuradas.");
+
+  const seedUser = seedUserEmail
+    ? await prisma.user.findUnique({ where: { email: seedUserEmail } })
+    : await prisma.user.findFirst({ orderBy: { createdAt: "asc" } });
+  if (!seedUser) throw new Error("Nenhum usuario disponivel para vincular conteudos iniciais.");
+
+  let created = 0;
+  let updated = 0;
+  for (const seed of contentSeeds) {
+    const existing = await prisma.content.findFirst({
+      where: {
+        title: seed.title,
+        type: seed.type,
+        researcherName: seed.researcherName || "LACE",
+      },
+    });
+    const data = {
+      title: seed.title,
+      description: seed.description || null,
+      type: seed.type,
+      researcherName: seed.researcherName || "LACE",
+      externalUrl: seed.externalUrl || null,
+      fileUrl: seed.fileUrl || null,
+      metadata: seed.metadata || {},
+      published: seed.published !== false,
+      createdById: existing?.createdById || seedUser.id,
+    };
+
+    if (existing) {
+      await prisma.content.update({ where: { id: existing.id }, data });
+      updated += 1;
+    } else {
+      await prisma.content.create({ data });
+      created += 1;
+    }
+  }
+
+  console.log(`Conteudos iniciais configurados. Criados: ${created}. Atualizados: ${updated}.`);
 }
 
 main()
