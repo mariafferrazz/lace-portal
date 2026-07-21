@@ -3,6 +3,7 @@ import { Bell, CheckCircle2, Database, FolderUp, LogOut, Pencil, Plus, ShieldChe
 import Container from "../../components/ui/Container";
 import Button from "../../components/ui/Button";
 import api, { apiError } from "../../services/api";
+import { showSlug } from "../../utils/contentRoutes";
 
 const contentTypes = [
   ["FILM", "Filme"],
@@ -50,7 +51,7 @@ const emptySession = {
 const initialForm = {
   title: "",
   researcherName: "",
-  researcherUrl: "",
+  researcherMemberId: "",
   area: "CINEMA_DITADURA",
   type: "FILM",
   description: "",
@@ -58,6 +59,7 @@ const initialForm = {
   fileUrl: "",
   mediaFile: null,
   showNumber: "",
+  eventYear: "",
   playlistUrl: "",
   sessions: [{ ...emptySession }],
 };
@@ -85,13 +87,14 @@ function formFromContent(content) {
   return {
     ...base,
     title: content.title || "",
-    researcherName: content.researcherName || "",
-    researcherUrl: metadata.researcherUrl || "",
+    researcherName: content.researcherMember?.name || content.researcherName || "",
+    researcherMemberId: content.researcherMemberId || content.researcherMember?.id || content.metadata?.researcherMemberId || (content.researcherName ? `name:${content.researcherName}` : ""),
     description: content.description || "",
     externalUrl: content.externalUrl || "",
     fileUrl: content.fileUrl || "",
     mediaFile: metadata.mediaFile || null,
     showNumber: metadata.showNumber || "",
+    eventYear: metadata.eventYear || metadata.showYear || metadata.year || "",
     playlistUrl: metadata.playlistUrl || content.externalUrl || "",
     sessions: Array.isArray(metadata.sessions) && metadata.sessions.length
       ? metadata.sessions.map((session) => ({ ...emptySession, ...session }))
@@ -122,7 +125,7 @@ function Login({ onLogin }) {
     <div className="mx-auto max-w-lg rounded-3xl border border-border bg-card p-7 shadow-2xl md:p-10">
       <ShieldCheck className="text-primary" size={36} aria-hidden="true" />
       <h1 className="mt-5 font-title text-4xl">Acesso interno</h1>
-      <p className="mt-3 leading-7 text-muted">Area exclusiva da coordenacao, pesquisadores e estudantes do LACE.</p>
+      <p className="mt-3 leading-7 text-muted">Area exclusiva da Equipe LACE.</p>
       <form className="mt-8 space-y-5" onSubmit={submit}>
         <label className="block font-semibold">
           E-mail
@@ -139,12 +142,13 @@ function Login({ onLogin }) {
   );
 }
 
-function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, onClose, content = null }) {
+function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, onClose, content = null, teamMembers = [] }) {
   const isEditing = Boolean(content);
   const [form, setForm] = useState(() => (content ? formFromContent(content) : createInitialForm(initialArea, initialType)));
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
   const isCinemaShow = form.type === "CINEMA_SHOW";
+  const isEvent = form.type === "EVENT";
 
   function update(field) {
     return (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
@@ -157,6 +161,23 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
 
   function updateType(event) {
     setForm((current) => ({ ...current, type: event.target.value }));
+  }
+
+  function updateResearcher(event) {
+    if (event.target.value.startsWith("name:")) {
+      setForm((current) => ({
+        ...current,
+        researcherMemberId: event.target.value,
+        researcherName: event.target.value.replace(/^name:/, ""),
+      }));
+      return;
+    }
+    const member = teamMembers.find((item) => item.id === event.target.value);
+    setForm((current) => ({
+      ...current,
+      researcherMemberId: member?.id || "",
+      researcherName: member?.name || "",
+    }));
   }
 
   function updateSession(index, field, value) {
@@ -200,12 +221,14 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
     const metadata = {
       editorialArea: form.area,
     };
-    if (form.researcherUrl.trim()) metadata.researcherUrl = form.researcherUrl.trim();
+    if (form.researcherMemberId && !form.researcherMemberId.startsWith("name:")) metadata.researcherMemberId = form.researcherMemberId;
 
     if (isCinemaShow) {
       metadata.editorialArea = "CINEMA_DITADURA";
       metadata.editorialAreas = cinemaShowAreas;
       metadata.showNumber = form.showNumber.trim();
+      metadata.showSlug = showSlug(form.showNumber);
+      metadata.eventYear = form.eventYear.trim();
       metadata.playlistUrl = form.playlistUrl.trim() || null;
       metadata.sessions = form.sessions
         .map((session) => ({
@@ -217,13 +240,15 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
           archiveFile: session.archiveFile,
         }))
         .filter((session) => session.date || session.title || session.sessionUrl || session.archiveFilmUrl || session.archiveFile);
-    } else if (form.mediaFile) {
-      metadata.mediaFile = form.mediaFile;
+    } else {
+      if (isEvent) metadata.eventYear = form.eventYear.trim();
+      if (form.mediaFile) metadata.mediaFile = form.mediaFile;
     }
 
     return {
       title: form.title,
       researcherName: form.researcherName,
+      researcherMemberId: form.researcherMemberId && !form.researcherMemberId.startsWith("name:") ? form.researcherMemberId : null,
       type: form.type,
       description: form.description,
       externalUrl: isCinemaShow ? form.playlistUrl : null,
@@ -239,6 +264,11 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
 
     if (isCinemaShow && !form.showNumber.trim()) {
       setStatus({ ok: false, message: "Informe a numeracao da mostra, como VIII, IX ou X." });
+      setLoading(false);
+      return;
+    }
+    if ((isCinemaShow || isEvent) && !form.eventYear.trim()) {
+      setStatus({ ok: false, message: "Informe o ano do evento ou da mostra." });
       setLoading(false);
       return;
     }
@@ -266,8 +296,13 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
       <p className="mt-3 text-muted">{isEditing ? "Revise as informacoes antes de publicar ou manter em revisao." : "O nome informado abaixo sera exibido como autoria do material."}</p>
       <form className="mt-7 grid gap-5 md:grid-cols-2" onSubmit={submit}>
         <label className="font-semibold">Titulo *<input className={fieldClass} required maxLength={200} value={form.title} onChange={update("title")} /></label>
-        <label className="font-semibold">Nome do pesquisador *<input className={fieldClass} required maxLength={160} value={form.researcherName} onChange={update("researcherName")} /></label>
-        <label className="font-semibold md:col-span-2">Link do curriculo, Lattes ou LinkedIn do pesquisador<input className={fieldClass} type="url" placeholder="https://..." value={form.researcherUrl} onChange={update("researcherUrl")} /></label>
+        <label className="font-semibold">Nome do pesquisador *
+          <select className={fieldClass} required value={form.researcherMemberId} onChange={updateResearcher}>
+            <option value="">Selecione uma pessoa da Equipe LACE</option>
+            {teamMembers.map((member) => <option key={member.id} value={member.id}>{member.name}</option>)}
+            {form.researcherMemberId.startsWith("name:") && <option value={form.researcherMemberId}>{form.researcherName}</option>}
+          </select>
+        </label>
         <label className="font-semibold">Area editorial *
           <select className={fieldClass} required value={form.area} onChange={updateArea}>{contentAreas.map((area) => <option key={area.value} value={area.value}>{area.label}</option>)}</select>
         </label>
@@ -286,6 +321,12 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
           />
         ) : (
           <>
+            {isEvent && (
+              <label className="font-semibold md:col-span-2">
+                Ano do evento *
+                <input className={fieldClass} required inputMode="numeric" maxLength={4} placeholder="2026" value={form.eventYear} onChange={update("eventYear")} />
+              </label>
+            )}
             <label className="font-semibold md:col-span-2">URL do arquivo ou midia<input className={fieldClass} type="url" placeholder="https://..." value={form.fileUrl} onChange={update("fileUrl")} /></label>
             <FileUploadBox
               className="md:col-span-2"
@@ -337,6 +378,10 @@ function CinemaShowFields({ form, update, updateSession, updateSessionFile, addS
         <label className="font-semibold">
           Numeracao da mostra *
           <input className={fieldClass} required maxLength={20} placeholder="VIII, IX ou X" value={form.showNumber} onChange={update("showNumber")} />
+        </label>
+        <label className="font-semibold">
+          Ano da mostra *
+          <input className={fieldClass} required inputMode="numeric" maxLength={4} placeholder="2026" value={form.eventYear} onChange={update("eventYear")} />
         </label>
         <label className="font-semibold">
           Link da playlist
@@ -534,8 +579,22 @@ function ContentCard({ content, user, refresh, onEdit, onOpen }) {
           </span>
           <button className="cursor-pointer rounded-xl border border-primary/60 px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" type="button" onClick={() => onOpen(content)}>Abrir pagina</button>
           {isCoordinator && !isReadOnly && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => onEdit(content)}><Pencil className="inline" size={15} /> Editar</Button>}
-          {isCoordinator && !isReadOnly && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={publish}>{content.published ? "Retirar" : <><CheckCircle2 className="inline" size={15} /> Publicar</>}</Button>}
-          {isCoordinator && !isReadOnly && <button className="cursor-pointer rounded-xl border border-red-500/40 p-2 text-red-700 transition hover:bg-red-500/10 dark:text-red-300" type="button" aria-label={`Excluir ${content.title}`} onClick={remove}><Trash2 size={18} /></button>}
+          {isCoordinator && !isReadOnly && !content.published && (
+            <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={publish}>
+              <CheckCircle2 className="inline" size={15} /> Publicar
+            </Button>
+          )}
+          {isCoordinator && !isReadOnly && (
+            <button
+              className="grid size-10 cursor-pointer place-items-center rounded-xl border border-red-500/50 text-red-700 transition hover:border-red-500 hover:bg-red-600 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:text-red-300 dark:hover:text-white"
+              type="button"
+              aria-label={`Excluir ${content.title}`}
+              title="Excluir conteudo"
+              onClick={remove}
+            >
+              <Trash2 size={18} />
+            </button>
+          )}
         </div>
       </div>
     </article>
@@ -637,7 +696,7 @@ function PendingApprovals({ contents, refresh, onEdit, onOpen }) {
   );
 }
 
-function EditorialDashboard({ user, contents, refresh }) {
+function EditorialDashboard({ user, contents, refresh, teamMembers }) {
   const [activeArea, setActiveArea] = useState(null);
   const [addDefaults, setAddDefaults] = useState(null);
   const [editingContent, setEditingContent] = useState(null);
@@ -701,6 +760,7 @@ function EditorialDashboard({ user, contents, refresh }) {
             initialArea={addDefaults.area}
             initialType={addDefaults.type}
             onClose={() => setAddDefaults(null)}
+            teamMembers={teamMembers}
           />
         </Modal>
       )}
@@ -711,6 +771,7 @@ function EditorialDashboard({ user, contents, refresh }) {
             content={editingContent}
             onCreated={refresh}
             onClose={() => setEditingContent(null)}
+            teamMembers={teamMembers}
           />
         </Modal>
       )}
@@ -733,6 +794,7 @@ function EditorialDashboard({ user, contents, refresh }) {
 export default function AccessPage() {
   const [user, setUser] = useState(null);
   const [contents, setContents] = useState([]);
+  const [teamMembers, setTeamMembers] = useState([]);
   const [checking, setChecking] = useState(true);
 
   const loadContents = useCallback(async () => {
@@ -740,25 +802,34 @@ export default function AccessPage() {
     setContents(data.contents);
   }, []);
 
+  const loadTeamMembers = useCallback(async () => {
+    const { data } = await api.get("/team");
+    setTeamMembers(data.members || []);
+  }, []);
+
   useEffect(() => {
     api.get("/auth/me")
       .then(async ({ data }) => {
         setUser(data.user);
-        await loadContents();
+        await Promise.all([loadContents(), loadTeamMembers()]);
       })
       .catch(() => setUser(null))
       .finally(() => setChecking(false));
-  }, [loadContents]);
+  }, [loadContents, loadTeamMembers]);
 
   function handleLogin(authenticatedUser) {
     setUser(authenticatedUser);
-    loadContents().catch(() => setContents([]));
+    Promise.all([loadContents(), loadTeamMembers()]).catch(() => {
+      setContents([]);
+      setTeamMembers([]);
+    });
   }
 
   async function logout() {
     await api.post("/auth/logout");
     setUser(null);
     setContents([]);
+    setTeamMembers([]);
   }
 
   if (checking) return <main className="grid min-h-[70vh] place-items-center"><p className="text-muted">Verificando acesso...</p></main>;
@@ -771,7 +842,7 @@ export default function AccessPage() {
             <div><p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">Painel LACE</p><h1 className="mt-2 font-title text-4xl md:text-5xl">Ola, {user.name}</h1><p className="mt-2 text-muted">{user.role === "COORDINATOR" ? "Acesso de coordenacao" : "Acesso de pesquisadores e estudantes"}</p></div>
             <Button variant="dark" type="button" onClick={logout}><LogOut className="inline" size={17} /> Sair</Button>
           </header>
-          <EditorialDashboard user={user} contents={contents} refresh={loadContents} />
+          <EditorialDashboard user={user} contents={contents} refresh={loadContents} teamMembers={teamMembers} />
         </>}
       </Container>
     </main>

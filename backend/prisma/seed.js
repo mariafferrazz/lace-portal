@@ -2,6 +2,7 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const prisma = require("../src/db");
 const contentSeeds = require("./static-content-seeds.json");
+const teamSeeds = require("./team-seeds.json");
 
 const accounts = [
   { prefix: "COORDINATOR_1", role: "COORDINATOR", required: true },
@@ -35,6 +36,30 @@ async function main() {
   }
 
   console.log("Contas iniciais configuradas.");
+
+  let teamCount = 0;
+  for (const member of teamSeeds) {
+    await prisma.teamMember.upsert({
+      where: { name: member.name },
+      update: {
+        role: member.role,
+        bio: member.bio,
+        group: member.group,
+        sortOrder: member.sortOrder,
+        active: true,
+      },
+      create: {
+        name: member.name,
+        role: member.role,
+        bio: member.bio,
+        group: member.group,
+        sortOrder: member.sortOrder,
+      },
+    });
+    teamCount += 1;
+  }
+
+  console.log(`Equipe configurada. Membros: ${teamCount}.`);
 
   const seedUser = seedUserEmail
     ? await prisma.user.findUnique({ where: { email: seedUserEmail } })

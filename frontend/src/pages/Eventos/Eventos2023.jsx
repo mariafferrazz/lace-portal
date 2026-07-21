@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { ExternalLink, Images, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import Container from "../../components/ui/Container";
+import SocialShare from "../../components/ui/SocialShare";
 
 const events = [
   {
@@ -215,6 +216,7 @@ function EventModal({ event, activeGalleryIndex, onClose, onSelectGallery }) {
                 ))}
               </div>
             )}
+            <SocialShare title={event.title} url="/eventos/2023" className="mt-8" />
           </div>
         </section>
       </div>

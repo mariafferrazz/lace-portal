@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, ExternalLink, FileText, X } from "lucide-react";
 import Container from "../../components/ui/Container";
+import SocialShare from "../../components/ui/SocialShare";
 
 const authors = [
   {
@@ -228,18 +230,24 @@ function authorSlug(name) {
 }
 
 export default function Artigos() {
-  const [activeAuthor, setActiveAuthor] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const activeAuthor = useMemo(() => {
+    const hash = location.hash.replace("#", "");
+    return hash ? authors.find((item) => authorSlug(item.name) === hash) || null : null;
+  }, [location.hash]);
 
   function setAuthorAndHash(author) {
-    setActiveAuthor(author);
-    window.history.replaceState(null, "", `#${authorSlug(author.name)}`);
+    navigate(`${location.pathname}${location.search}#${authorSlug(author.name)}`, { replace: true });
   }
 
   useEffect(() => {
     if (!activeAuthor) return undefined;
 
     const closeOnEscape = (event) => {
-      if (event.key === "Escape") closeAuthor();
+      if (event.key === "Escape") {
+        navigate(`${location.pathname}${location.search}`, { replace: true });
+      }
     };
 
     document.body.style.overflow = "hidden";
@@ -249,32 +257,14 @@ export default function Artigos() {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", closeOnEscape);
     };
-  }, [activeAuthor]);
-
-  useEffect(() => {
-    const openAuthorFromHash = () => {
-      const hash = window.location.hash.replace("#", "");
-      if (!hash) return;
-
-      const author = authors.find((item) => authorSlug(item.name) === hash);
-      if (author) setActiveAuthor(author);
-    };
-
-    openAuthorFromHash();
-    window.addEventListener("hashchange", openAuthorFromHash);
-
-    return () => window.removeEventListener("hashchange", openAuthorFromHash);
-  }, []);
+  }, [activeAuthor, location.pathname, location.search, navigate]);
 
   function openAuthor(author) {
     setAuthorAndHash(author);
   }
 
   function closeAuthor() {
-    setActiveAuthor(null);
-    if (window.location.hash) {
-      window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
-    }
+    navigate(`${location.pathname}${location.search}`, { replace: true });
   }
 
   function navigateAuthor(direction) {
@@ -423,6 +413,7 @@ function AuthorModal({ author, authorPosition, authorCount, onClose, onNavigate 
                   >
                     Link para PDF <ExternalLink size={16} aria-hidden="true" />
                   </a>
+                  <SocialShare title={article.title} url={article.url} className="mt-6" />
                 </article>
               ))}
             </div>

@@ -23,6 +23,9 @@ function parseContent(body, partial = false) {
   for (const field of ["description", "fileUrl", "externalUrl"]) {
     if (body[field] !== undefined) data[field] = String(body[field]).trim() || null;
   }
+  if (body.researcherMemberId !== undefined) {
+    data.researcherMemberId = body.researcherMemberId ? String(body.researcherMemberId).trim() || null : null;
+  }
   if (body.metadata !== undefined) data.metadata = body.metadata;
   return data;
 }
@@ -34,7 +37,10 @@ router.get("/", async (req, res) => {
   const where = req.query.type ? { type: req.query.type, published: true } : { published: true };
   const contents = await prisma.content.findMany({
     where,
-    include: { createdBy: { select: { name: true, role: true } } },
+    include: {
+      createdBy: { select: { name: true, role: true } },
+      researcherMember: { select: { id: true, name: true, role: true } },
+    },
     orderBy: { title: "asc" },
   });
   res.json({ contents });
@@ -49,7 +55,10 @@ router.get("/manage", requireAuth, async (req, res) => {
   };
   const contents = await prisma.content.findMany({
     where,
-    include: { createdBy: { select: { name: true, email: true, role: true } } },
+    include: {
+      createdBy: { select: { name: true, email: true, role: true } },
+      researcherMember: { select: { id: true, name: true, role: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
   res.json({ contents });

@@ -14,6 +14,7 @@ const MostraIV = lazy(() => import("../pages/CinemaDitadura/MostraIV"));
 const MostraV = lazy(() => import("../pages/CinemaDitadura/MostraV"));
 const MostraVI = lazy(() => import("../pages/CinemaDitadura/MostraVI"));
 const MostraVII = lazy(() => import("../pages/CinemaDitadura/MostraVII"));
+const DynamicMostra = lazy(() => import("../pages/CinemaDitadura/DynamicMostra"));
 const Entrevistas = lazy(() => import("../pages/ProducaoAudiovisual/Entrevistas"));
 const Podcasts = lazy(() => import("../pages/ProducaoAudiovisual/Podcasts"));
 const LinhasDeFugasVirais = lazy(() => import("../pages/ProducaoAcademica/LinhasDeFugasVirais"));
@@ -24,6 +25,7 @@ const Eventos2022 = lazy(() => import("../pages/Eventos/Eventos2022"));
 const Eventos2023 = lazy(() => import("../pages/Eventos/Eventos2023"));
 const Eventos2024 = lazy(() => import("../pages/Eventos/Eventos2024"));
 const Eventos2025 = lazy(() => import("../pages/Eventos/Eventos2025"));
+const DynamicEventosYear = lazy(() => import("../pages/Eventos/DynamicEventosYear"));
 
 const withSuspense = (element) => <Suspense fallback={null}>{element}</Suspense>;
 
@@ -45,6 +47,7 @@ export default function AppRoutes() {
           <Route path="/cinema-e-ditadura/v-mostra" element={withSuspense(<MostraV />)} />
           <Route path="/cinema-e-ditadura/vi-mostra" element={withSuspense(<MostraVI />)} />
           <Route path="/cinema-e-ditadura/vii-mostra" element={withSuspense(<MostraVII />)} />
+          <Route path="/cinema-e-ditadura/:showSlug" element={withSuspense(<DynamicMostra />)} />
 
           {/* Produção Audiovisual */}
           <Route
@@ -76,6 +79,7 @@ export default function AppRoutes() {
           <Route path="/eventos/2023" element={withSuspense(<Eventos2023 />)} />
           <Route path="/eventos/2024" element={withSuspense(<Eventos2024 />)} />
           <Route path="/eventos/2025" element={withSuspense(<Eventos2025 />)} />
+          <Route path="/eventos/:year" element={withSuspense(<DynamicEventosYear />)} />
 
           {/* 404 */}
           <Route path="*" element={withSuspense(<NotFound />)} />

@@ -3,6 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth");
 const contentRoutes = require("./routes/contents");
+const teamRoutes = require("./routes/team");
 
 const app = express();
 app.disable("x-powered-by");
@@ -40,6 +41,7 @@ app.use(cookieParser());
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 app.use("/api/auth", authRoutes);
 app.use("/api/contents", contentRoutes);
+app.use("/api/team", teamRoutes);
 app.use((error, _req, res, _next) => {
   console.error(error);
   res.status(500).json({ error: "Erro interno do servidor." });

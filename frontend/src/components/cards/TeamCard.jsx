@@ -9,7 +9,19 @@ const slugify = (value) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-export default function TeamCard({ name, role, bio }) {
+const contributionTypeLabels = {
+  FILM: "Filme",
+  GLOSSARY: "Verbete",
+  CINEMA_SHOW: "Mostra",
+  ARTICLE: "Artigo",
+  RESEARCH: "Pesquisa",
+  VIRAL_ESCAPE_LINES: "Linhas de Fugas Virais",
+  INTERVIEW: "Entrevista",
+  PODCAST: "Podcast",
+  EVENT: "Evento",
+};
+
+export default function TeamCard({ name, role, bio, contributions = [] }) {
   const [open, setOpen] = useState(false);
   const contentId = useId();
 
@@ -32,6 +44,20 @@ export default function TeamCard({ name, role, bio }) {
       {open && (
         <div id={contentId} className="overflow-hidden">
           <p className="mt-6 border-t border-border pt-5 leading-7 text-muted">{bio}</p>
+          {contributions.length > 0 && (
+            <section className="mt-6 border-t border-border pt-5">
+              <h4 className="font-title text-2xl text-text">Contribuições</h4>
+              <ul className="mt-3 space-y-2">
+                {contributions.map((item) => (
+                  <li key={item.id} className="text-sm leading-6 text-muted">
+                    <span className="font-semibold text-primary">{contributionTypeLabels[item.type] || item.type}</span>
+                    {" · "}
+                    <span className="text-text">{item.title}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </div>
       )}
     </article>

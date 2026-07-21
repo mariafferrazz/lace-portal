@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, ExternalLink, FileText, X } from "lucide-react";
 import Container from "../../components/ui/Container";
+import SocialShare from "../../components/ui/SocialShare";
 
 const aracruzResearchers = [
   {
@@ -92,18 +94,19 @@ const researches = [
 ];
 
 export default function Pesquisas() {
-  const [activeResearch, setActiveResearch] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const activeResearch = useMemo(() => {
+    const hash = location.hash.replace("#", "");
+    return hash ? researches.find((item) => item.slug === hash) || null : null;
+  }, [location.hash]);
 
   function setResearchAndHash(research) {
-    setActiveResearch(research);
-    window.history.replaceState(null, "", `#${research.slug}`);
+    navigate(`${location.pathname}${location.search}#${research.slug}`, { replace: true });
   }
 
   function closeResearch() {
-    setActiveResearch(null);
-    if (window.location.hash) {
-      window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
-    }
+    navigate(`${location.pathname}${location.search}`, { replace: true });
   }
 
   function navigateResearch(direction) {
@@ -119,25 +122,12 @@ export default function Pesquisas() {
   }
 
   useEffect(() => {
-    const openResearchFromHash = () => {
-      const hash = window.location.hash.replace("#", "");
-      if (!hash) return;
-
-      const research = researches.find((item) => item.slug === hash);
-      if (research) setActiveResearch(research);
-    };
-
-    openResearchFromHash();
-    window.addEventListener("hashchange", openResearchFromHash);
-
-    return () => window.removeEventListener("hashchange", openResearchFromHash);
-  }, []);
-
-  useEffect(() => {
     if (!activeResearch) return undefined;
 
     const closeOnEscape = (event) => {
-      if (event.key === "Escape") closeResearch();
+      if (event.key === "Escape") {
+        navigate(`${location.pathname}${location.search}`, { replace: true });
+      }
     };
 
     document.body.style.overflow = "hidden";
@@ -147,7 +137,7 @@ export default function Pesquisas() {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", closeOnEscape);
     };
-  }, [activeResearch]);
+  }, [activeResearch, location.pathname, location.search, navigate]);
 
   return (
     <main className="bg-background py-20 lg:py-28">
@@ -310,6 +300,7 @@ function ResearchModal({ research, researchPosition, researchCount, onClose, onN
             </a>
           )}
         </div>
+        <SocialShare title={research.title} url={`/producao-academica/pesquisas#${research.slug}`} className="mt-8" />
       </div>
     </div>,
     document.body,

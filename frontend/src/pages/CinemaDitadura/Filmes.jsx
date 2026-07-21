@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, ExternalLink, Film, Play, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import ContentCredit from "../../components/ui/ContentCredit";
+import SocialShare from "../../components/ui/SocialShare";
 import api from "../../services/api";
 import { getStaticContents } from "../../data/staticContent";
 
@@ -224,6 +225,7 @@ function FilmModal({ film, onClose, onPrevious, onNext, navigationEnabled }) {
           <ContentCredit content={film} label="Pesquisa" className="mt-6" />
           {film.externalUrl && <a className="mt-6 inline-flex items-center gap-2 font-semibold text-primary" href={film.externalUrl} target="_blank" rel="noreferrer">Abrir no YouTube <ExternalLink size={16} aria-hidden="true" /></a>}
           {film.metadata?.website && <a className="ml-6 mt-6 inline-flex items-center gap-2 font-semibold text-primary" href={film.metadata.website} target="_blank" rel="noreferrer">Site do filme <ExternalLink size={16} aria-hidden="true" /></a>}
+          <SocialShare title={film.title} url={`/cinema-e-ditadura/filmes?filme=${film.id}`} className="mt-8" />
         </div>
       </div>
     </div>,

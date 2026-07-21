@@ -2,14 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 
-import { menu } from "../../../data/menu";
 import HomeLink from "./HomeLink";
 
 function menuLabel(label) {
   return label.toLocaleUpperCase("pt-BR");
 }
 
-export default function DesktopMenu() {
+export default function DesktopMenu({ items = [] }) {
   const navRef = useRef(null);
   const [openIndex, setOpenIndex] = useState(null);
   const [openNestedIndex, setOpenNestedIndex] = useState(null);
@@ -53,7 +52,7 @@ export default function DesktopMenu() {
   return (
     <nav ref={navRef} className="hidden lg:block">
       <ul className="flex items-center gap-8 text-sm font-medium uppercase tracking-wide text-text">
-        {menu.map((item, index) => (
+        {items.map((item, index) => (
           <li
             key={index}
             className="relative -my-4 flex items-center py-4"
@@ -92,21 +91,30 @@ export default function DesktopMenu() {
             {item.children && openIndex === index && (
                 <ul className="absolute left-0 top-full z-50 w-64 rounded-md border border-border bg-card p-3 shadow-lg">
                   {item.children.map((sub, i) => (
-                    <li key={i} onMouseEnter={() => sub.children && setOpenNestedIndex(i)}>
+                    <li key={i} className="relative" onMouseEnter={() => sub.children && setOpenNestedIndex(i)}>
                       {sub.children ? (
-                        <button
-                          type="button"
-                          onClick={() => setOpenNestedIndex(openNestedIndex === i ? null : i)}
-                          className="flex w-full items-center justify-between gap-3 rounded px-3 py-2 text-left text-sm uppercase tracking-wide text-text transition hover:bg-surface hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                          aria-expanded={openNestedIndex === i}
-                        >
-                          <span>{menuLabel(sub.title)}</span>
-                          <ChevronDown
-                            size={12}
-                            className={`transition-transform ${openNestedIndex === i ? "rotate-180" : ""}`}
-                            aria-hidden="true"
-                          />
-                        </button>
+                        <div className="flex items-stretch rounded transition hover:bg-surface">
+                          <Link
+                            to={sub.path}
+                            className="flex min-w-0 flex-1 items-center px-3 py-2 text-sm uppercase tracking-wide text-text transition hover:text-primary"
+                            onClick={closeDropdown}
+                          >
+                            <span>{menuLabel(sub.title)}</span>
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() => setOpenNestedIndex(openNestedIndex === i ? null : i)}
+                            className="grid cursor-pointer place-items-center px-3 text-text transition hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                            aria-label={`${openNestedIndex === i ? "Fechar" : "Abrir"} submenu ${sub.title}`}
+                            aria-expanded={openNestedIndex === i}
+                          >
+                            <ChevronDown
+                              size={12}
+                              className={`transition-transform ${openNestedIndex === i ? "-rotate-90" : ""}`}
+                              aria-hidden="true"
+                            />
+                          </button>
+                        </div>
                       ) : (
                         <Link
                           to={sub.path}
@@ -118,7 +126,7 @@ export default function DesktopMenu() {
                       )}
 
                       {sub.children && openNestedIndex === i && (
-                          <ul className="mt-1 overflow-hidden border-l border-border pl-3">
+                          <ul className="absolute left-[calc(100%-0.25rem)] top-0 z-50 w-72 rounded-md border border-border bg-card p-3 shadow-lg">
                             {sub.children.map((nested) => (
                               <li key={nested.path}>
                                 <Link

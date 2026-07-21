@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Container from "../ui/Container";
 import Button from "../ui/Button";
 import ContentCredit from "../ui/ContentCredit";
+import SocialShare from "../ui/SocialShare";
 import api from "../../services/api";
 
 function getSpotifyEmbedUrl(url) {
@@ -497,6 +498,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                 {isAlineViralItem ? activeViralItem.description : activeViralItem.authorBio}
               </p>
             </section>
+            <SocialShare title={activeViralItem.title} url="/producao-academica/linhas-de-fugas-virais" className="mt-8" />
           </div>
         </div>
       )}
@@ -548,6 +550,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                 <ExternalLink size={16} aria-hidden="true" />
               </a>
             )}
+            <SocialShare title={activeInterview.title} url="/producao-audiovisual/entrevistas" className="mt-8" />
           </div>
         </div>
       )}
@@ -665,6 +668,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                     </div>
                   </section>
                 )}
+                <SocialShare title={activeEpisode?.title || activePodcast.title} url="/producao-audiovisual/podcasts" className="mt-8" />
               </section>
 
               <section className="pt-2">

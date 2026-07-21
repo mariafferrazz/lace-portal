@@ -4,6 +4,7 @@ import { ArrowRight, BookOpenText, ChevronLeft, ChevronRight, ExternalLink, X } 
 import { Link } from "react-router-dom";
 import Container from "../../components/ui/Container";
 import ContentCredit from "../../components/ui/ContentCredit";
+import SocialShare from "../../components/ui/SocialShare";
 import api from "../../services/api";
 import { getStaticContents } from "../../data/staticContent";
 
@@ -109,6 +110,7 @@ function GlossaryModal({ entry, onClose, onPrevious, onNext, navigationEnabled }
       {relatedFilms.length > 0 && <section className="mt-12 border-t border-border pt-8"><h3 className="font-title text-3xl">Filmes relacionados</h3><div className="mt-5 flex flex-wrap gap-3">{relatedFilms.map((film) => <Link key={film.id} className="rounded-xl border border-border bg-card px-4 py-3 font-semibold text-primary hover:border-primary" to={`/cinema-e-ditadura/filmes?filme=${film.id}`}>{film.title}</Link>)}</div></section>}
       {entry.metadata?.authorBio && <section className="mt-12 border-t border-border pt-8"><h3 className="font-title text-3xl">Sobre a autoria</h3><p className="mt-5 leading-7 text-muted"><strong className="text-text">{entry.researcherName}</strong> — {entry.metadata.authorBio}</p></section>}
       {entry.metadata?.references && <section className="mt-12 border-t border-border pt-8"><h3 className="font-title text-3xl">Referências bibliográficas</h3><div className="mt-5 whitespace-pre-line leading-7 text-muted">{entry.metadata.references}</div></section>}
+      <SocialShare title={entry.title} url="/cinema-e-ditadura/verbetes" className="mt-12" />
     </article>
   </div>, document.body);
 }

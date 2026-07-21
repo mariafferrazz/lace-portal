@@ -37,12 +37,27 @@ model User {
   updatedAt    DateTime  @updatedAt
 }
 
+model TeamMember {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  role      String
+  bio       String    @db.Text
+  group     String
+  sortOrder Int       @default(0)
+  active    Boolean   @default(true)
+  contents  Content[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
 model Content {
   id             String      @id @default(cuid())
   title          String
   description    String?     @db.Text
   type           ContentType
   researcherName String
+  researcherMemberId String?
+  researcherMember   TeamMember? @relation(fields: [researcherMemberId], references: [id], onDelete: SetNull)
   fileUrl        String?     @db.Text
   externalUrl    String?     @db.Text
   metadata       Json?
@@ -54,5 +69,6 @@ model Content {
 
   @@index([type, published])
   @@index([researcherName])
+  @@index([researcherMemberId])
   @@index([createdById])
 }

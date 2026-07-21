@@ -2,14 +2,13 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 
-import { menu } from "../../../data/menu";
 import HomeLink from "./HomeLink";
 
 function menuLabel(label) {
   return label.toLocaleUpperCase("pt-BR");
 }
 
-export default function MobileMenu() {
+export default function MobileMenu({ items = [] }) {
   const [isOpen, setIsOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [openNestedSubmenu, setOpenNestedSubmenu] = useState(null);
@@ -80,7 +79,7 @@ export default function MobileMenu() {
 
               {/* MENU ITEMS */}
               <ul className="mobile-menu-list flex flex-col gap-2 uppercase tracking-wide">
-                {menu.map((item, index) => (
+                {items.map((item, index) => (
                   <li key={index}>
                     {/* ITEM COM SUBMENU */}
                     {item.children ? (
@@ -104,19 +103,28 @@ export default function MobileMenu() {
                               {item.children.map((sub, i) => (
                                 <li key={i}>
                                   {sub.children ? (
-                                    <button
-                                      type="button"
-                                      onClick={() => toggleNestedSubmenu(i)}
-                                      className="flex w-full items-center justify-between gap-3 rounded-md bg-background px-4 py-3 text-left text-sm font-medium uppercase tracking-wide text-text transition hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                                      aria-expanded={openNestedSubmenu === i}
-                                    >
-                                      <span>{menuLabel(sub.title)}</span>
-                                      <ChevronDown
-                                        size={14}
-                                        className={`transition-transform ${openNestedSubmenu === i ? "rotate-180" : ""}`}
-                                        aria-hidden="true"
-                                      />
-                                    </button>
+                                    <div className="flex overflow-hidden rounded-md bg-background">
+                                      <Link
+                                        to={sub.path}
+                                        onClick={closeMenu}
+                                        className="flex min-w-0 flex-1 items-center px-4 py-3 text-sm font-medium uppercase tracking-wide text-text transition hover:text-primary"
+                                      >
+                                        <span>{menuLabel(sub.title)}</span>
+                                      </Link>
+                                      <button
+                                        type="button"
+                                        onClick={() => toggleNestedSubmenu(i)}
+                                        className="grid min-h-12 w-12 shrink-0 place-items-center text-text transition hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                                        aria-label={`${openNestedSubmenu === i ? "Fechar" : "Abrir"} submenu ${sub.title}`}
+                                        aria-expanded={openNestedSubmenu === i}
+                                      >
+                                        <ChevronDown
+                                          size={14}
+                                          className={`transition-transform ${openNestedSubmenu === i ? "rotate-180" : ""}`}
+                                          aria-hidden="true"
+                                        />
+                                      </button>
+                                    </div>
                                   ) : (
                                     <Link
                                       to={sub.path}
