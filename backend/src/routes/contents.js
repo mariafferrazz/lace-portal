@@ -33,6 +33,19 @@ async function listManageContents() {
   }
 }
 
+function attachContentRelations(contents, users = [], members = []) {
+  const usersById = new Map(users.map((user) => [user.id, user]));
+  const membersById = new Map(members.map((member) => [member.id, member]));
+
+  return contents.map((content) => ({
+    ...content,
+    createdBy: usersById.get(content.createdById) || content.createdBy || null,
+    researcherMember: content.researcherMemberId
+      ? membersById.get(content.researcherMemberId) || content.researcherMember || null
+      : content.researcherMember || null,
+  }));
+}
+
 function parseContent(body, partial = false) {
   const data = {};
   const required = (field, label) => {
@@ -74,29 +87,34 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/manage", requireAuth, async (req, res) => {
-  const contents = await listManageContents();
-  let users = [];
-  let members = [];
   try {
-    users = await prisma.user.findMany({ select: { id: true, name: true, email: true, role: true } });
-  } catch (error) {
-    console.error("Erro ao listar usuarios para o painel:", error);
-  }
-  try {
-    members = await prisma.teamMember.findMany({ select: { id: true, name: true, role: true } });
-  } catch (error) {
-    console.error("Erro ao listar equipe para o painel:", error);
-  }
-  const usersById = new Map(users.map((user) => [user.id, user]));
-  const membersById = new Map(members.map((member) => [member.id, member]));
+    const contents = await listManageContents();
+    let users = [];
+    let members = [];
+    try {
+      users = await prisma.user.findMany({ select: { id: true, name: true, email: true, role: true } });
+    } catch (error) {
+      console.error("Erro ao listar usuarios para o painel:", error);
+    }
+    try {
+      members = await prisma.teamMember.findMany({ select: { id: true, name: true, role: true } });
+    } catch (error) {
+      console.error("Erro ao listar equipe para o painel:", error);
+    }
 
-  res.json({
-    contents: contents.map((content) => ({
-      ...content,
-      createdBy: usersById.get(content.createdById) || null,
-      researcherMember: content.researcherMemberId ? membersById.get(content.researcherMemberId) || null : null,
-    })),
-  });
+    res.json({ contents: attachContentRelations(contents, users, members), adminFallback: false });
+  } catch (error) {
+    console.error("Erro ao listar painel administrativo. Usando acervo publicado:", error);
+    const contents = await prisma.content.findMany({
+      where: { published: true },
+      include: {
+        createdBy: { select: { id: true, name: true, role: true } },
+        researcherMember: { select: { id: true, name: true, role: true } },
+      },
+      orderBy: { title: "asc" },
+    });
+    res.json({ contents, adminFallback: true });
+  }
 });
 
 router.post("/", requireAuth, async (req, res) => {
