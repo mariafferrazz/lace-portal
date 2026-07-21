@@ -457,9 +457,9 @@ function ContentPreviewModal({ content, onClose, onEdit, user }) {
         <section className="mt-6 rounded-2xl border border-border bg-card p-5">
           <h3 className="font-title text-2xl">Links e arquivos</h3>
           <div className="mt-4 flex flex-wrap gap-3">
-            {content.externalUrl && <a className="rounded-xl border border-border px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary" href={content.externalUrl} target="_blank" rel="noreferrer">Abrir link externo</a>}
-            {content.fileUrl && <a className="rounded-xl border border-border px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary" href={content.fileUrl} target="_blank" rel="noreferrer">Abrir arquivo ou midia</a>}
-            {content.metadata?.playlistUrl && content.metadata.playlistUrl !== content.externalUrl && <a className="rounded-xl border border-border px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary" href={content.metadata.playlistUrl} target="_blank" rel="noreferrer">Abrir playlist</a>}
+            {content.externalUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={content.externalUrl} target="_blank" rel="noreferrer">Abrir link externo</a>}
+            {content.fileUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={content.fileUrl} target="_blank" rel="noreferrer">Abrir arquivo ou midia</a>}
+            {content.metadata?.playlistUrl && content.metadata.playlistUrl !== content.externalUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={content.metadata.playlistUrl} target="_blank" rel="noreferrer">Abrir playlist</a>}
             {mediaFile && <span className="rounded-xl border border-border px-4 py-3 text-sm text-muted">Arquivo selecionado: <strong className="text-text">{mediaFile.name}</strong></span>}
           </div>
         </section>
@@ -478,8 +478,8 @@ function ContentPreviewModal({ content, onClose, onEdit, user }) {
                 <h4 className="mt-1 font-title text-2xl">{session.title || "Sem titulo"}</h4>
                 <p className="mt-2 text-sm text-muted">{session.date || "Sem data"}{session.direction ? ` - ${session.direction}` : ""}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {session.sessionUrl && <a className="rounded-xl border border-border px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary" href={session.sessionUrl} target="_blank" rel="noreferrer">Abrir sessao</a>}
-                  {session.archiveFilmUrl && <a className="rounded-xl border border-border px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary" href={session.archiveFilmUrl} target="_blank" rel="noreferrer">Abrir filme no acervo</a>}
+                  {session.sessionUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={session.sessionUrl} target="_blank" rel="noreferrer">Abrir sessao</a>}
+                  {session.archiveFilmUrl && <a className="cursor-pointer rounded-xl border border-primary/60 px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" href={session.archiveFilmUrl} target="_blank" rel="noreferrer">Abrir filme no acervo</a>}
                   {session.archiveFile && <span className="rounded-xl border border-border px-3 py-2 text-sm text-muted">Arquivo: <strong className="text-text">{session.archiveFile.name}</strong></span>}
                 </div>
               </article>
@@ -513,11 +513,11 @@ function ContentCard({ content, user, refresh, onEdit, onOpen }) {
   }
 
   return (
-    <article className="rounded-2xl border border-border bg-background p-5">
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
-        <div>
+    <article className="rounded-2xl border border-border bg-background p-5 transition hover:border-primary/50">
+      <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
+        <div className="min-w-0">
           <p className="text-xs font-bold uppercase tracking-widest text-primary">{contentAreaLabel(content)} - {typeLabel(content.type)}</p>
-          <h3 className="mt-2 font-title text-2xl">{content.title}</h3>
+          <h3 className="mt-2 line-clamp-2 max-w-[78ch] overflow-hidden text-ellipsis font-title text-[clamp(1.35rem,1.7vw,1.6rem)] leading-tight">{content.title}</h3>
           {content.type === "CINEMA_SHOW" && (
             <p className="mt-2 text-sm text-muted">
               Mostra: <strong className="text-text">{content.metadata?.showNumber || "Sem numeracao"}</strong>
@@ -527,9 +527,12 @@ function ContentCard({ content, user, refresh, onEdit, onOpen }) {
           <p className="mt-2 text-sm text-muted">Pesquisador(a): <strong className="text-text">{content.researcherName}</strong></p>
           <p className="mt-1 text-xs text-muted">Enviado por {content.createdBy?.name || "usuario do LACE"}</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className={`rounded-full px-3 py-1 text-xs font-bold ${content.published ? "bg-green-600/15 text-green-700 dark:text-green-300" : "bg-primary/10 text-primary"}`}>{isReadOnly ? "No site" : content.published ? "Publicado" : "Em revisao"}</span>
-          <button className="rounded-xl border border-border px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary" type="button" onClick={() => onOpen(content)}>Abrir pagina</button>
+        <div className="flex shrink-0 flex-wrap items-center gap-2 md:justify-end">
+          <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold ${content.published ? "bg-green-600/15 text-green-700 dark:text-green-300" : "bg-primary/10 text-primary"}`}>
+            <span className={`size-2 rounded-full ${content.published ? "bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.85)]" : "bg-primary"}`} aria-hidden="true" />
+            {isReadOnly ? "No site" : content.published ? "Publicado" : "Em revisao"}
+          </span>
+          <button className="cursor-pointer rounded-xl border border-primary/60 px-3 py-2 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary" type="button" onClick={() => onOpen(content)}>Abrir pagina</button>
           {isCoordinator && !isReadOnly && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => onEdit(content)}><Pencil className="inline" size={15} /> Editar</Button>}
           {isCoordinator && !isReadOnly && <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={publish}>{content.published ? "Retirar" : <><CheckCircle2 className="inline" size={15} /> Publicar</>}</Button>}
           {isCoordinator && !isReadOnly && <button className="cursor-pointer rounded-xl border border-red-500/40 p-2 text-red-700 transition hover:bg-red-500/10 dark:text-red-300" type="button" aria-label={`Excluir ${content.title}`} onClick={remove}><Trash2 size={18} /></button>}
@@ -615,13 +618,13 @@ function PendingApprovals({ contents, refresh, onEdit, onOpen }) {
       </div>
       <div className="mt-5 grid gap-3">
         {pending.slice(0, 6).map((content) => (
-          <article key={content.id} className="flex flex-col justify-between gap-4 rounded-2xl border border-border bg-background p-4 md:flex-row md:items-center">
-            <div>
+          <article key={content.id} className="grid gap-4 rounded-2xl border border-border bg-background p-4 transition hover:border-primary/50 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+            <div className="min-w-0">
               <p className="text-xs font-bold uppercase tracking-widest text-primary">{contentAreaLabel(content)} - {typeLabel(content.type)}</p>
-              <h3 className="mt-1 font-title text-2xl">{content.title}</h3>
+              <h3 className="mt-1 line-clamp-2 max-w-[78ch] overflow-hidden text-ellipsis font-title text-[clamp(1.35rem,1.7vw,1.6rem)] leading-tight">{content.title}</h3>
               <p className="mt-1 text-sm text-muted">Enviado por {content.createdBy?.name || "usuario do LACE"} - Pesquisador(a): <strong className="text-text">{content.researcherName}</strong></p>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex shrink-0 flex-wrap gap-2 md:justify-end">
               <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => onOpen(content)}>Abrir pagina</Button>
               <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => onEdit(content)}><Pencil className="inline" size={15} /> Editar</Button>
               <Button className="px-3 py-2 text-sm" type="button" onClick={() => approve(content)}><CheckCircle2 className="inline" size={15} /> Publicar</Button>
