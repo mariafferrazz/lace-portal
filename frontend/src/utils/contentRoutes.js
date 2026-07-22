@@ -17,6 +17,7 @@ export function showSlug(showNumber = "") {
 }
 
 export function showPath(content) {
+  if (content?.metadata?.cinemaPath) return content.metadata.cinemaPath;
   const slug = content?.metadata?.showSlug || showSlug(content?.metadata?.showNumber);
   return slug ? `/cinema-e-ditadura/${slug}` : "";
 }
@@ -33,6 +34,11 @@ export function eventYear(content) {
 
 export function eventYearPath(year) {
   return `/eventos/${year}`;
+}
+
+export function contentEventPath(content) {
+  const year = eventYear(content);
+  return content?.metadata?.eventPath || (year ? eventYearPath(year) : "");
 }
 
 export function isKnownShowSlug(slug) {

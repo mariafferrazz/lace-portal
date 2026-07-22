@@ -50,10 +50,12 @@ function normalizeContentData(data) {
     metadata.editorialArea = "CINEMA_DITADURA";
     metadata.editorialAreas = cinemaShowAreas;
     metadata.showNumber = showNumber;
-    metadata.showSlug = metadata.showSlug || showSlug(showNumber);
+    metadata.showSlug = showSlug(showNumber) || metadata.showSlug || null;
     metadata.eventYear = eventYear;
     metadata.showYear = eventYear;
     metadata.year = eventYear;
+    metadata.cinemaPath = metadata.showSlug ? `/cinema-e-ditadura/${metadata.showSlug}` : null;
+    metadata.eventPath = eventYear ? `/eventos/${eventYear}` : null;
     metadata.imageUrl = imageUrls[0] || null;
     metadata.imageUrls = imageUrls;
     metadata.playlistUrl = playlistUrls[0] || null;
@@ -64,6 +66,7 @@ function normalizeContentData(data) {
     metadata.editorialArea = "EVENTOS_ATIVIDADES";
     metadata.eventYear = String(metadata.eventYear || metadata.year || "").trim();
     metadata.year = metadata.eventYear;
+    metadata.eventPath = metadata.eventYear ? `/eventos/${metadata.eventYear}` : null;
   }
 
   data.metadata = metadata;

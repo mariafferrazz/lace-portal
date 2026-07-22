@@ -5,7 +5,7 @@ import Container from "../ui/Container";
 import SectionTitle from "../ui/SectionTitle";
 import api from "../../services/api";
 import { contentFileUrls, contentImage } from "../../utils/contentMetadata";
-import { eventYear, showPath } from "../../utils/contentRoutes";
+import { contentEventPath, eventYear, showPath } from "../../utils/contentRoutes";
 
 const fallbackImage = "https://i.ytimg.com/vi/iuRlQ17bDbM/hqdefault.jpg";
 
@@ -91,8 +91,7 @@ const fallbackHighlights = [
 
 function eventPath(content) {
   if (content.type === "CINEMA_SHOW") return showPath(content);
-  const year = eventYear(content);
-  return year ? `/eventos/${year}` : contentFileUrls(content)[0] || "/";
+  return contentEventPath(content) || contentFileUrls(content)[0] || "/";
 }
 
 function eventCardFromContent(content) {

@@ -312,11 +312,17 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
     if (form.researcherMemberId && !form.researcherMemberId.startsWith("name:")) metadata.researcherMemberId = form.researcherMemberId;
 
     if (isCinemaShow) {
+      const slug = showSlug(form.showNumber);
+      const year = form.eventYear.trim();
       metadata.editorialArea = "CINEMA_DITADURA";
       metadata.editorialAreas = cinemaShowAreas;
       metadata.showNumber = form.showNumber.trim();
-      metadata.showSlug = showSlug(form.showNumber);
-      metadata.eventYear = form.eventYear.trim();
+      metadata.showSlug = slug;
+      metadata.eventYear = year;
+      metadata.showYear = year;
+      metadata.year = year;
+      metadata.cinemaPath = slug ? `/cinema-e-ditadura/${slug}` : null;
+      metadata.eventPath = year ? `/eventos/${year}` : null;
       metadata.imageUrl = imageUrls[0] || null;
       metadata.imageUrls = imageUrls;
       metadata.playlistUrl = playlistUrls[0] || null;
@@ -333,7 +339,12 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
         }))
         .filter((session) => session.date || session.title || session.sessionUrl || session.archiveFilmUrl);
     } else {
-      if (isEvent) metadata.eventYear = form.eventYear.trim();
+      if (isEvent) {
+        const year = form.eventYear.trim();
+        metadata.eventYear = year;
+        metadata.year = year;
+        metadata.eventPath = year ? `/eventos/${year}` : null;
+      }
       metadata.imageUrl = imageUrls[0] || null;
       metadata.imageUrls = imageUrls;
       metadata.fileUrls = fileUrls;
