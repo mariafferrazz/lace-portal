@@ -4386,11 +4386,13 @@
           "date": "20/09/2025",
           "title": "Vou Contar para os Meus Filhos",
           "direction": "Tuca Siqueira",
-          "archiveFilmUrl": "https://www.youtube.com/watch?v=Ux2glsbWynM",
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=-BhA-G6-2uo",
           "sessionUrls": [],
           "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=-BhA-G6-2uo",
             "https://www.youtube.com/watch?v=Ux2glsbWynM"
-          ]
+          ],
+          "sessionUrl": null
         },
         {
           "date": "26/09/2025",
@@ -4400,7 +4402,8 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=LTnNaWM4R3Y"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [],
+          "archiveFilmUrl": null
         },
         {
           "date": "08/10/2025",
@@ -4410,7 +4413,8 @@
           "sessionUrls": [],
           "archiveFilmUrls": [
             "https://www.youtube.com/watch?v=I418PGZIONQ"
-          ]
+          ],
+          "sessionUrl": null
         },
         {
           "date": "21/10/2025",
@@ -4476,7 +4480,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=_VmVV19X6EM"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=_VmVV19X6EM"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=_VmVV19X6EM"
         },
         {
           "date": "10/12/2025",
@@ -4535,7 +4542,8 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=3y6GG61RCpg"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [],
+          "archiveFilmUrl": null
         },
         {
           "date": "10/12/2024",
@@ -4544,7 +4552,8 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=krOvUNjhGyU"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [],
+          "archiveFilmUrl": null
         },
         {
           "date": "11/12/2024",
@@ -4553,7 +4562,8 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=y-NofZQLIAg"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [],
+          "archiveFilmUrl": null
         },
         {
           "date": "12/12/2024",
@@ -4562,7 +4572,8 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=_7hLCmXOFio"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [],
+          "archiveFilmUrl": null
         }
       ],
       "source": "cinema-show-pages"
@@ -4608,7 +4619,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=dsOuU9aKEl8"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=YWtuhUsn5ao"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=YWtuhUsn5ao"
         },
         {
           "date": "30/06/2023",
@@ -4617,7 +4631,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=D1VzIBEU7q8"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=j0wW2DCnN9o"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=j0wW2DCnN9o"
         },
         {
           "date": "14/07/2023",
@@ -4626,7 +4643,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=ZAUN6ZmTcMA"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=lGrZvFCj414"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=lGrZvFCj414"
         },
         {
           "date": "25/08/2023",
@@ -4635,7 +4655,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=2t1RteMv2Yc"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=6aTDB3yQ8SM"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=6aTDB3yQ8SM"
         },
         {
           "date": "22/09/2023",
@@ -4644,7 +4667,8 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=7axAd5yAglw"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [],
+          "archiveFilmUrl": null
         },
         {
           "date": "13/10/2023",
@@ -4653,7 +4677,8 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=GppkZPcVSpE"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [],
+          "archiveFilmUrl": null
         },
         {
           "date": "17/11/2023",
@@ -4662,7 +4687,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=ipeBffYvDtc"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=WpTyc3TrYrE"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=WpTyc3TrYrE"
         },
         {
           "date": "08/12/2023",
@@ -4671,7 +4699,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=hV51ziEJqBQ"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=qCPCvaFvDJM"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=qCPCvaFvDJM"
         }
       ],
       "source": "cinema-show-pages"
@@ -4718,7 +4749,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=iuRlQ17bDbM"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=ltawI64zBEo"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=ltawI64zBEo"
         },
         {
           "date": "10/06/2022",
@@ -4727,7 +4761,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=D1VzIBEU7q8"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=yBYHhBhr15U"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=yBYHhBhr15U"
         },
         {
           "date": "15/07/2022",
@@ -4736,7 +4773,8 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=nuPKqOlJKe4"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [],
+          "archiveFilmUrl": null
         },
         {
           "date": "26/08/2022",
@@ -4745,7 +4783,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=rI8tfOlCYiQ"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=0voAYZ71SNA"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=0voAYZ71SNA"
         },
         {
           "date": "30/09/2022",
@@ -4754,7 +4795,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=U20KrHpcEAA"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=yGxIA90xXeY"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=yGxIA90xXeY"
         },
         {
           "date": "07/11/2022",
@@ -4763,7 +4807,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=IXex4K90mPE"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=1iWmAmvNMNg"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=1iWmAmvNMNg"
         },
         {
           "date": "25/11/2022",
@@ -4772,7 +4819,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=11W2n0fK_0A"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=6eU_59vY9ds"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=6eU_59vY9ds"
         },
         {
           "date": "16/12/2022",
@@ -4781,7 +4831,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=8du9lI1Y45c"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=4njP3dUDWKw"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=4njP3dUDWKw"
         }
       ],
       "source": "cinema-show-pages"
@@ -4827,7 +4880,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=Y4EhQ6pFd2o"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=pGEOTZ4t-VY"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=pGEOTZ4t-VY"
         },
         {
           "date": "16/07/2021",
@@ -4836,7 +4892,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=0kuXEeHfEzA"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=UhpO4I2O0zs"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=UhpO4I2O0zs"
         },
         {
           "date": "19/08/2021",
@@ -4845,7 +4904,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=bOaBaZlTqF4"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=Iy5yRNYsUzI"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=Iy5yRNYsUzI"
         },
         {
           "date": "10/09/2021",
@@ -4854,7 +4916,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=8Usy1OTeDqM"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=r5i3i8n6w-0"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=r5i3i8n6w-0"
         },
         {
           "date": "21/10/2021",
@@ -4863,7 +4928,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=HpPr9coY5oA"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=1jx3ScQXyD0"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=1jx3ScQXyD0"
         },
         {
           "date": "05/11/2021",
@@ -4872,7 +4940,10 @@
           "sessionUrls": [
             "https://www.youtube.com/watch?v=kcnyLc8shCE"
           ],
-          "archiveFilmUrls": []
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=nzq9l3Eu7i4"
+          ],
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=nzq9l3Eu7i4"
         }
       ],
       "source": "cinema-show-pages"

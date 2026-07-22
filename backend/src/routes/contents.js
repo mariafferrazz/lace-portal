@@ -52,6 +52,85 @@ function extractShowNumber(title = "") {
   return match ? match[1].toUpperCase() : "";
 }
 
+function normalizeTitleForLookup(value = "") {
+  return String(value)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\(\d{4}\)/g, "")
+    .replace(/[–—-]/g, " ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function filmArchiveUrl(content) {
+  const metadata = parseMetadata(content.metadata);
+  if (content.externalUrl) return content.externalUrl;
+  if (metadata.youtubeId) return `https://www.youtube.com/watch?v=${metadata.youtubeId}`;
+  return null;
+}
+
+function buildFilmArchiveIndex(contents = []) {
+  return contents
+    .filter((content) => content.type === "FILM")
+    .map((content) => {
+      const url = filmArchiveUrl(content);
+      const normalizedTitle = normalizeTitleForLookup(content.title);
+      return url && normalizedTitle ? { normalizedTitle, url } : null;
+    })
+    .filter(Boolean);
+}
+
+function findFilmArchiveUrl(filmIndex, title = "") {
+  const normalizedTitle = normalizeTitleForLookup(title);
+  if (!normalizedTitle) return null;
+
+  const exact = filmIndex.find((film) => film.normalizedTitle === normalizedTitle);
+  if (exact) return exact.url;
+
+  if (normalizedTitle.length < 6) return null;
+
+  const partial = filmIndex.find((film) => (
+    film.normalizedTitle.includes(normalizedTitle) || normalizedTitle.includes(film.normalizedTitle)
+  ));
+  return partial?.url || null;
+}
+
+function enrichCinemaShowContent(content, filmIndex = []) {
+  if (content.type !== "CINEMA_SHOW") return content;
+
+  const metadata = parseMetadata(content.metadata);
+  const sessions = Array.isArray(metadata.sessions) ? metadata.sessions : [];
+  const enrichedSessions = sessions.map((session) => {
+    const sessionUrls = uniqueValues(session.sessionUrls, session.sessionUrl);
+    const existingArchiveUrls = uniqueValues(session.archiveFilmUrls, session.archiveFilmUrl)
+      .filter((url) => !sessionUrls.includes(url));
+    const matchedArchiveUrl = findFilmArchiveUrl(filmIndex, session.filmTitle || session.title);
+    const archiveFilmUrls = uniqueValues(matchedArchiveUrl, existingArchiveUrls);
+
+    return {
+      ...session,
+      sessionUrl: sessionUrls[0] || null,
+      sessionUrls,
+      archiveFilmUrl: archiveFilmUrls[0] || null,
+      archiveFilmUrls,
+    };
+  });
+
+  return {
+    ...content,
+    metadata: {
+      ...metadata,
+      sessions: enrichedSessions,
+    },
+  };
+}
+
+function enrichCinemaShows(contents = []) {
+  const filmIndex = buildFilmArchiveIndex(contents);
+  return contents.map((content) => enrichCinemaShowContent(content, filmIndex));
+}
+
 function normalizeContentData(data) {
   if (data.type === undefined && data.metadata === undefined) return data;
 
@@ -101,14 +180,14 @@ async function listManageContents(summaryOnly = false) {
       FROM Content
       ORDER BY createdAt DESC
     `;
-    return rows.map((content) => ({
+    return enrichCinemaShows(rows.map((content) => ({
       ...content,
       metadata: parseMetadata(content.metadata),
       published: Boolean(content.published),
       createdBy: null,
       researcherMember: null,
       summaryOnly: false,
-    }));
+    })));
   }
 
   return prisma.content.findMany({
@@ -117,10 +196,10 @@ async function listManageContents(summaryOnly = false) {
       researcherMember: { select: { id: true, name: true, role: true } },
     },
     orderBy: { createdAt: "desc" },
-  }).then((contents) => contents.map((content) => ({
+  }).then((contents) => enrichCinemaShows(contents.map((content) => ({
     ...content,
     summaryOnly: false,
-  })));
+  }))));
 }
 
 function parseContent(body, partial = false) {
@@ -160,7 +239,7 @@ router.get("/", async (req, res) => {
     },
     orderBy: { title: "asc" },
   });
-  res.json({ contents });
+  res.json({ contents: enrichCinemaShows(contents) });
 });
 
 router.get("/navigation", async (_req, res) => {
@@ -195,14 +274,15 @@ router.get("/highlights", async (_req, res) => {
 router.get("/cinema-shows/:showSlug", async (req, res) => {
   const requestedSlug = normalizeSlug(req.params.showSlug);
   const contents = await prisma.content.findMany({
-    where: { published: true, type: "CINEMA_SHOW" },
+    where: { published: true, type: { in: ["CINEMA_SHOW", "FILM"] } },
     include: {
       createdBy: { select: { id: true, name: true, role: true } },
       researcherMember: { select: { id: true, name: true, role: true } },
     },
     orderBy: { createdAt: "desc" },
   });
-  const content = contents.find((item) => {
+  const content = enrichCinemaShows(contents).find((item) => {
+    if (item.type !== "CINEMA_SHOW") return false;
     const metadata = item.metadata || {};
     const slug = normalizeSlug(metadata.showSlug || "");
     const pathSlug = normalizeSlug(String(metadata.cinemaPath || "").split("/").filter(Boolean).pop() || "");
@@ -215,7 +295,7 @@ router.get("/cinema-shows/:showSlug", async (req, res) => {
 router.get("/events/year/:year", async (req, res) => {
   const requestedYear = String(req.params.year || "").trim();
   const contents = await prisma.content.findMany({
-    where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW"] } },
+    where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW", "FILM"] } },
     include: {
       createdBy: { select: { id: true, name: true, role: true } },
       researcherMember: { select: { id: true, name: true, role: true } },
@@ -223,7 +303,8 @@ router.get("/events/year/:year", async (req, res) => {
     orderBy: { createdAt: "desc" },
   });
   res.json({
-    contents: contents.filter((item) => {
+    contents: enrichCinemaShows(contents).filter((item) => {
+      if (!["EVENT", "CINEMA_SHOW"].includes(item.type)) return false;
       const metadata = item.metadata || {};
       const year = String(metadata.eventYear || metadata.year || metadata.showYear || "").trim();
       return year === requestedYear;
@@ -245,7 +326,7 @@ router.get("/manage", requireAuth, async (req, res) => {
       },
       orderBy: { title: "asc" },
     });
-    res.json({ contents, adminFallback: true });
+    res.json({ contents: enrichCinemaShows(contents), adminFallback: true });
   }
 });
 
@@ -258,7 +339,15 @@ router.get("/:id", requireAuth, async (req, res) => {
     },
   });
   if (!content) return res.status(404).json({ error: "Conteudo nao encontrado." });
-  res.json({ content: { ...content, summaryOnly: false } });
+  if (content.type !== "CINEMA_SHOW") return res.json({ content: { ...content, summaryOnly: false } });
+
+  const films = await prisma.content.findMany({
+    where: { type: "FILM" },
+    select: { id: true, title: true, type: true, externalUrl: true, metadata: true },
+  });
+  const enrichedContent = enrichCinemaShows([...films, { ...content, summaryOnly: false }])
+    .find((item) => item.id === content.id);
+  res.json({ content: enrichedContent || { ...content, summaryOnly: false } });
 });
 
 router.post("/", requireAuth, async (req, res) => {
