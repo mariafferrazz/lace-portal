@@ -175,19 +175,28 @@ function normalizeContentData(data) {
 
 async function listManageContents(summaryOnly = false) {
   if (summaryOnly) {
-    const rows = await prisma.$queryRaw`
-      SELECT id, title, description, type, researcherName, researcherMemberId, fileUrl, externalUrl, metadata, published, createdById, createdAt, updatedAt
-      FROM Content
-      ORDER BY createdAt DESC
-    `;
-    return enrichCinemaShows(rows.map((content) => ({
+    const contents = await prisma.content.findMany({
+      select: {
+        id: true,
+        title: true,
+        type: true,
+        researcherName: true,
+        researcherMemberId: true,
+        metadata: true,
+        published: true,
+        createdAt: true,
+        updatedAt: true,
+        createdBy: { select: { id: true, name: true, role: true } },
+        researcherMember: { select: { id: true, name: true, role: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return contents.map((content) => ({
       ...content,
       metadata: parseMetadata(content.metadata),
-      published: Boolean(content.published),
-      createdBy: null,
-      researcherMember: null,
-      summaryOnly: false,
-    })));
+      summaryOnly: true,
+    }));
   }
 
   return prisma.content.findMany({
@@ -315,18 +324,10 @@ router.get("/events/year/:year", async (req, res) => {
 router.get("/manage", requireAuth, async (req, res) => {
   try {
     const contents = await listManageContents(req.query.summary === "1");
-    res.json({ contents, adminFallback: false });
+    res.json({ contents });
   } catch (error) {
-    console.error("Erro ao listar painel administrativo. Usando acervo publicado:", error);
-    const contents = await prisma.content.findMany({
-      where: { published: true },
-      include: {
-        createdBy: { select: { id: true, name: true, role: true } },
-        researcherMember: { select: { id: true, name: true, role: true } },
-      },
-      orderBy: { title: "asc" },
-    });
-    res.json({ contents: enrichCinemaShows(contents), adminFallback: true });
+    console.error("Erro ao listar painel administrativo:", error);
+    res.status(500).json({ error: "Nao foi possivel carregar os conteudos administrativos." });
   }
 });
 

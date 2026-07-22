@@ -192,11 +192,6 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
   const isCinemaShow = form.type === "CINEMA_SHOW";
   const isEvent = form.type === "EVENT";
 
-  useEffect(() => {
-    setForm(content ? formFromContent(content) : createInitialForm(initialArea, initialType));
-    setStatus(null);
-  }, [content, initialArea, initialType]);
-
   function update(field) {
     return (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
   }
@@ -411,14 +406,17 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
     }
 
     try {
+      let savedContent;
       if (isEditing) {
-        await api.patch(`/contents/${content.id}`, buildPayload());
+        const { data } = await api.patch(`/contents/${content.id}`, buildPayload());
+        savedContent = data.content;
       } else {
-        await api.post("/contents", buildPayload());
+        const { data } = await api.post("/contents", buildPayload());
+        savedContent = data.content;
       }
       setForm(createInitialForm(initialArea, initialType));
       setStatus({ ok: true, message: isEditing ? "Conteudo atualizado." : "Conteudo enviado para revisao da coordenacao." });
-      onCreated();
+      await onCreated(savedContent);
       onClose?.();
     } catch (error) {
       setStatus({ ok: false, message: apiError(error) });
@@ -1115,21 +1113,26 @@ export default function AccessPage() {
   const [dashboardError, setDashboardError] = useState("");
   const [checking, setChecking] = useState(true);
 
-  const loadContents = useCallback(async () => {
+  const loadContents = useCallback(async (savedContent = null) => {
+    if (savedContent?.id) {
+      setContents((current) => [
+        { ...savedContent, summaryOnly: false },
+        ...current.filter((content) => content.id !== savedContent.id),
+      ]);
+    }
+
     try {
       setDashboardError("");
       let data;
       try {
         ({ data } = await api.get("/contents/manage", { params: { summary: "1" } }));
-      } catch (error) {
+      } catch {
         await new Promise((resolve) => setTimeout(resolve, 600));
         ({ data } = await api.get("/contents/manage", { params: { summary: "1" } }));
       }
       setContents(data.contents || []);
-    } catch (error) {
-      setDashboardError(apiError(error));
-      const { data } = await api.get("/contents");
-      setContents(data.contents || []);
+    } catch (requestError) {
+      setDashboardError(apiError(requestError));
     }
   }, []);
 
@@ -1183,7 +1186,7 @@ export default function AccessPage() {
           </header>
           {dashboardError && (
             <p className="mb-6 rounded-2xl border border-primary/40 bg-primary/10 p-4 text-sm font-semibold text-primary" role="status">
-              A sessao administrativa nao foi confirmada agora. Entre novamente se esta mensagem continuar aparecendo.
+              {dashboardError}
             </p>
           )}
           <EditorialDashboard user={user} contents={contents} refresh={loadContents} teamMembers={teamMembers} ensureTeamMembers={ensureTeamMembers} />
