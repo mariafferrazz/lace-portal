@@ -88,10 +88,10 @@ const initialForm = {
 const fieldClass = "mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-text outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20";
 const maxEmbeddedImageSize = 2 * 1024 * 1024;
 
-const cleanUrlList = (urls) => urls.map((url) => url.trim()).filter(Boolean);
+const cleanUrlList = (urls) => [...new Set(urls.map((url) => url.trim()).filter(Boolean))];
 
 const ensureUrlList = (...values) => {
-  const urls = values.flat().filter(Boolean);
+  const urls = cleanUrlList(values.flat().filter(Boolean));
   return urls.length ? urls : [""];
 };
 
