@@ -9,11 +9,6 @@ const AccessPage = lazy(() => import("../pages/Access/AccessPage"));
 const NotFound = lazy(() => import("../pages/NotFound"));
 const Filmes = lazy(() => import("../pages/CinemaDitadura/Filmes"));
 const Verbetes = lazy(() => import("../pages/CinemaDitadura/Verbetes"));
-const MostraIII = lazy(() => import("../pages/CinemaDitadura/MostraIII"));
-const MostraIV = lazy(() => import("../pages/CinemaDitadura/MostraIV"));
-const MostraV = lazy(() => import("../pages/CinemaDitadura/MostraV"));
-const MostraVI = lazy(() => import("../pages/CinemaDitadura/MostraVI"));
-const MostraVII = lazy(() => import("../pages/CinemaDitadura/MostraVII"));
 const DynamicMostra = lazy(() => import("../pages/CinemaDitadura/DynamicMostra"));
 const Entrevistas = lazy(() => import("../pages/ProducaoAudiovisual/Entrevistas"));
 const Podcasts = lazy(() => import("../pages/ProducaoAudiovisual/Podcasts"));
@@ -37,11 +32,6 @@ export default function AppRoutes() {
           {/* Cinema e Ditadura */}
           <Route path="/cinema-e-ditadura/filmes" element={withSuspense(<Filmes />)} />
           <Route path="/cinema-e-ditadura/verbetes" element={withSuspense(<Verbetes />)} />
-          <Route path="/cinema-e-ditadura/iii-mostra" element={withSuspense(<MostraIII />)} />
-          <Route path="/cinema-e-ditadura/iv-mostra" element={withSuspense(<MostraIV />)} />
-          <Route path="/cinema-e-ditadura/v-mostra" element={withSuspense(<MostraV />)} />
-          <Route path="/cinema-e-ditadura/vi-mostra" element={withSuspense(<MostraVI />)} />
-          <Route path="/cinema-e-ditadura/vii-mostra" element={withSuspense(<MostraVII />)} />
           <Route path="/cinema-e-ditadura/:showSlug" element={withSuspense(<DynamicMostra />)} />
 
           {/* Produção Audiovisual */}

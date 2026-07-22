@@ -4352,10 +4352,10 @@
   {
     "id": "cinema-show-vii",
     "title": "VII Mostra Cinema e Ditadura",
-    "description": "VII Mostra Cinema e Ditadura publicada no portal do LACE.",
+    "description": "A VII Mostra Cinema e Ditadura integra as atividades do Laboratório de Agenciamentos Cotidianos e Experiências (LACE), que reúne dois grupos de pesquisa certificados no CNPq.",
     "type": "CINEMA_SHOW",
     "researcherName": "LACE",
-    "externalUrl": "/cinema-e-ditadura/vii-mostra",
+    "externalUrl": "https://www.youtube.com/playlist?list=PLgImeU9gw9824wqqt4x-Rhq7xl6ODZQtM",
     "fileUrl": null,
     "published": true,
     "metadata": {
@@ -4364,17 +4364,144 @@
         "CINEMA_DITADURA",
         "EVENTOS_ATIVIDADES"
       ],
+      "createCinemaPage": true,
       "showNumber": "VII",
+      "showSlug": "vii-mostra",
+      "eventYear": "2025",
+      "showYear": "2025",
+      "year": "2025",
+      "period": "entre setembro e dezembro de 2025",
+      "cinemaPath": "/cinema-e-ditadura/vii-mostra",
+      "eventPath": "/eventos/2025",
+      "imageUrl": "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000169-804c1804c2/13ad51a8-369d-446e-9987-d0ae30dd2fe7.webp?ph=3554c7d1fd",
+      "imageUrls": [
+        "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000169-804c1804c2/13ad51a8-369d-446e-9987-d0ae30dd2fe7.webp?ph=3554c7d1fd"
+      ],
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLgImeU9gw9824wqqt4x-Rhq7xl6ODZQtM",
+      "playlistUrls": [
+        "https://www.youtube.com/playlist?list=PLgImeU9gw9824wqqt4x-Rhq7xl6ODZQtM"
+      ],
+      "sessions": [
+        {
+          "date": "20/09/2025",
+          "title": "Vou Contar para os Meus Filhos",
+          "direction": "Tuca Siqueira",
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=Ux2glsbWynM",
+          "sessionUrls": [],
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=Ux2glsbWynM"
+          ]
+        },
+        {
+          "date": "26/09/2025",
+          "title": "Visões do Paraíso",
+          "direction": "Cristiana Miranda",
+          "sessionUrl": "https://www.youtube.com/watch?v=LTnNaWM4R3Y",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=LTnNaWM4R3Y"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "08/10/2025",
+          "title": "O Dia em que Dorival Encarou a Guarda",
+          "direction": "Jorge Furtado e José Pedro Goulart",
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=I418PGZIONQ",
+          "sessionUrls": [],
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=I418PGZIONQ"
+          ]
+        },
+        {
+          "date": "21/10/2025",
+          "title": "Zé",
+          "direction": "Rafael Conde",
+          "note": "Debate com Dulce Pandolfi e Ricardo Máximo.",
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=8L5g64U-sc8",
+          "sessionUrl": "https://www.youtube.com/watch?v=DAFR5oG3vPk",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=DAFR5oG3vPk"
+          ],
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=8L5g64U-sc8"
+          ]
+        },
+        {
+          "date": "21/10/2025",
+          "title": "Acervo Dops - Os papéis da repressão",
+          "direction": "Núcleo de audiovisual da UFF e Arquivo Público do Estado do Rio de Janeiro",
+          "note": "Debate com Felipe Nin, Fernanda Pradal e Daniel Elian.",
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=5BXLPRnrQJE",
+          "sessionUrl": "https://www.youtube.com/watch?v=BP90zueiAsI",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=BP90zueiAsI"
+          ],
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=5BXLPRnrQJE"
+          ]
+        },
+        {
+          "date": "22/10/2025",
+          "title": "Caio Martins e o apagamento da memória",
+          "direction": "Lucas Cavalcante",
+          "note": "Debate com Kenia Maia e Gabriel Souza.",
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=c-oxcKCqVws",
+          "sessionUrl": "https://www.youtube.com/watch?v=tJSgBMCBnWo",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=tJSgBMCBnWo"
+          ],
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=c-oxcKCqVws"
+          ]
+        },
+        {
+          "date": "09/12/2025",
+          "title": "Qual é a memória da ditadura militar?",
+          "note": "Debate com Helen Ortiz, Guilherme Oliveira, Gabriel Rivas, Stella Moreira e Maria Antônia.",
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=0pXwARWKHlk",
+          "sessionUrl": "https://www.youtube.com/watch?v=WsI9D1cTV64",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=WsI9D1cTV64"
+          ],
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=0pXwARWKHlk"
+          ]
+        },
+        {
+          "date": "09/12/2025",
+          "title": "Arquivos da ditadura: luta e resistência em Perus",
+          "direction": "Memorial da Resistência de SP",
+          "note": "Debate com Liza Santos, Gabriel Rivas, Rayane Miranda, Carlos Santos e Rafaela Reis.",
+          "sessionUrl": "https://www.youtube.com/watch?v=_VmVV19X6EM",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=_VmVV19X6EM"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "10/12/2025",
+          "title": "Atuação da FEDEFAM como espaço de resistência e de memória na ditadura Argentina",
+          "note": "Debate com María Adela Antokoletz (Madre de la Plaza de Mayo).",
+          "archiveFilmUrl": "https://www.youtube.com/watch?v=O2jwZVeaPkM",
+          "sessionUrl": "https://www.youtube.com/watch?v=xInohttBwsY",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=xInohttBwsY"
+          ],
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=O2jwZVeaPkM"
+          ]
+        }
+      ],
       "source": "cinema-show-pages"
     }
   },
   {
     "id": "cinema-show-vi",
     "title": "VI Mostra Cinema e Ditadura",
-    "description": "VI Mostra Cinema e Ditadura publicada no portal do LACE.",
+    "description": "A VI Mostra Cinema e Ditadura reúne debates e transmissões sobre memória, resistência, trabalho, juventude, povos originários e os impactos históricos da ditadura empresarial-militar brasileira.",
     "type": "CINEMA_SHOW",
     "researcherName": "LACE",
-    "externalUrl": "/cinema-e-ditadura/vi-mostra",
+    "externalUrl": "https://www.youtube.com/playlist?list=PLgImeU9gw9828y6bUwXk0xHnKlk7uSZl_",
     "fileUrl": null,
     "published": true,
     "metadata": {
@@ -4383,17 +4510,71 @@
         "CINEMA_DITADURA",
         "EVENTOS_ATIVIDADES"
       ],
+      "createCinemaPage": true,
       "showNumber": "VI",
+      "showSlug": "vi-mostra",
+      "eventYear": "2024",
+      "showYear": "2024",
+      "year": "2024",
+      "period": "em dezembro de 2024",
+      "cinemaPath": "/cinema-e-ditadura/vi-mostra",
+      "eventPath": "/eventos/2024",
+      "imageUrl": "https://i4.ytimg.com/vi/3y6GG61RCpg/hqdefault.jpg",
+      "imageUrls": [
+        "https://i4.ytimg.com/vi/3y6GG61RCpg/hqdefault.jpg"
+      ],
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLgImeU9gw9828y6bUwXk0xHnKlk7uSZl_",
+      "playlistUrls": [
+        "https://www.youtube.com/playlist?list=PLgImeU9gw9828y6bUwXk0xHnKlk7uSZl_"
+      ],
+      "sessions": [
+        {
+          "date": "09/12/2024",
+          "title": "Irmãos Carvalho - Retrato da Resistência Operária Contra a Ditadura",
+          "sessionUrl": "https://www.youtube.com/watch?v=3y6GG61RCpg",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=3y6GG61RCpg"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "10/12/2024",
+          "title": "Calabouço, Um Tiro no Coração do Brasil",
+          "sessionUrl": "https://www.youtube.com/watch?v=krOvUNjhGyU",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=krOvUNjhGyU"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "11/12/2024",
+          "title": "O Canto da Terra",
+          "sessionUrl": "https://www.youtube.com/watch?v=y-NofZQLIAg",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=y-NofZQLIAg"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "12/12/2024",
+          "title": "Guerra Sem Fim - Resistência e Luta do Povo Krenak",
+          "sessionUrl": "https://www.youtube.com/watch?v=_7hLCmXOFio",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=_7hLCmXOFio"
+          ],
+          "archiveFilmUrls": []
+        }
+      ],
       "source": "cinema-show-pages"
     }
   },
   {
     "id": "cinema-show-v",
     "title": "V Mostra Cinema e Ditadura",
-    "description": "V Mostra Cinema e Ditadura publicada no portal do LACE.",
+    "description": "A V Mostra Cinema e Ditadura reúne sessões, debates e registros audiovisuais sobre memória, gênero, sexualidade, raça, resistência e ditadura empresarial-militar brasileira.",
     "type": "CINEMA_SHOW",
     "researcherName": "LACE",
-    "externalUrl": "/cinema-e-ditadura/v-mostra",
+    "externalUrl": "https://www.youtube.com/playlist?list=PLgImeU9gw982w_jtbTsr2ZYGyJCx7G9L0",
     "fileUrl": null,
     "published": true,
     "metadata": {
@@ -4402,17 +4583,107 @@
         "CINEMA_DITADURA",
         "EVENTOS_ATIVIDADES"
       ],
+      "createCinemaPage": true,
       "showNumber": "V",
+      "showSlug": "v-mostra",
+      "eventYear": "2023",
+      "showYear": "2023",
+      "year": "2023",
+      "period": "entre junho e dezembro de 2023",
+      "cinemaPath": "/cinema-e-ditadura/v-mostra",
+      "eventPath": "/eventos/2023",
+      "imageUrl": "https://i.ytimg.com/vi/dsOuU9aKEl8/hqdefault.jpg",
+      "imageUrls": [
+        "https://i.ytimg.com/vi/dsOuU9aKEl8/hqdefault.jpg"
+      ],
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLgImeU9gw982w_jtbTsr2ZYGyJCx7G9L0",
+      "playlistUrls": [
+        "https://www.youtube.com/playlist?list=PLgImeU9gw982w_jtbTsr2ZYGyJCx7G9L0"
+      ],
+      "sessions": [
+        {
+          "date": "16/06/2023",
+          "title": "Memórias Femininas da Luta Contra a Ditadura",
+          "sessionUrl": "https://www.youtube.com/watch?v=dsOuU9aKEl8",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=dsOuU9aKEl8"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "30/06/2023",
+          "title": "Memórias Clandestinas",
+          "sessionUrl": "https://www.youtube.com/watch?v=D1VzIBEU7q8",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=D1VzIBEU7q8"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "14/07/2023",
+          "title": "Damas da Liberdade",
+          "sessionUrl": "https://www.youtube.com/watch?v=ZAUN6ZmTcMA",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=ZAUN6ZmTcMA"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "25/08/2023",
+          "title": "Incontáveis - Episódio 4: População LGBTQIA+ na Ditadura",
+          "sessionUrl": "https://www.youtube.com/watch?v=2t1RteMv2Yc",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=2t1RteMv2Yc"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "22/09/2023",
+          "title": "Lampião da Esquina",
+          "sessionUrl": "https://www.youtube.com/watch?v=7axAd5yAglw",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=7axAd5yAglw"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "13/10/2023",
+          "title": "A Questão Racial: da Democracia à Ditadura",
+          "sessionUrl": "https://www.youtube.com/watch?v=GppkZPcVSpE",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=GppkZPcVSpE"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "17/11/2023",
+          "title": "Robson Silveira da Luz",
+          "sessionUrl": "https://www.youtube.com/watch?v=ipeBffYvDtc",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=ipeBffYvDtc"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "08/12/2023",
+          "title": "Incontáveis - Episódio 5: Populações Negras e Favelas na Ditadura",
+          "sessionUrl": "https://www.youtube.com/watch?v=hV51ziEJqBQ",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=hV51ziEJqBQ"
+          ],
+          "archiveFilmUrls": []
+        }
+      ],
       "source": "cinema-show-pages"
     }
   },
   {
     "id": "cinema-show-iv",
     "title": "IV Mostra Cinema e Ditadura",
-    "description": "IV Mostra Cinema e Ditadura publicada no portal do LACE.",
+    "description": "A IV Mostra Cinema e Ditadura reúne sessões e debates sobre memória, violência de Estado, povos originários, trabalho, território e os impactos da ditadura empresarial-militar brasileira.",
     "type": "CINEMA_SHOW",
     "researcherName": "LACE",
-    "externalUrl": "/cinema-e-ditadura/iv-mostra",
+    "externalUrl": "https://www.youtube.com/playlist?list=PLgImeU9gw9814kNyx-czsLXr18d5_zfIA",
     "fileUrl": null,
     "published": true,
     "metadata": {
@@ -4421,17 +4692,108 @@
         "CINEMA_DITADURA",
         "EVENTOS_ATIVIDADES"
       ],
+      "createCinemaPage": true,
       "showNumber": "IV",
+      "showSlug": "iv-mostra",
+      "eventYear": "2022",
+      "showYear": "2022",
+      "year": "2022",
+      "period": "entre maio e dezembro de 2022",
+      "cinemaPath": "/cinema-e-ditadura/iv-mostra",
+      "eventPath": "/eventos/2022",
+      "imageUrl": "https://i.ytimg.com/vi/iuRlQ17bDbM/hqdefault.jpg",
+      "imageUrls": [
+        "https://i.ytimg.com/vi/iuRlQ17bDbM/hqdefault.jpg"
+      ],
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLgImeU9gw9814kNyx-czsLXr18d5_zfIA",
+      "playlistUrls": [
+        "https://www.youtube.com/playlist?list=PLgImeU9gw9814kNyx-czsLXr18d5_zfIA"
+      ],
+      "sessions": [
+        {
+          "date": "27/05/2022",
+          "title": "O Dia que Durou 21 Anos",
+          "direction": "Camilo Galli Tavares",
+          "sessionUrl": "https://www.youtube.com/watch?v=iuRlQ17bDbM",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=iuRlQ17bDbM"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "10/06/2022",
+          "title": "O País de São Saruê",
+          "sessionUrl": "https://www.youtube.com/watch?v=D1VzIBEU7q8",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=D1VzIBEU7q8"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "15/07/2022",
+          "title": "Ditadura criou cadeias para índios com trabalhos forçados e torturas",
+          "sessionUrl": "https://www.youtube.com/watch?v=nuPKqOlJKe4",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=nuPKqOlJKe4"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "26/08/2022",
+          "title": "Senhoras do Dendê",
+          "sessionUrl": "https://www.youtube.com/watch?v=rI8tfOlCYiQ",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=rI8tfOlCYiQ"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "30/09/2022",
+          "title": "Cidadão Boilesen",
+          "sessionUrl": "https://www.youtube.com/watch?v=U20KrHpcEAA",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=U20KrHpcEAA"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "07/11/2022",
+          "title": "Cúmplices? - A Volkswagen e a Ditadura Militar no Brasil",
+          "sessionUrl": "https://www.youtube.com/watch?v=IXex4K90mPE",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=IXex4K90mPE"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "25/11/2022",
+          "title": "O Papel do Eucalipto",
+          "sessionUrl": "https://www.youtube.com/watch?v=11W2n0fK_0A",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=11W2n0fK_0A"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "16/12/2022",
+          "title": "Expurgado",
+          "sessionUrl": "https://www.youtube.com/watch?v=8du9lI1Y45c",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=8du9lI1Y45c"
+          ],
+          "archiveFilmUrls": []
+        }
+      ],
       "source": "cinema-show-pages"
     }
   },
   {
     "id": "cinema-show-iii",
     "title": "III Mostra Cinema e Ditadura",
-    "description": "III Mostra Cinema e Ditadura publicada no portal do LACE.",
+    "description": "A III Mostra Cinema e Ditadura reúne sessões e debates sobre memória, resistência, violência de Estado, território, povos originários e os legados da ditadura empresarial-militar brasileira.",
     "type": "CINEMA_SHOW",
     "researcherName": "LACE",
-    "externalUrl": "/cinema-e-ditadura/iii-mostra",
+    "externalUrl": "https://www.youtube.com/playlist?list=PLgImeU9gw981tOfL6Yu8AGdqwyd8qAuoZ",
     "fileUrl": null,
     "published": true,
     "metadata": {
@@ -4440,7 +4802,79 @@
         "CINEMA_DITADURA",
         "EVENTOS_ATIVIDADES"
       ],
+      "createCinemaPage": true,
       "showNumber": "III",
+      "showSlug": "iii-mostra",
+      "eventYear": "2021",
+      "showYear": "2021",
+      "year": "2021",
+      "period": "entre julho e novembro de 2021",
+      "cinemaPath": "/cinema-e-ditadura/iii-mostra",
+      "eventPath": "/eventos/2021",
+      "imageUrl": "https://i.ytimg.com/vi/Y4EhQ6pFd2o/hqdefault.jpg",
+      "imageUrls": [
+        "https://i.ytimg.com/vi/Y4EhQ6pFd2o/hqdefault.jpg"
+      ],
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLgImeU9gw981tOfL6Yu8AGdqwyd8qAuoZ",
+      "playlistUrls": [
+        "https://www.youtube.com/playlist?list=PLgImeU9gw981tOfL6Yu8AGdqwyd8qAuoZ"
+      ],
+      "sessions": [
+        {
+          "date": "04/07/2021",
+          "title": "Nossos Mortos Têm Voz",
+          "sessionUrl": "https://www.youtube.com/watch?v=Y4EhQ6pFd2o",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=Y4EhQ6pFd2o"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "16/07/2021",
+          "title": "Camponeses do Araguaia - A Guerrilha vista por dentro",
+          "sessionUrl": "https://www.youtube.com/watch?v=0kuXEeHfEzA",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=0kuXEeHfEzA"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "19/08/2021",
+          "title": "15 Filhos",
+          "sessionUrl": "https://www.youtube.com/watch?v=bOaBaZlTqF4",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=bOaBaZlTqF4"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "10/09/2021",
+          "title": "Marãiwatsédé - O Resgate da Terra",
+          "sessionUrl": "https://www.youtube.com/watch?v=8Usy1OTeDqM",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=8Usy1OTeDqM"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "21/10/2021",
+          "title": "O Nosso Sagrado",
+          "sessionUrl": "https://www.youtube.com/watch?v=HpPr9coY5oA",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=HpPr9coY5oA"
+          ],
+          "archiveFilmUrls": []
+        },
+        {
+          "date": "05/11/2021",
+          "title": "Barra 68, sem perder a ternura",
+          "sessionUrl": "https://www.youtube.com/watch?v=kcnyLc8shCE",
+          "sessionUrls": [
+            "https://www.youtube.com/watch?v=kcnyLc8shCE"
+          ],
+          "archiveFilmUrls": []
+        }
+      ],
       "source": "cinema-show-pages"
     }
   }

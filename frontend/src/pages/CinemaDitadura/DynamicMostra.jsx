@@ -21,6 +21,12 @@ function playlistTitle(show) {
   return showNumber ? `Playlist completa da ${showNumber} Mostra` : "Playlist completa da mostra";
 }
 
+function playlistPeriod(show) {
+  const period = show?.metadata?.period;
+  if (period) return `Registros das transmissões realizadas ${period}.`;
+  return `Registros das transmissões realizadas${show?.metadata?.eventYear ? ` em ${show.metadata.eventYear}` : ""}.`;
+}
+
 export default function DynamicMostra() {
   const { showSlug } = useParams();
   const [show, setShow] = useState(null);
@@ -31,6 +37,8 @@ export default function DynamicMostra() {
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+
     api
       .get(`/contents/cinema-shows/${showSlug}`)
       .then(({ data }) => {
@@ -51,7 +59,9 @@ export default function DynamicMostra() {
   if (loading) {
     return (
       <main className="bg-background py-20 lg:py-28">
-        <Container><p className="text-muted">Carregando mostra...</p></Container>
+        <Container>
+          <p className="text-muted">Carregando mostra...</p>
+        </Container>
       </main>
     );
   }
@@ -62,9 +72,9 @@ export default function DynamicMostra() {
         <Container>
           <div className="rounded-3xl border border-dashed border-border bg-card/60 p-8 md:p-12">
             <Library className="text-primary" aria-hidden="true" />
-            <h1 className="mt-5 font-title text-4xl md:text-5xl">Mostra em organizacao</h1>
+            <h1 className="mt-5 font-title text-4xl md:text-5xl">Mostra em organização</h1>
             <p className="mt-4 max-w-2xl leading-8 text-muted">
-              Esta mostra ainda nao foi publicada no acervo do LACE ou esta aguardando aprovacao.
+              Esta mostra ainda não foi publicada no acervo do LACE ou está aguardando aprovação.
             </p>
           </div>
         </Container>
@@ -97,7 +107,7 @@ export default function DynamicMostra() {
           ) : (
             <div className="rounded-3xl border border-dashed border-border bg-card/60 p-8">
               <Film className="text-primary" aria-hidden="true" />
-              <p className="mt-4 leading-7 text-muted">Imagem da mostra ainda nao cadastrada.</p>
+              <p className="mt-4 leading-7 text-muted">Imagem da mostra ainda não cadastrada.</p>
             </div>
           )}
         </header>
@@ -107,9 +117,7 @@ export default function DynamicMostra() {
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">Transmissões gravadas</p>
               <h2 className="mt-3 font-title text-4xl">{playlistTitle(show)}</h2>
-              <p className="mt-3 text-muted">
-                Registros das transmissões realizadas{show.metadata?.eventYear ? ` em ${show.metadata.eventYear}` : ""}.
-              </p>
+              <p className="mt-3 text-muted">{playlistPeriod(show)}</p>
             </div>
             <div className="mt-6 flex flex-wrap gap-3 md:mt-0">
               {playlistUrls.map((url, index) => (
@@ -159,6 +167,7 @@ export default function DynamicMostra() {
                       <div>
                         <h3 className="font-title text-3xl leading-tight text-text">{session.title || `Sessão ${index + 1}`}</h3>
                         {session.direction && <p className="mt-3 text-sm text-muted">Direção: {session.direction}</p>}
+                        {session.note && <p className="mt-3 text-sm text-muted">{session.note}</p>}
                       </div>
 
                       <div className="mt-4 flex flex-wrap items-center gap-4">
@@ -194,7 +203,7 @@ export default function DynamicMostra() {
             </div>
           ) : (
             <div className="mt-8 rounded-3xl border border-dashed border-border bg-card/60 p-8">
-              <p className="leading-7 text-muted">O calendario desta mostra sera publicado em breve.</p>
+              <p className="leading-7 text-muted">O calendário desta mostra será publicado em breve.</p>
             </div>
           )}
         </section>
