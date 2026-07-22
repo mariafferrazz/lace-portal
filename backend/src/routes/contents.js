@@ -34,6 +34,11 @@ function showSlug(showNumber = "") {
   return slug ? `${slug}-mostra` : "";
 }
 
+function extractShowNumber(title = "") {
+  const match = String(title || "").trim().match(/^([IVXLCDM]+)\b/i);
+  return match ? match[1].toUpperCase() : "";
+}
+
 function normalizeContentData(data) {
   if (data.type === undefined && data.metadata === undefined) return data;
 
@@ -42,19 +47,22 @@ function normalizeContentData(data) {
     : {};
 
   if (data.type === "CINEMA_SHOW") {
-    const showNumber = String(metadata.showNumber || "").trim();
+    const showNumber = String(metadata.showNumber || extractShowNumber(data.title) || "").trim();
     const eventYear = String(metadata.eventYear || metadata.showYear || metadata.year || "").trim();
     const imageUrls = uniqueValues(metadata.imageUrls, metadata.imageUrl, metadata.thumbnail, metadata.images);
     const playlistUrls = uniqueValues(metadata.playlistUrls, metadata.playlistUrl, data.externalUrl);
+    const createCinemaPage = metadata.createCinemaPage !== false && metadata.cinemaPath !== null;
+    const slug = showSlug(showNumber) || metadata.showSlug || (createCinemaPage ? showSlug(data.title) : null);
 
-    metadata.editorialArea = "CINEMA_DITADURA";
-    metadata.editorialAreas = cinemaShowAreas;
+    metadata.editorialArea = createCinemaPage ? "CINEMA_DITADURA" : "EVENTOS_ATIVIDADES";
+    metadata.editorialAreas = createCinemaPage ? cinemaShowAreas : ["EVENTOS_ATIVIDADES"];
+    metadata.createCinemaPage = createCinemaPage;
     metadata.showNumber = showNumber;
-    metadata.showSlug = showSlug(showNumber) || metadata.showSlug || null;
+    metadata.showSlug = slug || null;
     metadata.eventYear = eventYear;
     metadata.showYear = eventYear;
     metadata.year = eventYear;
-    metadata.cinemaPath = metadata.showSlug ? `/cinema-e-ditadura/${metadata.showSlug}` : null;
+    metadata.cinemaPath = createCinemaPage && metadata.showSlug ? `/cinema-e-ditadura/${metadata.showSlug}` : null;
     metadata.eventPath = eventYear ? `/eventos/${eventYear}` : null;
     metadata.imageUrl = imageUrls[0] || null;
     metadata.imageUrls = imageUrls;

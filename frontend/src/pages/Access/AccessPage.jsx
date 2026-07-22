@@ -18,7 +18,7 @@ const contentTypes = [
 ];
 
 const contentAreas = [
-  { value: "CINEMA_DITADURA", label: "Cinema e Ditadura", types: ["FILM", "GLOSSARY", "CINEMA_SHOW"] },
+  { value: "CINEMA_DITADURA", label: "Cinema e Ditadura", types: ["FILM", "GLOSSARY"] },
   { value: "PRODUCAO_AUDIOVISUAL", label: "Producao Audiovisual", types: ["INTERVIEW", "PODCAST"] },
   { value: "PRODUCAO_ACADEMICA", label: "Producao Academica", types: ["ARTICLE", "RESEARCH"] },
   { value: "EVENTOS_ATIVIDADES", label: "Eventos e Atividades", types: ["EVENT", "CINEMA_SHOW", "VIRAL_ESCAPE_LINES"] },
@@ -27,6 +27,21 @@ const contentAreas = [
 const areaForType = (type) => contentAreas.find((area) => area.types.includes(type));
 const typeLabel = (type) => contentTypes.find(([value]) => value === type)?.[1] || type;
 const cinemaShowAreas = ["CINEMA_DITADURA", "EVENTOS_ATIVIDADES"];
+const eventYearOptions = ["2026", "2025", "2024", "2023", "2022", "2021", "2020"];
+
+function extractShowNumber(title = "") {
+  const match = String(title).trim().match(/^([IVXLCDM]+)\b/i);
+  return match ? match[1].toUpperCase() : "";
+}
+
+function selectedEventYear(form) {
+  return form.eventYear === "__new__" ? form.customEventYear.trim() : form.eventYear.trim();
+}
+
+function showSlugFromTitle(title = "") {
+  const number = extractShowNumber(title);
+  return number ? showSlug(number) : showSlug(title);
+}
 
 function contentAreaLabel(content) {
   const areas = content.metadata?.editorialAreas;
@@ -62,7 +77,9 @@ const initialForm = {
   imageUrl: "",
   imageUrls: [""],
   showNumber: "",
-  eventYear: "",
+  eventYear: "2026",
+  customEventYear: "",
+  createCinemaPage: true,
   playlistUrl: "",
   playlistUrls: [""],
   sessions: [{ ...emptySession }],
@@ -93,7 +110,9 @@ function createInitialForm(areaValue = "CINEMA_DITADURA", typeValue) {
 
 function formFromContent(content) {
   const metadata = content.metadata || {};
-  const areaValue = Array.isArray(metadata.editorialAreas)
+  const areaValue = content.type === "CINEMA_SHOW"
+    ? "EVENTOS_ATIVIDADES"
+    : Array.isArray(metadata.editorialAreas)
     ? metadata.editorialAreas[0]
     : metadata.editorialArea || areaForType(content.type)?.value || "CINEMA_DITADURA";
   const base = createInitialForm(areaValue, content.type);
@@ -109,7 +128,9 @@ function formFromContent(content) {
     imageUrl: metadata.imageUrl || "",
     imageUrls: ensureUrlList(metadata.imageUrls, metadata.imageUrl),
     showNumber: metadata.showNumber || "",
-    eventYear: metadata.eventYear || metadata.showYear || metadata.year || "",
+    eventYear: eventYearOptions.includes(String(metadata.eventYear || metadata.showYear || metadata.year || "")) ? String(metadata.eventYear || metadata.showYear || metadata.year || "") : ((metadata.eventYear || metadata.showYear || metadata.year) ? "__new__" : "2026"),
+    customEventYear: eventYearOptions.includes(String(metadata.eventYear || metadata.showYear || metadata.year || "")) ? "" : String(metadata.eventYear || metadata.showYear || metadata.year || ""),
+    createCinemaPage: metadata.createCinemaPage !== false && metadata.cinemaPath !== null,
     playlistUrl: metadata.playlistUrl || content.externalUrl || "",
     playlistUrls: ensureUrlList(metadata.playlistUrls, metadata.playlistUrl || content.externalUrl),
     sessions: Array.isArray(metadata.sessions) && metadata.sessions.length
@@ -231,6 +252,10 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
     setForm((current) => ({ ...current, type: event.target.value }));
   }
 
+  function updateCheckbox(field) {
+    return (event) => setForm((current) => ({ ...current, [field]: event.target.checked }));
+  }
+
   function updateResearcher(event) {
     if (event.target.value.startsWith("name:")) {
       setForm((current) => ({
@@ -312,16 +337,18 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
     if (form.researcherMemberId && !form.researcherMemberId.startsWith("name:")) metadata.researcherMemberId = form.researcherMemberId;
 
     if (isCinemaShow) {
-      const slug = showSlug(form.showNumber);
-      const year = form.eventYear.trim();
-      metadata.editorialArea = "CINEMA_DITADURA";
-      metadata.editorialAreas = cinemaShowAreas;
-      metadata.showNumber = form.showNumber.trim();
+      const slug = showSlugFromTitle(form.title);
+      const year = selectedEventYear(form);
+      const showNumber = extractShowNumber(form.title);
+      metadata.editorialArea = form.createCinemaPage ? "CINEMA_DITADURA" : "EVENTOS_ATIVIDADES";
+      metadata.editorialAreas = form.createCinemaPage ? cinemaShowAreas : ["EVENTOS_ATIVIDADES"];
+      metadata.createCinemaPage = form.createCinemaPage;
+      metadata.showNumber = showNumber;
       metadata.showSlug = slug;
       metadata.eventYear = year;
       metadata.showYear = year;
       metadata.year = year;
-      metadata.cinemaPath = slug ? `/cinema-e-ditadura/${slug}` : null;
+      metadata.cinemaPath = form.createCinemaPage && slug ? `/cinema-e-ditadura/${slug}` : null;
       metadata.eventPath = year ? `/eventos/${year}` : null;
       metadata.imageUrl = imageUrls[0] || null;
       metadata.imageUrls = imageUrls;
@@ -340,7 +367,7 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
         .filter((session) => session.date || session.title || session.sessionUrl || session.archiveFilmUrl);
     } else {
       if (isEvent) {
-        const year = form.eventYear.trim();
+        const year = selectedEventYear(form);
         metadata.eventYear = year;
         metadata.year = year;
         metadata.eventPath = year ? `/eventos/${year}` : null;
@@ -367,12 +394,12 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
     setLoading(true);
     setStatus(null);
 
-    if (isCinemaShow && !form.showNumber.trim()) {
-      setStatus({ ok: false, message: "Informe a numeracao da mostra, como VIII, IX ou X." });
+    if (isCinemaShow && !extractShowNumber(form.title)) {
+      setStatus({ ok: false, message: "Comece o titulo com a numeracao da mostra, como VIII Mostra Cinema e Ditadura." });
       setLoading(false);
       return;
     }
-    if ((isCinemaShow || isEvent) && !form.eventYear.trim()) {
+    if ((isCinemaShow || isEvent) && !selectedEventYear(form)) {
       setStatus({ ok: false, message: "Informe o ano do evento ou da mostra." });
       setLoading(false);
       return;
@@ -400,7 +427,36 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
       <div className="flex items-center gap-3 text-primary"><Upload aria-hidden="true" /><h2 className="font-title text-3xl text-text">{isEditing ? "Editar conteudo" : "Novo conteudo"}</h2></div>
       <p className="mt-3 text-muted">{isEditing ? "Revise as informacoes antes de publicar ou manter em revisao." : "O nome informado abaixo sera exibido como autoria do material."}</p>
       <form className="mt-7 grid gap-5 md:grid-cols-2" onSubmit={submit}>
-        <label className="font-semibold">Titulo *<input className={fieldClass} required maxLength={200} value={form.title} onChange={update("title")} /></label>
+        <label className="font-semibold">Area editorial *
+          <select className={fieldClass} required value={form.area} onChange={updateArea}>{contentAreas.map((area) => <option key={area.value} value={area.value}>{area.label}</option>)}</select>
+        </label>
+        <label className="font-semibold">Tipo de conteudo *
+          <select className={fieldClass} required value={form.type} onChange={updateType}>{contentTypes.filter(([value]) => contentAreas.find((area) => area.value === form.area)?.types.includes(value)).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select>
+        </label>
+        {(isCinemaShow || isEvent) && (
+          <EventYearField
+            value={form.eventYear}
+            customValue={form.customEventYear}
+            onYearChange={update("eventYear")}
+            onCustomYearChange={update("customEventYear")}
+            label={isCinemaShow ? "Ano da mostra *" : "Ano do evento *"}
+          />
+        )}
+        {isCinemaShow && (
+          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-4 font-semibold transition hover:border-primary">
+            <input
+              className="mt-1 size-5 accent-primary"
+              type="checkbox"
+              checked={form.createCinemaPage}
+              onChange={updateCheckbox("createCinemaPage")}
+            />
+            <span>
+              Criar pagina tambem em Cinema e Ditadura
+              <span className="mt-1 block text-sm font-normal leading-6 text-muted">A mostra ficara acessivel no ano de Eventos e tambem no submenu Cinema e Ditadura.</span>
+            </span>
+          </label>
+        )}
+        <label className="font-semibold">Titulo *<input className={fieldClass} required maxLength={200} placeholder={isCinemaShow ? "VIII Mostra Cinema e Ditadura" : ""} value={form.title} onChange={update("title")} /></label>
         <label className="font-semibold">Nome do pesquisador *
           <select className={fieldClass} required value={form.researcherMemberId} onChange={updateResearcher}>
             <option value="">Selecione uma pessoa da Equipe LACE</option>
@@ -408,17 +464,10 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
             {form.researcherMemberId.startsWith("name:") && <option value={form.researcherMemberId}>{form.researcherName}</option>}
           </select>
         </label>
-        <label className="font-semibold">Area editorial *
-          <select className={fieldClass} required value={form.area} onChange={updateArea}>{contentAreas.map((area) => <option key={area.value} value={area.value}>{area.label}</option>)}</select>
-        </label>
-        <label className="font-semibold">Tipo de conteudo *
-          <select className={fieldClass} required value={form.type} onChange={updateType}>{contentTypes.filter(([value]) => contentAreas.find((area) => area.value === form.area)?.types.includes(value)).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select>
-        </label>
 
         {isCinemaShow ? (
           <CinemaShowFields
             form={form}
-            update={update}
             updateImageFile={updateImageFile}
             updateSession={updateSession}
             updateSessionUrlList={updateSessionUrlList}
@@ -432,12 +481,6 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
           />
         ) : (
           <>
-            {isEvent && (
-              <label className="font-semibold md:col-span-2">
-                Ano do evento *
-                <input className={fieldClass} required inputMode="numeric" maxLength={4} placeholder="2026" value={form.eventYear} onChange={update("eventYear")} />
-              </label>
-            )}
             <MultiUrlField
               className="md:col-span-2"
               label={isEvent ? "URL do evento" : "URL do conteudo, arquivo ou midia"}
@@ -540,9 +583,31 @@ function ImageSourceField({ label, values, onUrlChange, onUrlAdd, onUrlRemove, o
   );
 }
 
+function EventYearField({ value, customValue, onYearChange, onCustomYearChange, label }) {
+  return (
+    <div className="font-semibold">
+      {label}
+      <select className={fieldClass} required value={value} onChange={onYearChange}>
+        {eventYearOptions.map((year) => <option key={year} value={year}>{year}</option>)}
+        <option value="__new__">Adicionar ano</option>
+      </select>
+      {value === "__new__" && (
+        <input
+          className={fieldClass}
+          required
+          inputMode="numeric"
+          maxLength={4}
+          placeholder="2027"
+          value={customValue}
+          onChange={onCustomYearChange}
+        />
+      )}
+    </div>
+  );
+}
+
 function CinemaShowFields({
   form,
-  update,
   updateImageFile,
   updateSession,
   updateSessionUrlList,
@@ -557,14 +622,6 @@ function CinemaShowFields({
   return (
     <section className="md:col-span-2 rounded-2xl border border-primary/30 bg-primary/5 p-5">
       <div className="grid gap-5 md:grid-cols-2">
-        <label className="font-semibold">
-          Numeracao da mostra *
-          <input className={fieldClass} required maxLength={20} placeholder="VIII, IX ou X" value={form.showNumber} onChange={update("showNumber")} />
-        </label>
-        <label className="font-semibold">
-          Ano da mostra *
-          <input className={fieldClass} required inputMode="numeric" maxLength={4} placeholder="2026" value={form.eventYear} onChange={update("eventYear")} />
-        </label>
         <MultiUrlField
           label="Link da playlist"
           values={form.playlistUrls}
