@@ -1,10 +1,15 @@
-import { useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import EventCard from "../cards/EventCard";
 import Container from "../ui/Container";
 import SectionTitle from "../ui/SectionTitle";
+import api from "../../services/api";
+import { contentFileUrls, contentImage } from "../../utils/contentMetadata";
+import { eventYear, showPath } from "../../utils/contentRoutes";
 
-const highlights = [
+const fallbackImage = "https://i.ytimg.com/vi/iuRlQ17bDbM/hqdefault.jpg";
+
+const fallbackHighlights = [
   {
     image:
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000169-804c1804c2/13ad51a8-369d-446e-9987-d0ae30dd2fe7.webp?ph=3554c7d1fd",
@@ -12,7 +17,7 @@ const highlights = [
     year: "2025",
     title: "VII MOSTRA CINEMA E DITADURA",
     description:
-      "Sétima edição da mostra promovida pelo LACE para pensar a ditadura brasileira por meio do cinema e do debate público.",
+      "Setima edicao da mostra promovida pelo LACE para pensar a ditadura brasileira por meio do cinema e do debate publico.",
     to: "/cinema-e-ditadura/vii-mostra",
   },
   {
@@ -21,27 +26,27 @@ const highlights = [
     year: "2024",
     title: "VI MOSTRA CINEMA E DITADURA",
     description:
-      "Sessões, debates e materiais audiovisuais voltados à memória social, aos movimentos de resistência e aos direitos humanos.",
+      "Sessoes, debates e materiais audiovisuais voltados a memoria social, aos movimentos de resistencia e aos direitos humanos.",
     to: "/cinema-e-ditadura/vi-mostra",
   },
   {
     image:
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000163-741a2741a3/Chamada%20para%20verbetes%20%281%29.webp?ph=3554c7d1fd",
-    imageAlt: "Chamada para produção de verbetes",
+    imageAlt: "Chamada para producao de verbetes",
     year: "2024",
-    title: "CHAMADA PARA PRODUÇÃO DE VERBETES",
+    title: "CHAMADA PARA PRODUCAO DE VERBETES",
     description:
-      "Chamada do LACE para produção de verbetes sobre temas relacionados à Ditadura Empresarial Militar.",
+      "Chamada do LACE para producao de verbetes sobre temas relacionados a Ditadura Empresarial Militar.",
     to: "/eventos/2024",
   },
   {
     image:
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000155-19b7519b78/700/404275078_920886799556176_2318967520888483703_n.webp?ph=3554c7d1fd",
-    imageAlt: "Seminário Empresas e Empresários na Ditadura",
+    imageAlt: "Seminario Empresas e Empresarios na Ditadura",
     year: "2023",
-    title: "SEMINÁRIO EMPRESAS E EMPRESÁRIOS NA DITADURA",
+    title: "SEMINARIO EMPRESAS E EMPRESARIOS NA DITADURA",
     description:
-      "Agenda de pesquisas comum realizada na Universidade Federal Fluminense, no Campus Gragoatá, em Niterói.",
+      "Agenda de pesquisas comum realizada na Universidade Federal Fluminense, no Campus Gragoata, em Niteroi.",
     to: "/eventos/2023",
   },
   {
@@ -50,17 +55,17 @@ const highlights = [
     year: "2023",
     title: "V MOSTRA CINEMA E DITADURA",
     description:
-      "Mostra dedicada a filmes e debates sobre memória, gênero, raça, repressão e resistência durante a ditadura empresarial-militar.",
+      "Mostra dedicada a filmes e debates sobre memoria, genero, raca, repressao e resistencia durante a ditadura empresarial-militar.",
     to: "/cinema-e-ditadura/v-mostra",
   },
   {
     image:
       "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000159-cdc6ccdc6e/700/Podcasting.webp?ph=3554c7d1fd",
-    imageAlt: "No Convés da Repressão e Resistência - O podcast do LACE",
+    imageAlt: "No Conves da Repressao e Resistencia - O podcast do LACE",
     year: "2022",
-    title: "NO CONVÉS DA REPRESSÃO E RESISTÊNCIA",
+    title: "NO CONVES DA REPRESSAO E RESISTENCIA",
     description:
-      "Podcast do LACE dedicado à memória, à repressão e à resistência dos operários navais durante a ditadura empresarial-militar.",
+      "Podcast do LACE dedicado a memoria, a repressao e a resistencia dos operarios navais durante a ditadura empresarial-militar.",
     to: "/producao-audiovisual/podcasts",
   },
   {
@@ -69,7 +74,7 @@ const highlights = [
     year: "2022",
     title: "IV MOSTRA CINEMA E DITADURA",
     description:
-      "Programação dedicada a filmes, debates e reflexões sobre memória, violência de Estado e direitos humanos.",
+      "Programacao dedicada a filmes, debates e reflexoes sobre memoria, violencia de Estado e direitos humanos.",
     to: "/cinema-e-ditadura/iv-mostra",
   },
   {
@@ -79,13 +84,60 @@ const highlights = [
     year: "2021",
     title: "III MOSTRA VIRTUAL CINEMA E DITADURA",
     description:
-      "Mostra virtual com debates e reflexões sobre temas historicamente ligados à ditadura militar brasileira.",
+      "Mostra virtual com debates e reflexoes sobre temas historicamente ligados a ditadura militar brasileira.",
     to: "/cinema-e-ditadura/iii-mostra",
   },
 ];
 
+function eventPath(content) {
+  if (content.type === "CINEMA_SHOW") return showPath(content);
+  const year = eventYear(content);
+  return year ? `/eventos/${year}` : contentFileUrls(content)[0] || "/";
+}
+
+function eventCardFromContent(content) {
+  return {
+    image: contentImage(content, fallbackImage),
+    imageAlt: content.title,
+    year: eventYear(content),
+    title: content.title,
+    description: content.description || "Conteudo publicado pelo LACE em eventos e atividades.",
+    to: eventPath(content),
+    dynamicId: content.id,
+  };
+}
+
 export default function FeaturedEventSection() {
   const carouselRef = useRef(null);
+  const [dynamicHighlights, setDynamicHighlights] = useState([]);
+  const events = useMemo(() => {
+    const seen = new Set();
+    return [...dynamicHighlights.map(eventCardFromContent), ...fallbackHighlights]
+      .filter((event) => event.to && event.title)
+      .filter((event) => {
+        const key = `${event.title}-${event.year}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, 8);
+  }, [dynamicHighlights]);
+
+  useEffect(() => {
+    let active = true;
+    api
+      .get("/contents/highlights")
+      .then(({ data }) => {
+        if (active) setDynamicHighlights(data.contents || []);
+      })
+      .catch(() => {
+        if (active) setDynamicHighlights([]);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function scrollCarousel(direction) {
     const carousel = carouselRef.current;
@@ -103,7 +155,7 @@ export default function FeaturedEventSection() {
     <section className="bg-background py-24 lg:py-32">
       <Container>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <SectionTitle subtitle="Destaques" title="Últimos eventos" />
+          <SectionTitle subtitle="Destaques" title="Ultimos eventos" />
           <div className="flex gap-3">
             <button
               type="button"
@@ -117,7 +169,7 @@ export default function FeaturedEventSection() {
               type="button"
               onClick={() => scrollCarousel("next")}
               className="inline-flex size-12 items-center justify-center rounded-full border border-border bg-card text-text transition hover:border-primary hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              aria-label="Ver próximos eventos"
+              aria-label="Ver proximos eventos"
             >
               <ArrowRight size={20} aria-hidden="true" />
             </button>
@@ -127,11 +179,11 @@ export default function FeaturedEventSection() {
         <div
           ref={carouselRef}
           className="mt-8 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          aria-label="Últimos quatro eventos em destaque"
+          aria-label="Ultimos eventos em destaque"
         >
-          {highlights.map((event) => (
+          {events.map((event) => (
             <div
-              key={event.title}
+              key={event.dynamicId || event.title}
               data-carousel-card
               className="w-[82vw] max-w-[420px] shrink-0 snap-start sm:w-[44vw] lg:w-[31%] xl:w-[24%]"
             >

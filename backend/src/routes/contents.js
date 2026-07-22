@@ -5,6 +5,70 @@ const { notifyCoordinatorContentChange } = require("../services/notifications");
 
 const router = express.Router();
 const contentTypes = new Set(["FILM", "GLOSSARY", "CINEMA_SHOW", "ARTICLE", "RESEARCH", "TRANSLATION", "VIRAL_ESCAPE_LINES", "INTERVIEW", "PODCAST", "EVENT", "OTHER"]);
+const cinemaShowAreas = ["CINEMA_DITADURA", "EVENTOS_ATIVIDADES"];
+
+function uniqueValues(...values) {
+  return [
+    ...new Set(
+      values
+        .flat(Infinity)
+        .filter(Boolean)
+        .map((value) => String(value).trim())
+        .filter(Boolean),
+    ),
+  ];
+}
+
+function normalizeSlug(value = "") {
+  return String(value)
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function showSlug(showNumber = "") {
+  const slug = normalizeSlug(showNumber);
+  return slug ? `${slug}-mostra` : "";
+}
+
+function normalizeContentData(data) {
+  if (data.type === undefined && data.metadata === undefined) return data;
+
+  const metadata = data.metadata && typeof data.metadata === "object" && !Array.isArray(data.metadata)
+    ? { ...data.metadata }
+    : {};
+
+  if (data.type === "CINEMA_SHOW") {
+    const showNumber = String(metadata.showNumber || "").trim();
+    const eventYear = String(metadata.eventYear || metadata.showYear || metadata.year || "").trim();
+    const imageUrls = uniqueValues(metadata.imageUrls, metadata.imageUrl, metadata.thumbnail, metadata.images);
+    const playlistUrls = uniqueValues(metadata.playlistUrls, metadata.playlistUrl, data.externalUrl);
+
+    metadata.editorialArea = "CINEMA_DITADURA";
+    metadata.editorialAreas = cinemaShowAreas;
+    metadata.showNumber = showNumber;
+    metadata.showSlug = metadata.showSlug || showSlug(showNumber);
+    metadata.eventYear = eventYear;
+    metadata.showYear = eventYear;
+    metadata.year = eventYear;
+    metadata.imageUrl = imageUrls[0] || null;
+    metadata.imageUrls = imageUrls;
+    metadata.playlistUrl = playlistUrls[0] || null;
+    metadata.playlistUrls = playlistUrls;
+    metadata.sessions = Array.isArray(metadata.sessions) ? metadata.sessions : [];
+    data.externalUrl = playlistUrls[0] || data.externalUrl || null;
+  } else if (data.type === "EVENT") {
+    metadata.editorialArea = "EVENTOS_ATIVIDADES";
+    metadata.eventYear = String(metadata.eventYear || metadata.year || "").trim();
+    metadata.year = metadata.eventYear;
+  }
+
+  data.metadata = metadata;
+  return data;
+}
 
 async function listManageContents(summaryOnly = false) {
   if (summaryOnly) {
@@ -59,7 +123,7 @@ function parseContent(body, partial = false) {
     data.researcherMemberId = body.researcherMemberId ? String(body.researcherMemberId).trim() || null : null;
   }
   if (body.metadata !== undefined) data.metadata = body.metadata;
-  return data;
+  return normalizeContentData(data);
 }
 
 router.get("/", async (req, res) => {
@@ -83,6 +147,26 @@ router.get("/navigation", async (_req, res) => {
     where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW"] } },
     select: { id: true, title: true, type: true, metadata: true },
     orderBy: { createdAt: "desc" },
+  });
+  res.json({ contents });
+});
+
+router.get("/highlights", async (_req, res) => {
+  const contents = await prisma.content.findMany({
+    where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW"] } },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      type: true,
+      fileUrl: true,
+      externalUrl: true,
+      metadata: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+    orderBy: [{ createdAt: "desc" }],
+    take: 12,
   });
   res.json({ contents });
 });
