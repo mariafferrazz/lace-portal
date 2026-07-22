@@ -207,19 +207,23 @@ async function listManageContents() {
         createdBy: { select: { id: true, name: true, role: true } },
         researcherMember: { select: { id: true, name: true, role: true } },
       },
-      orderBy: { createdAt: "desc" },
     }),
     prisma.content.findMany({
       where: { published: false },
       select: basicContentSelect,
-      orderBy: { createdAt: "desc" },
     }),
   ]);
 
-  return enrichCinemaShows([
+  const contents = [
     ...pendingRows.map(normalizeRawContent),
     ...publishedContents.map((content) => ({ ...content, summaryOnly: false })),
-  ]);
+  ].sort((left, right) => {
+    const rightCreatedAt = new Date(right.createdAt || 0).getTime();
+    const leftCreatedAt = new Date(left.createdAt || 0).getTime();
+    return rightCreatedAt - leftCreatedAt;
+  });
+
+  return enrichCinemaShows(contents);
 }
 
 async function findManageContent(id) {
