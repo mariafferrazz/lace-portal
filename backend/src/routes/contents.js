@@ -19,6 +19,19 @@ function uniqueValues(...values) {
   ];
 }
 
+function parseMetadata(value) {
+  if (!value) return {};
+  if (Buffer.isBuffer(value)) value = value.toString("utf8");
+  if (typeof value === "string") {
+    try {
+      return JSON.parse(value || "{}");
+    } catch {
+      return {};
+    }
+  }
+  return value;
+}
+
 function normalizeSlug(value = "") {
   return String(value)
     .trim()
@@ -84,20 +97,17 @@ function normalizeContentData(data) {
 async function listManageContents(summaryOnly = false) {
   if (summaryOnly) {
     const rows = await prisma.$queryRaw`
-      SELECT id, title, type, researcherName, researcherMemberId, published, createdById, createdAt, updatedAt
+      SELECT id, title, description, type, researcherName, researcherMemberId, fileUrl, externalUrl, metadata, published, createdById, createdAt, updatedAt
       FROM Content
       ORDER BY createdAt DESC
     `;
     return rows.map((content) => ({
       ...content,
-      description: null,
-      fileUrl: null,
-      externalUrl: null,
-      metadata: null,
+      metadata: parseMetadata(content.metadata),
       published: Boolean(content.published),
       createdBy: null,
       researcherMember: null,
-      summaryOnly: true,
+      summaryOnly: false,
     }));
   }
 

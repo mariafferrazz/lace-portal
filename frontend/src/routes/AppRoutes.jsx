@@ -20,11 +20,6 @@ const Podcasts = lazy(() => import("../pages/ProducaoAudiovisual/Podcasts"));
 const LinhasDeFugasVirais = lazy(() => import("../pages/ProducaoAcademica/LinhasDeFugasVirais"));
 const Artigos = lazy(() => import("../pages/ProducaoAcademica/Artigos"));
 const Pesquisas = lazy(() => import("../pages/ProducaoAcademica/Pesquisas"));
-const Eventos2021 = lazy(() => import("../pages/Eventos/Eventos2021"));
-const Eventos2022 = lazy(() => import("../pages/Eventos/Eventos2022"));
-const Eventos2023 = lazy(() => import("../pages/Eventos/Eventos2023"));
-const Eventos2024 = lazy(() => import("../pages/Eventos/Eventos2024"));
-const Eventos2025 = lazy(() => import("../pages/Eventos/Eventos2025"));
 const DynamicEventosYear = lazy(() => import("../pages/Eventos/DynamicEventosYear"));
 
 const withSuspense = (element) => <Suspense fallback={null}>{element}</Suspense>;
@@ -74,11 +69,6 @@ export default function AppRoutes() {
           />
 
           {/* Eventos */}
-          <Route path="/eventos/2021" element={withSuspense(<Eventos2021 />)} />
-          <Route path="/eventos/2022" element={withSuspense(<Eventos2022 />)} />
-          <Route path="/eventos/2023" element={withSuspense(<Eventos2023 />)} />
-          <Route path="/eventos/2024" element={withSuspense(<Eventos2024 />)} />
-          <Route path="/eventos/2025" element={withSuspense(<Eventos2025 />)} />
           <Route path="/eventos/:year" element={withSuspense(<DynamicEventosYear />)} />
 
           {/* 404 */}

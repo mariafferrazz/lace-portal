@@ -5,7 +5,7 @@ import { CalendarDays, ExternalLink, Images, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import SocialShare from "../../components/ui/SocialShare";
 import api from "../../services/api";
-import { contentFileUrls, contentImage, contentImageUrls, contentPlaylistUrls, sessionArchiveUrls, sessionWatchUrls } from "../../utils/contentMetadata";
+import { contentFileUrls, contentImage, contentImageUrls, contentPlaylistUrls, sessionArchiveUrls, sessionWatchUrls, uniqueUrls } from "../../utils/contentMetadata";
 import { eventYear, showPath } from "../../utils/contentRoutes";
 
 const fallbackImage = "https://i.ytimg.com/vi/iuRlQ17bDbM/hqdefault.jpg";
@@ -17,6 +17,26 @@ function eventImage(content) {
 function eventLink(content) {
   if (content.type === "CINEMA_SHOW") return showPath(content);
   return contentFileUrls(content)[0] || "";
+}
+
+function eventPeriod(content) {
+  return content?.metadata?.period || eventYear(content);
+}
+
+function eventGalleryUrls(content) {
+  const gallery = Array.isArray(content?.metadata?.gallery) ? content.metadata.gallery : [];
+  return gallery.map((item) => item?.url || item).filter(Boolean);
+}
+
+function eventLinks(content) {
+  const metadataLinks = Array.isArray(content?.metadata?.links) ? content.metadata.links : [];
+  return metadataLinks
+    .map((link) => ({
+      label: link.label || "Abrir link",
+      href: link.href || link.url || "",
+      to: link.to || "",
+    }))
+    .filter((link) => link.href || link.to);
 }
 
 export default function DynamicEventosYear() {
@@ -82,7 +102,7 @@ export default function DynamicEventosYear() {
               >
                 <img className="aspect-[4/3] w-full object-cover" src={eventImage(content)} alt="" loading="lazy" decoding="async" />
                 <span className="flex flex-1 flex-col p-6">
-                  <span className="text-xs font-semibold uppercase tracking-widest text-primary">{eventYear(content)}</span>
+                  <span className="text-xs font-semibold uppercase tracking-widest text-primary">{eventPeriod(content)}</span>
                   <span className="mt-3 block font-title text-3xl">{content.title}</span>
                   {content.description && <span className="mt-4 flex-1 leading-7 text-muted">{content.description}</span>}
                   <span className="mt-6 inline-flex items-center gap-2 self-start font-semibold text-primary">
@@ -110,9 +130,11 @@ export default function DynamicEventosYear() {
 function EventModal({ content, onClose }) {
   const link = eventLink(content);
   const sessions = Array.isArray(content.metadata?.sessions) ? content.metadata.sessions : [];
-  const imageUrls = contentImageUrls(content);
+  const imageUrls = uniqueUrls(contentImageUrls(content), eventGalleryUrls(content));
   const fileUrls = contentFileUrls(content);
   const playlistUrls = contentPlaylistUrls(content);
+  const details = Array.isArray(content.metadata?.details) ? content.metadata.details.filter(Boolean) : [];
+  const links = eventLinks(content);
   const displayImage = imageUrls[0] || eventImage(content);
 
   return createPortal(
@@ -150,9 +172,18 @@ function EventModal({ content, onClose }) {
           </div>
 
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">{eventYear(content)}</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">{eventPeriod(content)}</p>
             <h2 id="dynamic-event-title" className="mt-3 pr-10 font-title text-4xl md:text-5xl">{content.title}</h2>
             {content.description && <p className="mt-5 whitespace-pre-line leading-8 text-muted">{content.description}</p>}
+
+            {details.length > 0 && (
+              <section className="mt-8 rounded-2xl border border-border bg-card p-5">
+                <h3 className="font-title text-3xl">Detalhes</h3>
+                <div className="mt-4 space-y-3 leading-7 text-muted">
+                  {details.map((detail) => <p key={detail}>{detail}</p>)}
+                </div>
+              </section>
+            )}
 
             {playlistUrls.length > 0 && (
               <section className="mt-8 rounded-2xl border border-primary/40 bg-primary/10 p-5">
@@ -201,19 +232,30 @@ function EventModal({ content, onClose }) {
               </section>
             )}
 
-            {(link || fileUrls.length > 0) && (
+            {(link || fileUrls.length > 0 || links.length > 0) && (
               <div className="mt-8 flex flex-wrap gap-3">
                 {link.startsWith("/") ? (
                   <Link className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" to={link} onClick={onClose}>
                     Abrir pagina <ExternalLink size={16} aria-hidden="true" />
                   </Link>
-                ) : (
+                ) : fileUrls.length > 0 ? (
                   fileUrls.map((url, index) => (
                     <a key={url} className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={url} target="_blank" rel="noreferrer">
                       Abrir link {fileUrls.length > 1 ? index + 1 : ""} <ExternalLink size={16} aria-hidden="true" />
                     </a>
                   ))
-                )}
+                ) : null}
+                {links.map((item) => (
+                  item.to ? (
+                    <Link key={item.to} className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" to={item.to} onClick={onClose}>
+                      {item.label} <ExternalLink size={16} aria-hidden="true" />
+                    </Link>
+                  ) : (
+                    <a key={item.href} className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={item.href} target="_blank" rel="noreferrer">
+                      {item.label} <ExternalLink size={16} aria-hidden="true" />
+                    </a>
+                  )
+                ))}
               </div>
             )}
 

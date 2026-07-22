@@ -192,6 +192,11 @@ function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, 
   const isCinemaShow = form.type === "CINEMA_SHOW";
   const isEvent = form.type === "EVENT";
 
+  useEffect(() => {
+    setForm(content ? formFromContent(content) : createInitialForm(initialArea, initialType));
+    setStatus(null);
+  }, [content, initialArea, initialType]);
+
   function update(field) {
     return (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
   }
