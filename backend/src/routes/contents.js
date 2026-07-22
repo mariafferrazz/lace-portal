@@ -363,11 +363,7 @@ router.get("/manage", requireAuth, async (req, res) => {
     res.json({ contents });
   } catch (error) {
     console.error("Erro ao listar painel administrativo:", error);
-    res.status(500).json({
-      error: "Nao foi possivel carregar os conteudos administrativos.",
-      detail: error.message,
-      code: error.code || null,
-    });
+    res.status(500).json({ error: "Nao foi possivel carregar os conteudos administrativos." });
   }
 });
 
