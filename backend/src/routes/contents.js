@@ -173,32 +173,7 @@ function normalizeContentData(data) {
   return data;
 }
 
-async function listManageContents(summaryOnly = false) {
-  if (summaryOnly) {
-    const contents = await prisma.content.findMany({
-      select: {
-        id: true,
-        title: true,
-        type: true,
-        researcherName: true,
-        researcherMemberId: true,
-        metadata: true,
-        published: true,
-        createdAt: true,
-        updatedAt: true,
-        createdBy: { select: { id: true, name: true, role: true } },
-        researcherMember: { select: { id: true, name: true, role: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    });
-
-    return contents.map((content) => ({
-      ...content,
-      metadata: parseMetadata(content.metadata),
-      summaryOnly: true,
-    }));
-  }
-
+async function listManageContents() {
   return prisma.content.findMany({
     include: {
       createdBy: { select: { id: true, name: true, role: true } },
@@ -323,7 +298,7 @@ router.get("/events/year/:year", async (req, res) => {
 
 router.get("/manage", requireAuth, async (req, res) => {
   try {
-    const contents = await listManageContents(req.query.summary === "1");
+    const contents = await listManageContents();
     res.json({ contents });
   } catch (error) {
     console.error("Erro ao listar painel administrativo:", error);
