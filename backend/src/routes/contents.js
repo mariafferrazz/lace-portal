@@ -182,6 +182,45 @@ router.get("/highlights", async (_req, res) => {
   res.json({ contents });
 });
 
+router.get("/cinema-shows/:showSlug", async (req, res) => {
+  const requestedSlug = normalizeSlug(req.params.showSlug);
+  const contents = await prisma.content.findMany({
+    where: { published: true, type: "CINEMA_SHOW" },
+    include: {
+      createdBy: { select: { id: true, name: true, role: true } },
+      researcherMember: { select: { id: true, name: true, role: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+  const content = contents.find((item) => {
+    const metadata = item.metadata || {};
+    const slug = normalizeSlug(metadata.showSlug || "");
+    const pathSlug = normalizeSlug(String(metadata.cinemaPath || "").split("/").filter(Boolean).pop() || "");
+    return slug === requestedSlug || pathSlug === requestedSlug;
+  });
+  if (!content) return res.status(404).json({ error: "Mostra nao encontrada." });
+  res.json({ content });
+});
+
+router.get("/events/year/:year", async (req, res) => {
+  const requestedYear = String(req.params.year || "").trim();
+  const contents = await prisma.content.findMany({
+    where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW"] } },
+    include: {
+      createdBy: { select: { id: true, name: true, role: true } },
+      researcherMember: { select: { id: true, name: true, role: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+  res.json({
+    contents: contents.filter((item) => {
+      const metadata = item.metadata || {};
+      const year = String(metadata.eventYear || metadata.year || metadata.showYear || "").trim();
+      return year === requestedYear;
+    }),
+  });
+});
+
 router.get("/manage", requireAuth, async (req, res) => {
   try {
     const contents = await listManageContents(req.query.summary === "1");

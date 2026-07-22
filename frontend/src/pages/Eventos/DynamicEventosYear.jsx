@@ -34,7 +34,7 @@ export default function DynamicEventosYear() {
   useEffect(() => {
     let active = true;
     api
-      .get("/contents")
+      .get(`/contents/events/year/${year}`)
       .then(({ data }) => {
         if (active) setContents(data.contents || []);
       })
@@ -48,7 +48,7 @@ export default function DynamicEventosYear() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [year]);
 
   useEffect(() => {
     if (!activeEvent) return undefined;

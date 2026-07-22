@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { CalendarDays, Film, Library, PlayCircle } from "lucide-react";
 import Container from "../../components/ui/Container";
@@ -23,12 +23,8 @@ function playlistTitle(show) {
 
 export default function DynamicMostra() {
   const { showSlug } = useParams();
-  const [shows, setShows] = useState([]);
+  const [show, setShow] = useState(null);
   const [loading, setLoading] = useState(true);
-  const show = useMemo(
-    () => shows.find((content) => showPath(content).endsWith(`/${showSlug}`)),
-    [showSlug, shows],
-  );
   const sessions = Array.isArray(show?.metadata?.sessions) ? show.metadata.sessions : [];
   const playlistUrls = show ? contentPlaylistUrls(show) : [];
   const imageUrl = show ? contentImageUrls(show)[0] : "";
@@ -36,12 +32,12 @@ export default function DynamicMostra() {
   useEffect(() => {
     let active = true;
     api
-      .get("/contents", { params: { type: "CINEMA_SHOW" } })
+      .get(`/contents/cinema-shows/${showSlug}`)
       .then(({ data }) => {
-        if (active) setShows(data.contents || []);
+        if (active) setShow(data.content || null);
       })
       .catch(() => {
-        if (active) setShows([]);
+        if (active) setShow(null);
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -50,7 +46,7 @@ export default function DynamicMostra() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [showSlug]);
 
   if (loading) {
     return (
