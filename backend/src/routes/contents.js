@@ -184,6 +184,21 @@ function normalizeRawContent(content) {
   };
 }
 
+const basicContentSelect = {
+  id: true,
+  title: true,
+  description: true,
+  type: true,
+  researcherName: true,
+  fileUrl: true,
+  externalUrl: true,
+  metadata: true,
+  published: true,
+  createdById: true,
+  createdAt: true,
+  updatedAt: true,
+};
+
 async function listManageContents() {
   const [publishedContents, pendingRows] = await Promise.all([
     prisma.content.findMany({
@@ -194,12 +209,11 @@ async function listManageContents() {
       },
       orderBy: { createdAt: "desc" },
     }),
-    prisma.$queryRaw`
-      SELECT id, title, description, type, researcherName, fileUrl, externalUrl, metadata, published, createdById, createdAt, updatedAt
-      FROM Content
-      WHERE published = false
-      ORDER BY createdAt DESC
-    `,
+    prisma.content.findMany({
+      where: { published: false },
+      select: basicContentSelect,
+      orderBy: { createdAt: "desc" },
+    }),
   ]);
 
   return enrichCinemaShows([
@@ -219,13 +233,11 @@ async function findManageContent(id) {
     });
   } catch (error) {
     console.error("Erro ao carregar relacionamentos do conteudo. Usando leitura basica:", error);
-    const rows = await prisma.$queryRaw`
-      SELECT id, title, description, type, researcherName, fileUrl, externalUrl, metadata, published, createdById, createdAt, updatedAt
-      FROM Content
-      WHERE id = ${id}
-      LIMIT 1
-    `;
-    return rows[0] ? normalizeRawContent(rows[0]) : null;
+    const content = await prisma.content.findUnique({
+      where: { id },
+      select: basicContentSelect,
+    });
+    return content ? normalizeRawContent(content) : null;
   }
 }
 
