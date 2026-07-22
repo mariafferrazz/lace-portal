@@ -195,29 +195,31 @@ const basicContentSelect = {
   metadata: true,
   published: true,
   createdById: true,
+  researcherMemberId: true,
   createdAt: true,
   updatedAt: true,
 };
 
 async function listManageContents() {
-  const [publishedContents, pendingRows] = await Promise.all([
+  const [contentRows, users, teamMembers] = await Promise.all([
     prisma.content.findMany({
-      where: { published: true },
-      include: {
-        createdBy: { select: { id: true, name: true, role: true } },
-        researcherMember: { select: { id: true, name: true, role: true } },
-      },
-    }),
-    prisma.content.findMany({
-      where: { published: false },
       select: basicContentSelect,
+    }),
+    prisma.user.findMany({
+      select: { id: true, name: true, role: true },
+    }),
+    prisma.teamMember.findMany({
+      select: { id: true, name: true, role: true },
     }),
   ]);
 
-  const contents = [
-    ...pendingRows.map(normalizeRawContent),
-    ...publishedContents.map((content) => ({ ...content, summaryOnly: false })),
-  ].sort((left, right) => {
+  const usersById = new Map(users.map((user) => [user.id, user]));
+  const teamMembersById = new Map(teamMembers.map((member) => [member.id, member]));
+  const contents = contentRows.map((content) => ({
+    ...normalizeRawContent(content),
+    createdBy: usersById.get(content.createdById) || null,
+    researcherMember: teamMembersById.get(content.researcherMemberId) || null,
+  })).sort((left, right) => {
     const rightCreatedAt = new Date(right.createdAt || 0).getTime();
     const leftCreatedAt = new Date(left.createdAt || 0).getTime();
     return rightCreatedAt - leftCreatedAt;
