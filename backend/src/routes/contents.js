@@ -173,17 +173,60 @@ function normalizeContentData(data) {
   return data;
 }
 
-async function listManageContents() {
-  return prisma.content.findMany({
-    include: {
-      createdBy: { select: { id: true, name: true, role: true } },
-      researcherMember: { select: { id: true, name: true, role: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  }).then((contents) => enrichCinemaShows(contents.map((content) => ({
+function normalizeRawContent(content) {
+  return {
     ...content,
+    metadata: parseMetadata(content.metadata),
+    published: Boolean(content.published),
+    createdBy: null,
+    researcherMember: null,
     summaryOnly: false,
-  }))));
+  };
+}
+
+async function listManageContents() {
+  const [publishedContents, pendingRows] = await Promise.all([
+    prisma.content.findMany({
+      where: { published: true },
+      include: {
+        createdBy: { select: { id: true, name: true, role: true } },
+        researcherMember: { select: { id: true, name: true, role: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.$queryRaw`
+      SELECT id, title, description, type, researcherName, fileUrl, externalUrl, metadata, published, createdById, createdAt, updatedAt
+      FROM Content
+      WHERE published = false
+      ORDER BY createdAt DESC
+    `,
+  ]);
+
+  return enrichCinemaShows([
+    ...pendingRows.map(normalizeRawContent),
+    ...publishedContents.map((content) => ({ ...content, summaryOnly: false })),
+  ]);
+}
+
+async function findManageContent(id) {
+  try {
+    return await prisma.content.findUnique({
+      where: { id },
+      include: {
+        createdBy: { select: { id: true, name: true, role: true } },
+        researcherMember: { select: { id: true, name: true, role: true } },
+      },
+    });
+  } catch (error) {
+    console.error("Erro ao carregar relacionamentos do conteudo. Usando leitura basica:", error);
+    const rows = await prisma.$queryRaw`
+      SELECT id, title, description, type, researcherName, fileUrl, externalUrl, metadata, published, createdById, createdAt, updatedAt
+      FROM Content
+      WHERE id = ${id}
+      LIMIT 1
+    `;
+    return rows[0] ? normalizeRawContent(rows[0]) : null;
+  }
 }
 
 function parseContent(body, partial = false) {
@@ -307,13 +350,7 @@ router.get("/manage", requireAuth, async (req, res) => {
 });
 
 router.get("/:id", requireAuth, async (req, res) => {
-  const content = await prisma.content.findUnique({
-    where: { id: req.params.id },
-    include: {
-      createdBy: { select: { id: true, name: true, role: true } },
-      researcherMember: { select: { id: true, name: true, role: true } },
-    },
-  });
+  const content = await findManageContent(req.params.id);
   if (!content) return res.status(404).json({ error: "Conteudo nao encontrado." });
   if (content.type !== "CINEMA_SHOW") return res.json({ content: { ...content, summaryOnly: false } });
 
