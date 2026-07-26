@@ -163,44 +163,14 @@ export default function useContentForm({ content, initialArea, initialType, onCr
     }
 
     try {
-      let formToSave = form;
-      if (form.type === "CINEMA_SHOW") {
-        const sessions = await Promise.all(form.sessions.map(async (session) => {
-          if (!session.addFilmToDatabase || session.filmId) return session;
-          if (!session.title.trim() || !session.filmUrl.trim()) {
-            throw new Error("Para adicionar um filme ao banco, informe o titulo alternativo e a URL do filme.");
-          }
-
-          const { data: filmData } = await api.post("/contents", {
-            title: session.title.trim(),
-            researcherName: form.researcherName.trim(),
-            researcherMemberId: form.researcherMemberId && !form.researcherMemberId.startsWith("name:")
-              ? form.researcherMemberId
-              : null,
-            type: "FILM",
-            description: "",
-            externalUrl: session.filmUrl.trim(),
-            metadata: {
-              editorialArea: "CINEMA_DITADURA",
-              direction: session.direction.trim() || null,
-              videoUrl: session.filmUrl.trim(),
-              cardExcerptWords: 45,
-            },
-          });
-          return { ...session, filmId: filmData.content.id, addFilmToDatabase: false };
-        }));
-        formToSave = { ...form, sessions };
-        await onReferenceCreated?.();
-      }
-
-      const payload = buildContentPayload(formToSave);
+      const payload = buildContentPayload(form);
       const { data } = isEditing ? await api.patch(`/contents/${content.id}`, payload) : await api.post("/contents", payload);
       setForm(createInitialForm(initialArea, initialType));
       setStatus({ ok: true, message: isEditing ? "Conteudo atualizado." : "Conteudo enviado para revisao da coordenacao." });
       await onCreated(data.content);
       onClose?.();
     } catch (error) {
-      setStatus({ ok: false, message: error.response ? apiError(error) : error.message });
+      setStatus({ ok: false, message: apiError(error) });
     } finally {
       setLoading(false);
     }

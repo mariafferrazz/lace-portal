@@ -133,13 +133,12 @@ async function findManageContent(id) {
 async function listManageReferenceOptions() {
   const rows = await prisma.content.findMany({
     where: { type: { in: ["FILM", "ARTICLE_AUTHOR"] } },
-    select: { id: true, title: true, type: true, researcherName: true, externalUrl: true, metadata: true },
+    select: { id: true, title: true, type: true, researcherName: true },
   });
   const toOption = (content) => ({
     id: content.id,
     title: content.title,
     subtitle: content.researcherName || undefined,
-    url: content.externalUrl || parseMetadata(content.metadata).videoUrl || "",
   });
   const byTitle = (left, right) => left.title.localeCompare(right.title, "pt-BR");
 

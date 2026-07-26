@@ -90,8 +90,6 @@ export function formFromContent(content) {
         ...emptySession,
         ...session,
         filmId: session.filmId || session.archiveFilmId || "",
-        filmUrl: session.filmUrl || session.archiveFilmUrl || "",
-        addFilmToDatabase: false,
         sessionUrls: ensureUrlList(session.sessionUrls, session.sessionUrl),
       }))
       : [{ ...emptySession }],
@@ -202,8 +200,6 @@ export function buildContentPayload(form) {
           return {
             date: session.date.trim(),
             filmId: session.filmId || null,
-            archiveFilmUrl: session.filmUrl.trim() || null,
-            archiveFilmUrls: session.filmUrl.trim() ? [session.filmUrl.trim()] : [],
             title: session.title.trim(),
             direction: session.direction.trim() || null,
             sessionUrl: sessionUrls[0] || null,
