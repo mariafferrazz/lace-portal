@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, ExternalLink, FileText, X } from "lucide-rea
 import Container from "../../components/ui/Container";
 import SocialShare from "../../components/ui/SocialShare";
 import api from "../../services/api";
-import { contentFileUrls } from "../../utils/contentMetadata";
+import { contentFileUrls, contentImage } from "../../utils/contentMetadata";
 
 const authors = [
   {
@@ -232,10 +232,13 @@ function authorSlug(name) {
 }
 
 function articleFromContent(content) {
+  const legacyAuthors = Array.isArray(content.metadata?.authors)
+    ? content.metadata.authors.filter(Boolean).join(", ")
+    : content.metadata?.authors;
   return {
     title: content.title,
     url: contentFileUrls(content)[0] || content.externalUrl || content.fileUrl || "#",
-    note: content.metadata?.note || content.metadata?.authors || content.createdBy?.name,
+    note: content.metadata?.note || legacyAuthors || content.createdBy?.name,
     summary: content.description,
   };
 }
@@ -244,13 +247,34 @@ function mergeDynamicAuthors(dynamicContents) {
   const grouped = new Map(authors.map((author) => [author.name, { ...author, articles: [...author.articles] }]));
 
   dynamicContents.forEach((content) => {
-    const name = content.metadata?.authorName || content.researcherName || "Equipe LACE";
-    const author = grouped.get(name) || { name, articles: [] };
     const article = articleFromContent(content);
-    if (!author.articles.some((item) => item.title === article.title)) {
-      author.articles.push(article);
-    }
-    grouped.set(name, author);
+    const relatedAuthors = Array.isArray(content.metadata?.articleAuthors)
+      ? content.metadata.articleAuthors
+      : [];
+    const legacyNames = Array.isArray(content.metadata?.authors)
+      ? content.metadata.authors.filter(Boolean)
+      : [content.metadata?.authorName || content.metadata?.authors || content.researcherName || "Equipe LACE"];
+    const articleAuthors = relatedAuthors.length > 0
+      ? relatedAuthors.map((authorContent) => ({
+        name: authorContent.title,
+        bio: authorContent.description,
+        image: contentImage(authorContent),
+        website: authorContent.externalUrl || authorContent.metadata?.website,
+      }))
+      : legacyNames.map((name) => ({ name }));
+
+    articleAuthors.forEach((authorData) => {
+      const current = grouped.get(authorData.name) || { name: authorData.name, articles: [] };
+      const author = {
+        ...current,
+        bio: authorData.bio || current.bio,
+        image: authorData.image || current.image,
+        website: authorData.website || current.website,
+        articles: [...current.articles],
+      };
+      if (!author.articles.some((item) => item.title === article.title)) author.articles.push(article);
+      grouped.set(author.name, author);
+    });
   });
 
   return [...grouped.values()];
@@ -406,6 +430,8 @@ function AuthorModal({ author, authorPosition, authorCount, onClose, onNavigate 
         <h2 id="author-articles-title" className="mt-3 pr-12 font-title text-4xl md:text-5xl">
           {author.name}
         </h2>
+        {author.image && <img className="mt-6 max-h-80 w-full rounded-2xl border border-border object-cover" src={author.image} alt={author.name} loading="lazy" />}
+        {author.bio && <p className="mt-5 max-w-3xl whitespace-pre-line leading-8 text-muted">{author.bio}</p>}
         {author.website && (
           <a
             className="mt-6 inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"

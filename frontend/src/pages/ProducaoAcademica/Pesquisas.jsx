@@ -105,6 +105,7 @@ function researchSlug(title) {
 }
 
 function researchFromContent(content) {
+  const team = Array.isArray(content.metadata?.team) ? content.metadata.team : [];
   return {
     title: content.title,
     shortTitle: content.metadata?.shortTitle || content.title,
@@ -112,6 +113,13 @@ function researchFromContent(content) {
     image: contentImage(content),
     summary: content.description ? content.description.split(/\n{2,}/).filter(Boolean) : ["Pesquisa em organizacao."],
     publicReportUrl: contentFileUrls(content)[0],
+    researchers: team.map((person) => ({
+      name: person.name,
+      description: [person.role, person.description].filter(Boolean).join(" — "),
+      lattes: person.lattesUrl,
+    })),
+    additionalInfo: Array.isArray(content.metadata?.additionalInfo) ? content.metadata.additionalInfo : [],
+    resources: Array.isArray(content.metadata?.resources) ? content.metadata.resources : [],
   };
 }
 
@@ -308,7 +316,7 @@ function ResearchModal({ research, researchPosition, researchCount, onClose, onN
           ))}
         </section>
 
-        {research.researchers && (
+        {research.researchers?.length > 0 && (
           <section className="mt-10">
             <h3 className="font-title text-3xl text-text">Equipe de pesquisa</h3>
             <div className="mt-5 grid gap-3 md:grid-cols-2">
@@ -316,14 +324,16 @@ function ResearchModal({ research, researchPosition, researchCount, onClose, onN
                 <article key={researcher.name} className="rounded-2xl border border-border bg-card p-4">
                   <h4 className="font-semibold text-text">{researcher.name}</h4>
                   <p className="mt-2 text-sm leading-6 text-muted">{researcher.description}</p>
-                  <a
-                    className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-primary transition hover:text-text"
-                    href={researcher.lattes}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Lattes <ExternalLink size={14} aria-hidden="true" />
-                  </a>
+                  {researcher.lattes && (
+                    <a
+                      className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-primary transition hover:text-text"
+                      href={researcher.lattes}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Lattes <ExternalLink size={14} aria-hidden="true" />
+                    </a>
+                  )}
                 </article>
               ))}
             </div>
@@ -338,6 +348,17 @@ function ResearchModal({ research, researchPosition, researchCount, onClose, onN
           </section>
         )}
 
+        {research.additionalInfo?.length > 0 && (
+          <section className="mt-10 grid gap-4 md:grid-cols-2">
+            {research.additionalInfo.map((info, index) => (
+              <article key={`${info.title || "informacao"}-${index}`} className="rounded-2xl border border-border bg-card p-5">
+                <h3 className="font-title text-2xl text-text">{info.title || "Informação adicional"}</h3>
+                {info.description && <p className="mt-3 whitespace-pre-line leading-7 text-muted">{info.description}</p>}
+              </article>
+            ))}
+          </section>
+        )}
+
         <div className="mt-8 flex flex-wrap gap-3">
           {research.publicReportUrl && (
             <a
@@ -349,6 +370,17 @@ function ResearchModal({ research, researchPosition, researchCount, onClose, onN
               Informe Público <ExternalLink size={16} aria-hidden="true" />
             </a>
           )}
+          {research.resources?.map((resource, index) => resource.url && (
+            <a
+              key={`${resource.url}-${index}`}
+              className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
+              href={resource.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {resource.title || "Abrir recurso"} <ExternalLink size={16} aria-hidden="true" />
+            </a>
+          ))}
         </div>
         <SocialShare title={research.title} url={`/producao-academica/pesquisas#${research.slug}`} className="mt-8" />
       </div>

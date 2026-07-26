@@ -6,7 +6,12 @@ import ContentCredit from "../../components/ui/ContentCredit";
 import SocialShare from "../../components/ui/SocialShare";
 import api from "../../services/api";
 import { getStaticContents } from "../../data/staticContent";
-import { contentFileUrls, contentImage } from "../../utils/contentMetadata";
+import {
+  contentDirection,
+  contentFileUrls,
+  contentImage,
+  contentVideo,
+} from "../../utils/contentMetadata";
 
 function limitWords(text, limit = 40) {
   const words = text.trim().split(/\s+/);
@@ -14,7 +19,10 @@ function limitWords(text, limit = 40) {
 }
 
 const alphabet = ["#", ..."ABCDEFGHIJKLMNOPQRSTUVZ".split("")];
-const initialLetter = (title) => {
+const initialLetter = (content) => {
+  const storedLetter = String(content?.metadata?.alphabetLetter || "").toUpperCase();
+  if (/^[A-Z]$/.test(storedLetter)) return storedLetter;
+  const title = typeof content === "string" ? content : content?.title || "";
   const letter = title.trim().charAt(0).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
   return /^[A-Z]$/.test(letter) ? letter : "#";
 };
@@ -91,11 +99,11 @@ export default function Filmes() {
   }, [films, selectedFilm, selectedLetter]);
 
   const availableLetters = useMemo(
-    () => new Set(films.map((film) => initialLetter(film.title))),
+    () => new Set(films.map((film) => initialLetter(film))),
     [films],
   );
   const visibleFilms = useMemo(
-    () => films.filter((film) => initialLetter(film.title) === selectedLetter),
+    () => films.filter((film) => initialLetter(film) === selectedLetter),
     [films, selectedLetter],
   );
   const selectedIndex = useMemo(
@@ -142,7 +150,7 @@ export default function Filmes() {
                 <div className="flex flex-1 flex-col p-6">
                   <div className="flex flex-wrap gap-x-3 text-xs font-semibold uppercase tracking-widest text-primary">
                     {film.metadata?.year && <span>{film.metadata.year}</span>}
-                    {film.metadata?.director && <span>{film.metadata.director}</span>}
+                    {contentDirection(film) && <span>{contentDirection(film)}</span>}
                   </div>
                   <h2 className="mt-3 font-title text-3xl">{film.title}</h2>
                   {film.description && <p className="mt-4 flex-1 leading-7 text-muted">{limitWords(film.description)}</p>}
@@ -161,8 +169,8 @@ export default function Filmes() {
 }
 
 function FilmModal({ film, onClose, onPrevious, onNext, navigationEnabled }) {
-  const videoId = film.metadata?.youtubeId;
-  const vimeoId = film.metadata?.vimeoId;
+  const { youtubeId: videoId, vimeoId } = contentVideo(film);
+  const direction = contentDirection(film);
   const [playerStarted, setPlayerStarted] = useState(false);
   const embedUrl = videoId
     ? `https://www.youtube.com/embed/${videoId}?wmode=opaque&autoplay=1`
@@ -217,7 +225,7 @@ function FilmModal({ film, onClose, onPrevious, onNext, navigationEnabled }) {
         <div className="mx-auto max-w-6xl px-6 py-8 md:px-10 md:py-10 lg:px-14">
           <h2 className="font-title text-4xl md:text-6xl" id="film-modal-title">{film.title}</h2>
           <div className="flex flex-wrap gap-2 text-sm font-semibold text-primary">
-            {film.metadata?.director && <span>Direção: {film.metadata.director}</span>}
+            {direction && <span>Direção: {direction}</span>}
             {film.metadata?.country && <span>· {film.metadata.country}</span>}
             {film.metadata?.year && <span>· {film.metadata.year}</span>}
             {film.metadata?.duration && <span>· {film.metadata.duration}</span>}

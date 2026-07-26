@@ -7,7 +7,10 @@ export default function ContentCredit({
   className = "",
   linkName = true,
 }) {
-  const researcherName = (name || content?.researcherName || content?.meta || "").trim();
+  const metadataAuthors = Array.isArray(content?.metadata?.authors)
+    ? content.metadata.authors.filter(Boolean).join(", ")
+    : content?.metadata?.authors;
+  const researcherName = (name || metadataAuthors || content?.researcherName || content?.meta || "").trim();
   if (!researcherName) return null;
 
   const researcherUrl =

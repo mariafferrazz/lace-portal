@@ -7,7 +7,9 @@ const {
 function filmArchiveUrl(content) {
   const metadata = parseMetadata(content.metadata);
   if (content.externalUrl) return content.externalUrl;
+  if (metadata.videoUrl) return metadata.videoUrl;
   if (metadata.youtubeId) return `https://www.youtube.com/watch?v=${metadata.youtubeId}`;
+  if (metadata.vimeoId) return `https://vimeo.com/${metadata.vimeoId}`;
   return null;
 }
 
@@ -20,7 +22,7 @@ function buildFilmArchiveIndex(contents = []) {
       return normalizedTitle ? {
         id: content.id,
         title: content.title,
-        direction: parseMetadata(content.metadata).direction || null,
+        direction: parseMetadata(content.metadata).direction || parseMetadata(content.metadata).director || null,
         normalizedTitle,
         url,
       } : null;

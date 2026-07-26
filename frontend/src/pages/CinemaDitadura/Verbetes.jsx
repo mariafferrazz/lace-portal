@@ -7,10 +7,13 @@ import ContentCredit from "../../components/ui/ContentCredit";
 import SocialShare from "../../components/ui/SocialShare";
 import api from "../../services/api";
 import { getStaticContents } from "../../data/staticContent";
-import { contentFileUrls } from "../../utils/contentMetadata";
+import { contentFileUrls, contentImageUrls } from "../../utils/contentMetadata";
 
 const alphabet = ["#", ..."ABCDEFGHIJKLMNOPQRSTUVZ".split("")];
-const initialLetter = (title) => {
+const initialLetter = (content) => {
+  const storedLetter = String(content?.metadata?.alphabetLetter || "").toUpperCase();
+  if (/^[A-Z]$/.test(storedLetter)) return storedLetter;
+  const title = typeof content === "string" ? content : content?.title || "";
   const letter = title.trim().charAt(0).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
   return /^[A-Z]$/.test(letter) ? letter : "#";
 };
@@ -46,7 +49,7 @@ export default function Verbetes() {
     if (selectedEntry) return undefined;
     const navigate = (event) => {
       if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
-      const available = alphabet.filter((letter) => entries.some((entry) => initialLetter(entry.title) === letter));
+      const available = alphabet.filter((letter) => entries.some((entry) => initialLetter(entry) === letter));
       if (available.length < 2) return;
       const current = Math.max(0, available.indexOf(selectedLetter));
       setSelectedLetter(available[(current + (event.key === 'ArrowRight' ? 1 : -1) + available.length) % available.length]);
@@ -56,7 +59,7 @@ export default function Verbetes() {
   }, [entries, selectedEntry, selectedLetter]);
 
   const availableLetters = useMemo(
-    () => new Set(entries.map((entry) => initialLetter(entry.title))),
+    () => new Set(entries.map((entry) => initialLetter(entry))),
     [entries],
   );
   const visibleLetters = useMemo(
@@ -64,7 +67,7 @@ export default function Verbetes() {
     [availableLetters],
   );
   const visibleEntries = useMemo(
-    () => entries.filter((entry) => initialLetter(entry.title) === selectedLetter),
+    () => entries.filter((entry) => initialLetter(entry) === selectedLetter),
     [entries, selectedLetter],
   );
   const selectedIndex = useMemo(
@@ -89,6 +92,10 @@ function GlossaryModal({ entry, onClose, onPrevious, onNext, navigationEnabled }
   const [expanded, setExpanded] = useState(false);
   const text = entry.description || "Verbete em preparação.";
   const relatedFilms = entry.metadata?.relatedFilms || [];
+  const galleryImages = contentImageUrls(entry);
+  const references = Array.isArray(entry.metadata?.references)
+    ? entry.metadata.references.filter(Boolean)
+    : String(entry.metadata?.references || "").split(/\r?\n/).filter(Boolean);
   const sourceUrls = [...new Set([entry.metadata?.sourceUrl, ...contentFileUrls(entry)].filter(Boolean))];
   useEffect(() => {
     const navigate = (event) => {
@@ -107,11 +114,12 @@ function GlossaryModal({ entry, onClose, onPrevious, onNext, navigationEnabled }
     </>}
     <article className="mx-auto max-w-5xl px-6 py-10 md:px-12 md:py-16"><p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">Verbete</p><h2 id="glossary-title" className="mt-3 font-title text-5xl md:text-7xl">{entry.title}</h2><ContentCredit content={entry} label="Autoria" className="mt-5" />
       <GlossaryText text={expanded ? text : limitWords(text, 180)} inlineImages={entry.metadata?.inlineImages} />
+      {galleryImages.length > 0 && <section className="mt-10 grid gap-5 md:grid-cols-2">{galleryImages.map((imageUrl, index) => <figure key={imageUrl} className="overflow-hidden rounded-2xl border border-border bg-card"><img className="max-h-[70vh] w-full object-contain" src={imageUrl} alt={`Imagem ${index + 1} de ${entry.title}`} loading="lazy" decoding="async" /></figure>)}</section>}
       {text.trim().split(/\s+/).length > 180 && <button className="mt-6 cursor-pointer rounded-xl border border-primary px-5 py-3 font-semibold text-primary hover:bg-primary-fill hover:text-on-primary" onClick={() => setExpanded((value) => !value)}>{expanded ? "Recolher texto" : "Expandir texto completo"}</button>}
       {sourceUrls.length > 0 && <div className="mt-10 flex flex-wrap gap-3">{sourceUrls.map((url, index) => <a key={url} className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={url} target="_blank" rel="noreferrer">Consultar fonte {sourceUrls.length > 1 ? index + 1 : ""}<ExternalLink size={16} /></a>)}</div>}
       {relatedFilms.length > 0 && <section className="mt-12 border-t border-border pt-8"><h3 className="font-title text-3xl">Filmes relacionados</h3><div className="mt-5 flex flex-wrap gap-3">{relatedFilms.map((film) => <Link key={film.id} className="rounded-xl border border-border bg-card px-4 py-3 font-semibold text-primary hover:border-primary" to={`/cinema-e-ditadura/filmes?filme=${film.id}`}>{film.title}</Link>)}</div></section>}
       {entry.metadata?.authorBio && <section className="mt-12 border-t border-border pt-8"><h3 className="font-title text-3xl">Sobre a autoria</h3><p className="mt-5 leading-7 text-muted"><strong className="text-text">{entry.researcherName}</strong> — {entry.metadata.authorBio}</p></section>}
-      {entry.metadata?.references && <section className="mt-12 border-t border-border pt-8"><h3 className="font-title text-3xl">Referências bibliográficas</h3><div className="mt-5 whitespace-pre-line leading-7 text-muted">{entry.metadata.references}</div></section>}
+      {references.length > 0 && <section className="mt-12 border-t border-border pt-8"><h3 className="font-title text-3xl">Referências bibliográficas</h3><ul className="mt-5 grid list-disc gap-3 pl-5 leading-7 text-muted">{references.map((reference, index) => <li key={`${reference}-${index}`}>{reference}</li>)}</ul></section>}
       <SocialShare title={entry.title} url="/cinema-e-ditadura/verbetes" className="mt-12" />
     </article>
   </div>, document.body);

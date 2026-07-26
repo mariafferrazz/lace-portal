@@ -6,7 +6,14 @@ import Button from "../ui/Button";
 import ContentCredit from "../ui/ContentCredit";
 import SocialShare from "../ui/SocialShare";
 import api from "../../services/api";
-import { contentFileUrls, contentImageUrls } from "../../utils/contentMetadata";
+import {
+  contentCredits,
+  contentFileUrls,
+  contentImageUrls,
+  contentPeople,
+  contentText,
+  contentVideo,
+} from "../../utils/contentMetadata";
 
 function getSpotifyEmbedUrl(url) {
   const match = url?.match(/open\.spotify\.com\/episode\/([^?]+)/);
@@ -14,30 +21,84 @@ function getSpotifyEmbedUrl(url) {
 }
 
 function mapContentToItem(content) {
-  const youtubeId = content.metadata?.youtubeId;
+  const { youtubeId, vimeoId, url: videoUrl } = contentVideo(content);
   const fileUrls = contentFileUrls(content);
   const imageUrls = contentImageUrls(content);
+  const authors = Array.isArray(content.metadata?.authors) ? content.metadata.authors.filter(Boolean) : [];
 
   return {
     id: content.id,
     title: content.title,
-    description: content.description || "Conteúdo disponível no acervo do LACE.",
-    meta: content.researcherName,
+    description: contentText(content) || "Conteúdo disponível no acervo do LACE.",
+    meta: authors.join(", ") || content.researcherName,
     submittedBy: content.createdBy?.name,
-    href: fileUrls[0],
+    href: fileUrls[0] || videoUrl,
     links: fileUrls,
     thumbnail: imageUrls[0] || (youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : null),
     youtubeId,
+    vimeoId,
+    embedUrl: youtubeId
+      ? `https://www.youtube.com/embed/${youtubeId}?wmode=opaque&autoplay=1`
+      : vimeoId ? `https://player.vimeo.com/video/${vimeoId}?autoplay=1` : null,
     episodes: content.metadata?.episodes || [],
     episodeReferences: content.metadata?.episodeReferences || {},
     episodeImages: content.metadata?.episodeImages || {},
-    researchers: content.metadata?.researchers || [],
+    researchers: contentPeople(content),
+    credits: contentCredits(content),
     soundtrack: content.metadata?.soundtrack || [],
     platform: content.metadata?.platform,
-    authorBio: content.metadata?.authorBio,
+    authorBio: content.metadata?.authorBio
+      || (content.type === "VIRAL_ESCAPE_LINES" ? content.description : null),
     researcherUrl: content.metadata?.researcherUrl || content.metadata?.researcherProfileUrl || content.metadata?.lattesUrl || content.metadata?.curriculumUrl || content.metadata?.linkedinUrl,
     images: imageUrls,
   };
+}
+
+function ContentRelations({ people = [], credits = [] }) {
+  if (!people.length && !credits.length) return null;
+
+  return (
+    <div className="mt-8 grid gap-5 md:grid-cols-2">
+      {people.length > 0 && (
+        <section className="rounded-2xl border border-border bg-card p-5">
+          <h3 className="font-title text-3xl text-text">Pessoas e equipe</h3>
+          <div className="mt-4 grid gap-4">
+            {people.map((person, index) => (
+              <div key={`${person.name || "pessoa"}-${index}`}>
+                <p className="font-semibold text-text">{person.name || "Nome não informado"}</p>
+                {person.role && <p className="mt-1 text-sm text-primary">{person.role}</p>}
+                {person.description && <p className="mt-2 text-sm leading-6 text-muted">{person.description}</p>}
+                {person.lattesUrl && (
+                  <a className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-primary" href={person.lattesUrl} target="_blank" rel="noreferrer">
+                    Currículo <ExternalLink size={14} aria-hidden="true" />
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+      {credits.length > 0 && (
+        <section className="rounded-2xl border border-border bg-card p-5">
+          <h3 className="font-title text-3xl text-text">Ficha técnica</h3>
+          <div className="mt-4 grid gap-4">
+            {credits.map((credit, index) => (
+              <div key={`${credit.title || credit.value || "credito"}-${index}`}>
+                <p className="font-semibold text-text">{credit.title || credit.value || "Crédito"}</p>
+                {credit.title && credit.value && <p className="mt-1 text-primary">{credit.value}</p>}
+                {credit.description && <p className="mt-2 text-sm leading-6 text-muted">{credit.description}</p>}
+                {credit.url && (
+                  <a className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-primary" href={credit.url} target="_blank" rel="noreferrer">
+                    Abrir referência <ExternalLink size={14} aria-hidden="true" />
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
 }
 
 export default function ArchivePage({ eyebrow, title, description, items = [], emptyMessage, contentType }) {
@@ -288,7 +349,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                     </span>
                   </span>
                 </article>
-              ) : contentType === "INTERVIEW" && item.youtubeId ? (
+              ) : contentType === "INTERVIEW" && item.embedUrl ? (
                 <button
                   key={item.title}
                   type="button"
@@ -496,12 +557,12 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
               </section>
             )}
 
-            <section className="mt-8 rounded-2xl border border-border bg-surface/80 p-5">
+            {activeViralItem.authorBio && <section className="mt-8 rounded-2xl border border-border bg-surface/80 p-5">
               <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">{authorAboutLabel}</h3>
               <p className="mt-3 leading-7 text-muted">
-                {isAlineViralItem ? activeViralItem.description : activeViralItem.authorBio}
+                {activeViralItem.authorBio}
               </p>
-            </section>
+            </section>}
             <SocialShare title={activeViralItem.title} url="/producao-academica/linhas-de-fugas-virais" className="mt-8" />
           </div>
         </div>
@@ -530,7 +591,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
             <div className="overflow-hidden rounded-2xl border border-border bg-black">
               <iframe
                 className="aspect-video w-full"
-                src={`https://www.youtube.com/embed/${activeInterview.youtubeId}?wmode=opaque&autoplay=1`}
+                src={activeInterview.embedUrl}
                 title={activeInterview.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
@@ -543,6 +604,8 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
             </h2>
             <p className="mt-4 max-w-3xl leading-8 text-muted">{activeInterview.description}</p>
 
+            <ContentRelations people={activeInterview.researchers} credits={activeInterview.credits} />
+
             {activeInterview.href && (
               <a
                 className="mt-6 inline-flex items-center gap-2 font-semibold text-primary"
@@ -550,7 +613,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                 target="_blank"
                 rel="noreferrer"
               >
-                <span className="animated-underline">Abrir no YouTube</span>
+                <span className="animated-underline">Abrir vídeo original</span>
                 <ExternalLink size={16} aria-hidden="true" />
               </a>
             )}
@@ -617,6 +680,8 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
                     )}
                   </section>
                 )}
+
+                <ContentRelations credits={activePodcast.credits} />
 
                 <div className="mt-6 flex flex-wrap items-center gap-3">
                   {(activeEpisode?.url || activePodcast.href) && (
@@ -739,14 +804,15 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
             <div className="mt-8 grid gap-4 md:grid-cols-2">
               {activeResearchersPodcast.researchers.map((researcher) => (
                 <div key={researcher.name} className="rounded-2xl border border-border bg-card p-5">
-                  {researcher.url ? (
-                    <a className="font-semibold text-primary" href={researcher.url}>
+                  {researcher.url || researcher.lattesUrl ? (
+                    <a className="font-semibold text-primary" href={researcher.url || researcher.lattesUrl} target="_blank" rel="noreferrer">
                       <span className="animated-underline">{researcher.name}</span>
                     </a>
                   ) : (
                     <span className="font-semibold text-text">{researcher.name}</span>
                   )}
                   <p className="mt-2 text-sm leading-6 text-muted">{researcher.role}</p>
+                  {researcher.description && <p className="mt-2 text-sm leading-6 text-muted">{researcher.description}</p>}
                 </div>
               ))}
             </div>

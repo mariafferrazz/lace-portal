@@ -56,18 +56,73 @@ function sortNewestFirst(contents) {
   ));
 }
 
+function referenceTypeFor(type) {
+  if (type === "GLOSSARY") return "FILM";
+  if (type === "ARTICLE") return "ARTICLE_AUTHOR";
+  if (type === "CINEMA_SHOW") return "FILM";
+  return null;
+}
+
+function enrichPublicReferences(contents, references) {
+  const referencesById = new Map(references.map((content) => [content.id, content]));
+
+  return contents.map((content) => {
+    const metadata = parseMetadata(content.metadata);
+    let relationKey = null;
+    let ids = [];
+
+    if (content.type === "GLOSSARY") {
+      relationKey = "relatedFilms";
+      ids = Array.isArray(metadata.relatedFilmIds) ? metadata.relatedFilmIds : [];
+    } else if (content.type === "ARTICLE") {
+      relationKey = "articleAuthors";
+      ids = Array.isArray(metadata.authorIds) ? metadata.authorIds : [];
+    }
+
+    if (!relationKey) return { ...content, metadata };
+
+    return {
+      ...content,
+      metadata: {
+        ...metadata,
+        [relationKey]: ids.map((id) => referencesById.get(id)).filter(Boolean),
+      },
+    };
+  });
+}
+
 async function listPublishedContents(type) {
   const where = type ? { type, published: true } : { published: true };
-  const contents = await prisma.content.findMany({
-    where,
-    include: {
-      createdBy: { select: { id: true, name: true, role: true } },
-      researcherMember: { select: { id: true, name: true, role: true } },
-    },
-    orderBy: { title: "asc" },
-  });
+  const referenceType = referenceTypeFor(type);
+  const [contents, referenceRows] = await Promise.all([
+    prisma.content.findMany({
+      where,
+      include: {
+        createdBy: { select: { id: true, name: true, role: true } },
+        researcherMember: { select: { id: true, name: true, role: true } },
+      },
+      orderBy: { title: "asc" },
+    }),
+    referenceType
+      ? prisma.content.findMany({
+        where: { type: referenceType },
+        select: publicContentSelect,
+      })
+      : Promise.resolve([]),
+  ]);
 
-  return enrichCinemaShows(contents.map(normalizeContentMetadata));
+  const normalizedContents = contents.map(normalizeContentMetadata);
+  const normalizedReferences = referenceRows.map(normalizeContentMetadata);
+  const cinemaEnrichmentSource = type
+    ? [...normalizedContents, ...normalizedReferences]
+    : normalizedContents;
+  const cinemaEnrichedContents = enrichCinemaShows(cinemaEnrichmentSource)
+    .slice(0, normalizedContents.length);
+
+  return enrichPublicReferences(
+    cinemaEnrichedContents,
+    normalizedReferences.length > 0 ? normalizedReferences : normalizedContents,
+  );
 }
 
 async function listNavigationContents() {
