@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
-import { CalendarDays, ExternalLink, Film, Library, PlayCircle, X } from "lucide-react";
+import { ArrowLeft, CalendarDays, ExternalLink, Film, Library, ListVideo, PlayCircle, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import SocialShare from "../../components/ui/SocialShare";
 import { loadCinemaShow } from "../../features/content/public/navigation";
+import api, { apiError } from "../../services/api";
 import {
   contentImageUrls,
   contentPlaylistUrls,
@@ -46,14 +47,6 @@ function youtubePlaylistId(value) {
 
 function mediaPlayerSource(media) {
   const url = media?.url || "";
-  const playlistId = media?.playlist ? youtubePlaylistId(url) : "";
-  if (playlistId) {
-    return {
-      kind: "iframe",
-      src: `https://www.youtube-nocookie.com/embed/videoseries?list=${encodeURIComponent(playlistId)}&autoplay=1`,
-    };
-  }
-
   const youtubeId = youtubeVideoId(url);
   if (youtubeId) {
     return { kind: "iframe", src: `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1` };
@@ -73,8 +66,122 @@ function mediaPlayerSource(media) {
   return { kind: "external", src: url };
 }
 
+function PlayerFrame({ player, title }) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-border bg-black">
+      {player.kind === "iframe" && (
+        <iframe
+          className="aspect-video w-full"
+          src={player.src}
+          title={title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
+      )}
+      {player.kind === "video" && (
+        <video className="aspect-video w-full" src={player.src} controls autoPlay playsInline>
+          Seu navegador não oferece suporte à reprodução deste vídeo.
+        </video>
+      )}
+      {player.kind === "external" && (
+        <div className="grid min-h-72 place-items-center p-8 text-center">
+          <div>
+            <p className="text-muted">Este endereço não oferece um player incorporável.</p>
+            <a className="mt-5 inline-flex items-center gap-2 rounded-xl border border-primary px-5 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={player.src} target="_blank" rel="noreferrer">
+              Abrir conteúdo original <ExternalLink size={16} aria-hidden="true" />
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PlaylistBrowser({ media }) {
+  const [items, setItems] = useState([]);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+
+    api.get("/contents/youtube-playlist", { params: { url: media.url } })
+      .then(({ data }) => {
+        if (active) setItems(Array.isArray(data.items) ? data.items : []);
+      })
+      .catch((requestError) => {
+        if (active) setError(apiError(requestError));
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [media.url]);
+
+  if (selectedVideo) {
+    return (
+      <div className="mt-6">
+        <button
+          type="button"
+          className="mb-4 inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          onClick={() => setSelectedVideo(null)}
+        >
+          <ArrowLeft size={17} aria-hidden="true" /> Voltar para a playlist
+        </button>
+        <h3 className="mb-4 font-title text-2xl text-text md:text-3xl">{selectedVideo.title}</h3>
+        <PlayerFrame player={mediaPlayerSource(selectedVideo)} title={selectedVideo.title} />
+      </div>
+    );
+  }
+
+  if (loading) {
+    return <div className="mt-6 rounded-2xl border border-border bg-card p-8 text-muted">Carregando vídeos da playlist...</div>;
+  }
+
+  if (error || items.length === 0) {
+    return (
+      <div className="mt-6 rounded-2xl border border-border bg-card p-8 text-center">
+        <p className="text-muted">{error || "Nenhum vídeo público foi encontrado nesta playlist."}</p>
+        <a className="mt-5 inline-flex items-center gap-2 rounded-xl border border-primary px-5 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={media.url} target="_blank" rel="noreferrer">
+          Abrir playlist no YouTube <ExternalLink size={16} aria-hidden="true" />
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-6">
+      <p className="mb-4 flex items-center gap-2 text-muted"><ListVideo className="text-primary" size={20} aria-hidden="true" /> Escolha abaixo qual vídeo deseja assistir.</p>
+      <div className="grid gap-4 md:grid-cols-2">
+        {items.map((item, index) => (
+          <button
+            key={item.id}
+            type="button"
+            className="group grid overflow-hidden rounded-2xl border border-border bg-card text-left transition hover:-translate-y-0.5 hover:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:grid-cols-[180px_minmax(0,1fr)]"
+            onClick={() => setSelectedVideo(item)}
+          >
+            <img className="aspect-video h-full w-full object-cover" src={item.thumbnail} alt="" loading="lazy" />
+            <span className="flex min-w-0 items-center gap-3 p-4">
+              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary-fill text-on-primary"><PlayCircle size={20} aria-hidden="true" /></span>
+              <span>
+                <span className="block text-xs font-bold uppercase tracking-widest text-primary">Vídeo {index + 1}</span>
+                <span className="mt-1 block font-semibold leading-6 text-text">{item.title}</span>
+              </span>
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function MediaPlayerModal({ media, onClose }) {
-  const player = mediaPlayerSource(media);
+  const player = media.playlist ? null : mediaPlayerSource(media);
 
   return createPortal(
     <div
@@ -86,7 +193,7 @@ function MediaPlayerModal({ media, onClose }) {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="relative w-full max-w-6xl rounded-3xl border border-white/20 bg-background p-5 shadow-2xl md:p-8">
+      <div className="relative max-h-[94vh] w-full max-w-6xl overflow-y-auto rounded-3xl border border-white/20 bg-background p-5 shadow-2xl md:p-8">
         <button
           type="button"
           className="absolute right-4 top-4 z-10 rounded-full bg-black/70 p-3 text-white transition hover:bg-black focus:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
@@ -98,34 +205,7 @@ function MediaPlayerModal({ media, onClose }) {
 
         <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">Cinema e Ditadura</p>
         <h2 id="show-media-title" className="mt-3 pr-14 font-title text-3xl text-text md:text-5xl">{media.title}</h2>
-
-        <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-black">
-          {player.kind === "iframe" && (
-            <iframe
-              className="aspect-video w-full"
-              src={player.src}
-              title={media.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
-          )}
-          {player.kind === "video" && (
-            <video className="aspect-video w-full" src={player.src} controls autoPlay playsInline>
-              Seu navegador não oferece suporte à reprodução deste vídeo.
-            </video>
-          )}
-          {player.kind === "external" && (
-            <div className="grid min-h-72 place-items-center p-8 text-center">
-              <div>
-                <p className="text-muted">Este endereço não oferece um player incorporável.</p>
-                <a className="mt-5 inline-flex items-center gap-2 rounded-xl border border-primary px-5 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={player.src} target="_blank" rel="noreferrer">
-                  Abrir conteúdo original <ExternalLink size={16} aria-hidden="true" />
-                </a>
-              </div>
-            </div>
-          )}
-        </div>
+        {media.playlist ? <PlaylistBrowser media={media} /> : <div className="mt-6"><PlayerFrame player={player} title={media.title} /></div>}
       </div>
     </div>,
     document.body,

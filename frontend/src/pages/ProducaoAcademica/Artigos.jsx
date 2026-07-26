@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, ExternalLink, FileText, X } from "lucide-react";
 import Container from "../../components/ui/Container";
-import SocialShare from "../../components/ui/SocialShare";
 import api from "../../services/api";
 import { contentFileUrls, contentImage } from "../../utils/contentMetadata";
 
@@ -386,6 +385,55 @@ export default function Artigos() {
   );
 }
 
+const articleSummaryPreviewLength = 240;
+
+function summaryPreview(summary = "") {
+  const text = String(summary).trim();
+  if (text.length <= articleSummaryPreviewLength) return text;
+
+  const shortened = text.slice(0, articleSummaryPreviewLength);
+  const lastSpace = shortened.lastIndexOf(" ");
+  return `${shortened.slice(0, lastSpace > 160 ? lastSpace : articleSummaryPreviewLength).trim()}…`;
+}
+
+function AuthorArticleCard({ article }) {
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const summary = String(article.summary || "").trim();
+  const hasLongSummary = summary.length > articleSummaryPreviewLength;
+
+  return (
+    <article className="flex h-full flex-col rounded-2xl border border-border bg-card p-5 transition hover:border-primary/60 md:p-6">
+      <h3 className="font-title text-2xl leading-tight text-text">{article.title}</h3>
+      {article.note && <p className="mt-3 line-clamp-2 text-sm font-semibold leading-6 text-primary">{article.note}</p>}
+      {summary && (
+        <div className="mt-4">
+          <p className="leading-7 text-muted">{summaryExpanded ? summary : summaryPreview(summary)}</p>
+          {hasLongSummary && (
+            <button
+              type="button"
+              className="mt-3 text-sm font-bold text-primary underline decoration-primary/40 underline-offset-4 transition hover:decoration-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              aria-expanded={summaryExpanded}
+              onClick={() => setSummaryExpanded((expanded) => !expanded)}
+            >
+              {summaryExpanded ? "Recolher resumo" : "Ler resumo completo"}
+            </button>
+          )}
+        </div>
+      )}
+      <div className="mt-auto pt-5">
+        <a
+          className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
+          href={article.url}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Link para PDF <ExternalLink size={16} aria-hidden="true" />
+        </a>
+      </div>
+    </article>
+  );
+}
+
 function AuthorModal({ author, authorPosition, authorCount, onClose, onNavigate }) {
   useEffect(() => {
     const navigateByKeyboard = (event) => {
@@ -416,7 +464,7 @@ function AuthorModal({ author, authorPosition, authorCount, onClose, onNavigate 
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="relative max-h-[94vh] w-full max-w-5xl overflow-y-auto rounded-3xl border border-white/20 bg-background p-6 shadow-2xl md:p-10">
+      <div className="relative max-h-[94vh] w-full max-w-7xl overflow-y-auto rounded-3xl border border-white/20 bg-background p-6 shadow-2xl md:p-10">
         <button
           type="button"
           onClick={onClose}
@@ -469,22 +517,9 @@ function AuthorModal({ author, authorPosition, authorCount, onClose, onNavigate 
               </button>
             </div>
 
-            <div className="grid gap-5">
+            <div className="grid items-start gap-5 sm:grid-cols-2 xl:grid-cols-3">
               {author.articles.map((article) => (
-                <article key={article.title} className="rounded-2xl border border-border bg-card p-5 md:p-6">
-                  <h3 className="font-title text-3xl text-text">{article.title}</h3>
-                  {article.note && <p className="mt-3 text-sm font-semibold text-primary">{article.note}</p>}
-                  {article.summary && <p className="mt-4 leading-7 text-muted">{article.summary}</p>}
-                  <a
-                    className="mt-5 inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary"
-                    href={article.url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Link para PDF <ExternalLink size={16} aria-hidden="true" />
-                  </a>
-                  <SocialShare title={article.title} url={article.url} className="mt-6" />
-                </article>
+                <AuthorArticleCard key={article.title} article={article} />
               ))}
             </div>
           </div>

@@ -7,7 +7,7 @@ import { compareDashboardContents, contentAreaLabel, typeLabel } from "../utils"
 
 export default function PendingApprovals({ contents, refresh, onEdit, onOpen }) {
   const pending = useMemo(
-    () => contents.filter((content) => !content.published).sort(compareDashboardContents),
+    () => contents.filter((content) => !content.published && content.type !== "ARTICLE_AUTHOR").sort(compareDashboardContents),
     [contents],
   );
   if (pending.length === 0) return null;

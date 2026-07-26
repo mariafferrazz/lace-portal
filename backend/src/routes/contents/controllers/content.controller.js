@@ -15,6 +15,7 @@ const {
   updateContent,
 } = require("../services/content.service");
 const { enrichCinemaShows } = require("../services/cinemaShow.service");
+const { loadYoutubePlaylist } = require("../services/youtubePlaylist.service");
 const { normalizeSlug } = require("../utils/content.utils");
 const { parseContent } = require("../validators/content.validator");
 const { notifyCoordinatorContentChange } = require("../../../services/notifications");
@@ -43,6 +44,17 @@ async function listHighlightContents(_req, res) {
   disablePublicCache(res);
   const contents = await listHighlights();
   return res.json({ contents });
+}
+
+async function getYoutubePlaylist(req, res) {
+  try {
+    const playlist = await loadYoutubePlaylist(req.query.url || req.query.id);
+    res.set("Cache-Control", "public, max-age=900, stale-while-revalidate=1800");
+    return res.json(playlist);
+  } catch (error) {
+    const invalidUrl = String(error.message || "").includes("URL válida");
+    return res.status(invalidUrl ? 400 : 502).json({ error: error.message });
+  }
 }
 
 async function getCinemaShow(req, res) {
@@ -112,10 +124,10 @@ async function getManageContent(req, res) {
 async function create(req, res) {
   try {
     const data = parseContent(req.body);
-    if (req.user.role === "COORDINATOR") data.published = true;
+    if (req.user.role === "COORDINATOR" || data.type === "ARTICLE_AUTHOR") data.published = true;
     const content = await createContent(data, req.user.id);
 
-    if (req.user.role !== "COORDINATOR") {
+    if (req.user.role !== "COORDINATOR" && data.type !== "ARTICLE_AUTHOR") {
       notifyCoordinatorContentChange({ content, user: req.user })
         .catch((error) => console.error(error));
     }
@@ -165,6 +177,7 @@ module.exports = {
   listPublished,
   listNavigation,
   listHighlightContents,
+  getYoutubePlaylist,
   getCinemaShow,
   listEventsByYear,
   listManage,

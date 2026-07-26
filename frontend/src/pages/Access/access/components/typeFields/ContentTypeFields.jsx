@@ -1,4 +1,3 @@
-import ArticleAuthorFields from "./ArticleAuthorFields";
 import ArticleFields from "./ArticleFields";
 import CinemaShowFields from "./CinemaShowFields";
 import EventFields from "./EventFields";
@@ -16,7 +15,6 @@ const components = {
   PODCAST: PodcastFields,
   VIRAL_ESCAPE_LINES: ViralEscapeFields,
   ARTICLE: ArticleFields,
-  ARTICLE_AUTHOR: ArticleAuthorFields,
   RESEARCH: ResearchFields,
   CINEMA_SHOW: CinemaShowFields,
   EVENT: EventFields,

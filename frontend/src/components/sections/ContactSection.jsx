@@ -1,15 +1,26 @@
 import { useState } from "react";
-import { ExternalLink, Mail, Send } from "lucide-react";
+import { Copy, ExternalLink, Mail, Send } from "lucide-react";
 import Container from "../ui/Container";
 import SectionTitle from "../ui/SectionTitle";
 import Button from "../ui/Button";
 
 const fieldClass = "mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-text outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20";
 const contactEndpoint = import.meta.env.VITE_CONTACT_ENDPOINT;
+const contactEmail = "lab.lace.uff@gmail.com";
 
 export default function ContactSection() {
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [emailCopyStatus, setEmailCopyStatus] = useState("");
+
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText(contactEmail);
+      setEmailCopyStatus("E-mail copiado.");
+    } catch {
+      setEmailCopyStatus("Selecione o endereço e copie manualmente.");
+    }
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -57,16 +68,31 @@ export default function ContactSection() {
               Entre em contato com o LACE para saber mais sobre pesquisas, eventos, produções e possibilidades de colaboração.
             </p>
 
-            <a
-              href="mailto:lab.lace.uff@gmail.com"
-              className="mt-8 flex items-center gap-3 rounded-2xl border border-border bg-card p-5 text-text transition hover:border-primary hover:text-primary"
-            >
+            <div className="mt-8 rounded-2xl border border-border bg-card p-5">
+              <div className="flex items-center gap-3">
               <Mail className="shrink-0 text-primary" aria-hidden="true" />
-              <span>
+              <div className="min-w-0 flex-1">
                 <span className="block text-sm text-muted">E-mail</span>
-                <span className="font-semibold">lab.lace.uff@gmail.com</span>
-              </span>
-            </a>
+                <input
+                  className="mt-2 w-full rounded-xl border border-border bg-background px-3 py-2 font-semibold text-text outline-none selection:bg-primary selection:text-on-primary focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  type="email"
+                  value={contactEmail}
+                  readOnly
+                  aria-label="E-mail do LACE"
+                  onFocus={(event) => event.currentTarget.select()}
+                />
+              </div>
+              <button
+                type="button"
+                className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                onClick={copyEmail}
+                aria-label="Copiar e-mail do LACE"
+              >
+                <Copy size={17} aria-hidden="true" /> <span className="hidden sm:inline">Copiar</span>
+              </button>
+              </div>
+              {emailCopyStatus && <p className="mt-3 text-sm font-semibold text-muted" role="status">{emailCopyStatus}</p>}
+            </div>
 
             <h3 className="mt-10 font-title text-3xl">Redes sociais</h3>
             <div className="mt-5 grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
@@ -78,14 +104,23 @@ export default function ContactSection() {
               >
                 <ExternalLink size={18} aria-hidden="true" /> <span>X / Twitter</span>
               </a>
-              <div className="flex items-center gap-3 rounded-xl border border-border bg-card/60 px-4 py-3 text-muted" title="Link em breve">
+              <a
+                href="https://www.instagram.com/laceuff/"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 transition hover:border-primary hover:text-primary"
+              >
                 <ExternalLink size={18} aria-hidden="true" /> <span>Instagram</span>
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-border bg-card/60 px-4 py-3 text-muted" title="Link em breve">
+              </a>
+              <a
+                href="https://www.facebook.com/Lace.uff"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 transition hover:border-primary hover:text-primary"
+              >
                 <ExternalLink size={18} aria-hidden="true" /> <span>Facebook</span>
-              </div>
+              </a>
             </div>
-            <p className="mt-3 text-sm text-muted">Os links do Instagram e do Facebook serão adicionados em breve.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="rounded-3xl border border-border bg-card p-7 md:p-10">

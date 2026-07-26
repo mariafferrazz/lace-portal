@@ -128,7 +128,7 @@ export default function useContentForm({ content, initialArea, initialType, onCr
       setStatus(null);
       const { data } = await api.post("/contents", {
         title: name.trim(),
-        researcherName: form.researcherName.trim(),
+        researcherName: form.researcherName.trim() || "Equipe LACE",
         type: "ARTICLE_AUTHOR",
         description: description.trim(),
         metadata: { editorialArea: "PRODUCAO_ACADEMICA", pageKind: "ARTICLE_AUTHOR" },
@@ -153,6 +153,16 @@ export default function useContentForm({ content, initialArea, initialType, onCr
     }
     if (form.type === "CINEMA_SHOW" && !extractShowNumber(form.title)) {
       setStatus({ ok: false, message: "Comece o título com a numeração da mostra, como VIII Mostra Cinema e Ditadura." });
+      setLoading(false);
+      return;
+    }
+    if (form.type === "ARTICLE" && form.articleAuthorIds.length === 0) {
+      setStatus({ ok: false, message: "Selecione ou adicione pelo menos um autor para o artigo." });
+      setLoading(false);
+      return;
+    }
+    if (form.type === "ARTICLE" && !form.pdfUrl.trim()) {
+      setStatus({ ok: false, message: "Informe o link do artigo em PDF." });
       setLoading(false);
       return;
     }

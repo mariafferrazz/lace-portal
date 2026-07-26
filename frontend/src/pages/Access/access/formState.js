@@ -150,10 +150,6 @@ export function buildContentPayload(form) {
       payload.externalUrl = metadata.pdfUrl || "";
       break;
 
-    case "ARTICLE_AUTHOR":
-      metadata.pageKind = "ARTICLE_AUTHOR";
-      break;
-
     case "RESEARCH":
       metadata.team = nonEmptyObjects(form.researchTeam, ["name", "role", "description", "lattesUrl"]);
       metadata.additionalInfo = nonEmptyObjects(form.additionalInfo, ["title", "description"]);

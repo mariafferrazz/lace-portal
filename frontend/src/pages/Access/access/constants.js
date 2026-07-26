@@ -5,7 +5,6 @@ export const contentTypes = [
   ["PODCAST", "Podcast"],
   ["VIRAL_ESCAPE_LINES", "Linhas de Fugas Virais"],
   ["ARTICLE", "Artigo"],
-  ["ARTICLE_AUTHOR", "Autor de artigo"],
   ["RESEARCH", "Pesquisa"],
   ["CINEMA_SHOW", "Mostra Cinema e Ditadura"],
   ["EVENT", "Outro evento"],
@@ -17,7 +16,7 @@ export const contentAreas = [
   {
     value: "PRODUCAO_ACADEMICA",
     label: "Produção Acadêmica",
-    types: ["VIRAL_ESCAPE_LINES", "ARTICLE", "ARTICLE_AUTHOR", "RESEARCH"],
+    types: ["VIRAL_ESCAPE_LINES", "ARTICLE", "RESEARCH"],
   },
   { value: "EVENTOS_ATIVIDADES", label: "Eventos e Atividades", types: ["CINEMA_SHOW", "EVENT"] },
 ];

@@ -16,7 +16,9 @@ export default function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA"
       <form className="mt-7 grid gap-5 md:grid-cols-2" onSubmit={submit}>
         <label className="font-semibold">Área editorial *<select className={fieldClass} required value={form.area} onChange={actions.updateArea}>{contentAreas.map((area) => <option key={area.value} value={area.value}>{area.label}</option>)}</select></label>
         <label className="font-semibold">Tipo de conteúdo *<select className={fieldClass} required value={form.type} onChange={actions.updateType}>{contentTypes.filter(([value]) => contentAreas.find((area) => area.value === form.area)?.types.includes(value)).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-        <label className="font-semibold md:col-span-2">Título *<input className={fieldClass} required maxLength={200} placeholder={form.type === "CINEMA_SHOW" ? "VIII Mostra Cinema e Ditadura" : ""} value={form.title} onChange={actions.update("title")} /></label>
+        {form.type !== "ARTICLE" && (
+          <label className="font-semibold md:col-span-2">Título *<input className={fieldClass} required maxLength={200} placeholder={form.type === "CINEMA_SHOW" ? "VIII Mostra Cinema e Ditadura" : ""} value={form.title} onChange={actions.update("title")} /></label>
+        )}
 
         <ContentTypeFields form={form} actions={actions} referenceOptions={referenceOptions} />
 

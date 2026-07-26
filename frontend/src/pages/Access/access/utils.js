@@ -92,6 +92,7 @@ export function contentAreaLabel(content) {
 }
 
 export function contentBelongsToArea(content, area) {
+  if (content.type === "ARTICLE_AUTHOR") return false;
   const editorialAreas = content.metadata?.editorialAreas;
   if (Array.isArray(editorialAreas) && editorialAreas.includes(area.value)) return true;
   if (content.metadata?.editorialArea === area.value) return true;
