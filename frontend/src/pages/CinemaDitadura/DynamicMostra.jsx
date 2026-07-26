@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useParams } from "react-router-dom";
-import { CalendarDays, Film, Library, PlayCircle } from "lucide-react";
+import { CalendarDays, ExternalLink, Film, Library, PlayCircle, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import SocialShare from "../../components/ui/SocialShare";
 import { loadCinemaShow } from "../../features/content/public/navigation";
-import { contentImageUrls, contentPlaylistUrls, sessionArchiveUrls, sessionWatchUrls } from "../../utils/contentMetadata";
+import {
+  contentImageUrls,
+  contentPlaylistUrls,
+  sessionArchiveUrls,
+  sessionWatchUrls,
+  vimeoVideoId,
+  youtubeVideoId,
+} from "../../utils/contentMetadata";
 import { showLabel, showPath } from "../../utils/contentRoutes";
 
 function sessionKey(session, index) {
@@ -27,10 +35,108 @@ function playlistPeriod(show) {
   return `Registros das transmissões realizadas${show?.metadata?.eventYear ? ` em ${show.metadata.eventYear}` : ""}.`;
 }
 
+function youtubePlaylistId(value) {
+  try {
+    const url = new URL(String(value || "").trim());
+    return /(^|\.)youtube\.com$/.test(url.hostname) ? url.searchParams.get("list") || "" : "";
+  } catch {
+    return "";
+  }
+}
+
+function mediaPlayerSource(media) {
+  const url = media?.url || "";
+  const playlistId = media?.playlist ? youtubePlaylistId(url) : "";
+  if (playlistId) {
+    return {
+      kind: "iframe",
+      src: `https://www.youtube-nocookie.com/embed/videoseries?list=${encodeURIComponent(playlistId)}&autoplay=1`,
+    };
+  }
+
+  const youtubeId = youtubeVideoId(url);
+  if (youtubeId) {
+    return { kind: "iframe", src: `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1` };
+  }
+
+  const fallbackPlaylistId = youtubePlaylistId(url);
+  if (fallbackPlaylistId) {
+    return {
+      kind: "iframe",
+      src: `https://www.youtube-nocookie.com/embed/videoseries?list=${encodeURIComponent(fallbackPlaylistId)}&autoplay=1`,
+    };
+  }
+
+  const vimeoId = vimeoVideoId(url);
+  if (vimeoId) return { kind: "iframe", src: `https://player.vimeo.com/video/${vimeoId}?autoplay=1` };
+  if (/\.(?:mp4|webm|ogg)(?:$|[?#])/i.test(url)) return { kind: "video", src: url };
+  return { kind: "external", src: url };
+}
+
+function MediaPlayerModal({ media, onClose }) {
+  const player = mediaPlayerSource(media);
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 md:p-8"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="show-media-title"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div className="relative w-full max-w-6xl rounded-3xl border border-white/20 bg-background p-5 shadow-2xl md:p-8">
+        <button
+          type="button"
+          className="absolute right-4 top-4 z-10 rounded-full bg-black/70 p-3 text-white transition hover:bg-black focus:outline-none focus-visible:ring-4 focus-visible:ring-white/40"
+          aria-label="Fechar player"
+          onClick={onClose}
+        >
+          <X size={24} aria-hidden="true" />
+        </button>
+
+        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">Cinema e Ditadura</p>
+        <h2 id="show-media-title" className="mt-3 pr-14 font-title text-3xl text-text md:text-5xl">{media.title}</h2>
+
+        <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-black">
+          {player.kind === "iframe" && (
+            <iframe
+              className="aspect-video w-full"
+              src={player.src}
+              title={media.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          )}
+          {player.kind === "video" && (
+            <video className="aspect-video w-full" src={player.src} controls autoPlay playsInline>
+              Seu navegador não oferece suporte à reprodução deste vídeo.
+            </video>
+          )}
+          {player.kind === "external" && (
+            <div className="grid min-h-72 place-items-center p-8 text-center">
+              <div>
+                <p className="text-muted">Este endereço não oferece um player incorporável.</p>
+                <a className="mt-5 inline-flex items-center gap-2 rounded-xl border border-primary px-5 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={player.src} target="_blank" rel="noreferrer">
+                  Abrir conteúdo original <ExternalLink size={16} aria-hidden="true" />
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 export default function DynamicMostra() {
   const { showSlug } = useParams();
   const [show, setShow] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeMedia, setActiveMedia] = useState(null);
   const sessions = Array.isArray(show?.metadata?.sessions) ? show.metadata.sessions : [];
   const playlistUrls = show ? contentPlaylistUrls(show) : [];
   const imageUrl = show ? contentImageUrls(show)[0] : "";
@@ -52,6 +158,21 @@ export default function DynamicMostra() {
       active = false;
     };
   }, [showSlug]);
+
+  useEffect(() => {
+    if (!activeMedia) return undefined;
+
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setActiveMedia(null);
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [activeMedia]);
 
   if (loading) {
     return (
@@ -118,15 +239,18 @@ export default function DynamicMostra() {
             </div>
             <div className="mt-6 flex flex-wrap gap-3 md:mt-0">
               {playlistUrls.map((url, index) => (
-                <a
+                <button
                   key={url}
+                  type="button"
                   className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-primary px-5 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                  href={url}
-                  target="_blank"
-                  rel="noreferrer"
+                  onClick={() => setActiveMedia({
+                    url,
+                    title: `${playlistTitle(show)}${playlistUrls.length > 1 ? ` ${index + 1}` : ""}`,
+                    playlist: true,
+                  })}
                 >
                   <PlayCircle size={18} aria-hidden="true" /> Abrir playlist {playlistUrls.length > 1 ? index + 1 : ""}
-                </a>
+                </button>
               ))}
             </div>
           </section>
@@ -169,28 +293,32 @@ export default function DynamicMostra() {
 
                       <div className="mt-4 flex flex-wrap items-center gap-4">
                         {archiveFilmUrls.map((url, urlIndex) => (
-                          <a
+                          <button
                             key={`archive-${url}`}
+                            type="button"
                             className="group inline-flex w-fit items-center gap-2 text-base font-semibold text-primary"
-                            href={url}
-                            target="_blank"
-                            rel="noreferrer"
+                            onClick={() => setActiveMedia({
+                              url,
+                              title: `${session.title || `Sessão ${index + 1}`} — filme${archiveFilmUrls.length > 1 ? ` ${urlIndex + 1}` : ""}`,
+                            })}
                           >
                             <span className="animated-underline">Assistir ao filme{archiveFilmUrls.length > 1 ? ` ${urlIndex + 1}` : ""}</span>
                             <PlayCircle size={18} aria-hidden="true" />
-                          </a>
+                          </button>
                         ))}
                         {sessionUrls.map((url, urlIndex) => (
-                          <a
+                          <button
                             key={`session-${url}`}
+                            type="button"
                             className="group inline-flex w-fit items-center gap-2 text-base font-semibold text-primary"
-                            href={url}
-                            target="_blank"
-                            rel="noreferrer"
+                            onClick={() => setActiveMedia({
+                              url,
+                              title: `${session.title || `Sessão ${index + 1}`} — sessão${sessionUrls.length > 1 ? ` ${urlIndex + 1}` : ""}`,
+                            })}
                           >
                             <span className="animated-underline">Assistir à sessão{sessionUrls.length > 1 ? ` ${urlIndex + 1}` : ""}</span>
                             <PlayCircle size={18} aria-hidden="true" />
-                          </a>
+                          </button>
                         ))}
                       </div>
                     </div>
@@ -207,6 +335,7 @@ export default function DynamicMostra() {
 
         <SocialShare title={showLabel(show)} url={showPath(show)} className="mt-12" />
       </Container>
+      {activeMedia && <MediaPlayerModal media={activeMedia} onClose={() => setActiveMedia(null)} />}
     </main>
   );
 }

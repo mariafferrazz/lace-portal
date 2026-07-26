@@ -60,6 +60,12 @@ export const teamMembers = [
     "profileUrl": null
   },
   {
+    "name": "Joice Pinto de Andrade",
+    "role": "Equipe LACE",
+    "bio": "Graduada em Ciências Contábeis pela Fundação Visconde de Cairu (FVC) e Assistente em Administração da Universidade Federal do Rio de Janeiro (UFRJ). Atua na gestão acadêmica da pós-graduação, com experiência em processos seletivos, regulação acadêmica, gestão administrativa e apoio às atividades de ensino e pesquisa, especialmente no âmbito do Programa de Pós-Graduação em Mídias Criativas. Integra uma pesquisa desenvolvida pela Universidade Federal Fluminense (UFF), em parceria com o Ministério Público do Trabalho (MPT), sobre as violações de direitos trabalhistas cometidas durante a ditadura empresarial-militar pela empresa Aracruz Celulose.",
+    "profileUrl": "http://lattes.cnpq.br/3557133233777990"
+  },
+  {
     "name": "João Pedro Cavalcanti de Carvalho",
     "role": "Equipe LACE",
     "bio": "Bacharel em Sociologia pela UFF. Integra o LACE/UFF e realiza pesquisa na área de memória sobre as ditaduras empresarial-militares do Brasil, da Argentina, do Uruguai e do Chile. Fez parte da pesquisa, desenvolvida pela UFF junto ao Ministério Público do Trabalho, sobre as violações de direitos humanos empreendidas pela ditadura empresarial-militar (1964-1988) e pela empresa Aracruz Celulose. Atualmente, desenvolve, por conta própria, investigação sobre vítimas das ditaduras empresarial-militares na América Latina e os mecanismos e as estratégias de repressão pelo Estado. Atua nas áreas de violência de Estado, responsabilidade empresarial e reparação, memória social e movimentos sociais.",

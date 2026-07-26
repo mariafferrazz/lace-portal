@@ -4,6 +4,8 @@ const {
   uniqueValues,
 } = require("../utils/content.utils");
 
+const vouContarParaOsMeusFilhosTitle = normalizeTitleForLookup("Vou Contar para os Meus Filhos");
+
 function filmArchiveUrl(content) {
   const metadata = parseMetadata(content.metadata);
   if (content.externalUrl) return content.externalUrl;
@@ -54,8 +56,15 @@ function enrichCinemaShowContent(content, filmIndex = []) {
   const metadata = parseMetadata(content.metadata);
   const sessions = Array.isArray(metadata.sessions) ? metadata.sessions : [];
   const enrichedSessions = sessions.map((session) => {
-    const sessionUrls = uniqueValues(session.sessionUrls, session.sessionUrl);
-    const existingArchiveUrls = uniqueValues(session.archiveFilmUrls, session.archiveFilmUrl)
+    const storedSessionUrls = uniqueValues(session.sessionUrls, session.sessionUrl);
+    const storedArchiveUrls = uniqueValues(session.archiveFilmUrls, session.archiveFilmUrl);
+    const hasMisplacedSessionUrl = normalizeTitleForLookup(session.title) === vouContarParaOsMeusFilhosTitle
+      && storedSessionUrls.length === 0
+      && storedArchiveUrls.length > 1;
+    const sessionUrls = hasMisplacedSessionUrl
+      ? uniqueValues(storedArchiveUrls.slice(1))
+      : storedSessionUrls;
+    const existingArchiveUrls = (hasMisplacedSessionUrl ? storedArchiveUrls.slice(0, 1) : storedArchiveUrls)
       .filter((url) => !sessionUrls.includes(url));
     const linkedFilm = session.filmId
       ? filmIndex.find((film) => film.id === session.filmId)

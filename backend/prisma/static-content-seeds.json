@@ -4387,12 +4387,13 @@
           "title": "Vou Contar para os Meus Filhos",
           "direction": "Tuca Siqueira",
           "archiveFilmUrl": "https://www.youtube.com/watch?v=-BhA-G6-2uo",
-          "sessionUrls": [],
-          "archiveFilmUrls": [
-            "https://www.youtube.com/watch?v=-BhA-G6-2uo",
+          "sessionUrls": [
             "https://www.youtube.com/watch?v=Ux2glsbWynM"
           ],
-          "sessionUrl": null
+          "archiveFilmUrls": [
+            "https://www.youtube.com/watch?v=-BhA-G6-2uo"
+          ],
+          "sessionUrl": "https://www.youtube.com/watch?v=Ux2glsbWynM"
         },
         {
           "date": "26/09/2025",
