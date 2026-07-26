@@ -19,31 +19,40 @@ const { normalizeSlug } = require("../utils/content.utils");
 const { parseContent } = require("../validators/content.validator");
 const { notifyCoordinatorContentChange } = require("../../../services/notifications");
 
+function disablePublicCache(res) {
+  res.set("Cache-Control", "no-store, max-age=0");
+}
+
 async function listPublished(req, res) {
   if (req.query.type && !contentTypes.has(req.query.type)) {
     return res.status(400).json({ error: "Tipo de conteudo invalido." });
   }
 
+  disablePublicCache(res);
   const contents = await listPublishedContents(req.query.type);
   return res.json({ contents });
 }
 
 async function listNavigation(_req, res) {
+  disablePublicCache(res);
   const contents = await listNavigationContents();
   return res.json({ contents });
 }
 
 async function listHighlightContents(_req, res) {
+  disablePublicCache(res);
   const contents = await listHighlights();
   return res.json({ contents });
 }
 
 async function getCinemaShow(req, res) {
+  disablePublicCache(res);
   const requestedSlug = normalizeSlug(req.params.showSlug);
   const contents = await listCinemaShowSourceContents();
   const content = enrichCinemaShows(contents).find((item) => {
     if (item.type !== "CINEMA_SHOW") return false;
     const metadata = item.metadata || {};
+    if (metadata.createCinemaPage === false || !metadata.cinemaPath) return false;
     const slug = normalizeSlug(metadata.showSlug || "");
     const pathSlug = normalizeSlug(
       String(metadata.cinemaPath || "").split("/").filter(Boolean).pop() || "",
@@ -56,6 +65,7 @@ async function getCinemaShow(req, res) {
 }
 
 async function listEventsByYear(req, res) {
+  disablePublicCache(res);
   const requestedYear = String(req.params.year || "").trim();
   const contents = await listEventYearSourceContents();
 

@@ -15,7 +15,10 @@ function eventImage(content) {
 }
 
 function eventLink(content) {
-  if (content.type === "CINEMA_SHOW") return showPath(content);
+  if (content.type === "CINEMA_SHOW") {
+    if (content.metadata?.createCinemaPage === false || !content.metadata?.cinemaPath) return "";
+    return showPath(content);
+  }
   return contentFileUrls(content)[0] || "";
 }
 

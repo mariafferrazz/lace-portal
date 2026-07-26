@@ -21,7 +21,11 @@ export function mergeDynamicMenu(contents = []) {
   const cinemaMenu = nextMenu.find((item) => item.title === "Cinema e Ditadura");
   const eventMenu = nextMenu.find((item) => item.title === "Eventos e Atividades");
   const dynamicShows = contents
-    .filter((content) => content.type === "CINEMA_SHOW")
+    .filter((content) => (
+      content.type === "CINEMA_SHOW"
+      && content.metadata?.createCinemaPage !== false
+      && content.metadata?.cinemaPath
+    ))
     .map((content) => ({
       title: showLabel(content),
       path: showPath(content),

@@ -36,6 +36,26 @@ const basicContentSelect = {
   updatedAt: true,
 };
 
+const publicContentSelect = {
+  id: true,
+  title: true,
+  description: true,
+  type: true,
+  researcherName: true,
+  fileUrl: true,
+  externalUrl: true,
+  metadata: true,
+  published: true,
+  createdAt: true,
+  updatedAt: true,
+};
+
+function sortNewestFirst(contents) {
+  return contents.sort((left, right) => (
+    new Date(right.createdAt || 0).getTime() - new Date(left.createdAt || 0).getTime()
+  ));
+}
+
 async function listPublishedContents(type) {
   const where = type ? { type, published: true } : { published: true };
   const contents = await prisma.content.findMany({
@@ -53,10 +73,9 @@ async function listPublishedContents(type) {
 async function listNavigationContents() {
   const contents = await prisma.content.findMany({
     where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW"] } },
-    select: { id: true, title: true, type: true, metadata: true },
-    orderBy: { createdAt: "desc" },
+    select: { id: true, title: true, type: true, metadata: true, createdAt: true },
   });
-  return contents.map(normalizeContentMetadata);
+  return sortNewestFirst(contents.map(normalizeContentMetadata));
 }
 
 async function listHighlights() {
@@ -82,25 +101,17 @@ async function listHighlights() {
 async function listCinemaShowSourceContents() {
   const contents = await prisma.content.findMany({
     where: { published: true, type: { in: ["CINEMA_SHOW", "FILM"] } },
-    include: {
-      createdBy: { select: { id: true, name: true, role: true } },
-      researcherMember: { select: { id: true, name: true, role: true } },
-    },
-    orderBy: { createdAt: "desc" },
+    select: publicContentSelect,
   });
-  return contents.map(normalizeContentMetadata);
+  return sortNewestFirst(contents.map(normalizeContentMetadata));
 }
 
 async function listEventYearSourceContents() {
   const contents = await prisma.content.findMany({
     where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW", "FILM"] } },
-    include: {
-      createdBy: { select: { id: true, name: true, role: true } },
-      researcherMember: { select: { id: true, name: true, role: true } },
-    },
-    orderBy: { createdAt: "desc" },
+    select: publicContentSelect,
   });
-  return contents.map(normalizeContentMetadata);
+  return sortNewestFirst(contents.map(normalizeContentMetadata));
 }
 
 async function listManageContents() {
