@@ -26,6 +26,7 @@ export default function CinemaShowFields({ form, actions, referenceOptions }) {
         <ImageSourceField className="md:col-span-2" label="Imagem da mostra" values={form.imageUrls} onUrlChange={(index, value) => actions.updateUrlList("imageUrls", index, value)} onUrlAdd={() => actions.addUrl("imageUrls")} onUrlRemove={(index) => actions.removeUrl("imageUrls", index)} onFileChange={actions.updateImageFile} />
         <MultiUrlField className="md:col-span-2" label="Playlist da mostra" values={form.playlistUrls} onChange={(index, value) => actions.updateUrlList("playlistUrls", index, value)} onAdd={() => actions.addUrl("playlistUrls")} onRemove={(index) => actions.removeUrl("playlistUrls", index)} />
         <label className="font-semibold md:col-span-2">Descricao<textarea className={`${fieldClass} min-h-40 resize-y`} value={form.description} onChange={actions.update("description")} /></label>
+        <p className="text-sm leading-6 text-muted md:col-span-2">Ao ser publicada, a mostra entra automaticamente em Destaques, em Eventos do ano informado e, com a opcao acima marcada, no menu Cinema e Ditadura.</p>
       </div>
 
       <div className="mt-5">

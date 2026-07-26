@@ -11,7 +11,7 @@ export default function EventFields({ form, actions }) {
         <ImageSourceField label="Imagem do evento" values={form.imageUrls} onUrlChange={(index, value) => actions.updateUrlList("imageUrls", index, value)} onUrlAdd={() => actions.addUrl("imageUrls")} onUrlRemove={(index) => actions.removeUrl("imageUrls", index)} onFileChange={actions.updateImageFile} />
         <label className="font-semibold md:col-span-2">Descricao<textarea className={`${fieldClass} min-h-40 resize-y`} value={form.description} onChange={actions.update("description")} /></label>
         <MultiUrlField className="md:col-span-2" label="Links relacionados" values={form.fileUrls} onChange={(index, value) => actions.updateUrlList("fileUrls", index, value)} onAdd={() => actions.addUrl("fileUrls")} onRemove={(index) => actions.removeUrl("fileUrls", index)} />
-        <p className="text-sm leading-6 text-muted md:col-span-2">Outros eventos usam detalhes em modal. Mostras usam pagina propria e sao cadastradas no tipo Mostra Cinema e Ditadura.</p>
+        <p className="text-sm leading-6 text-muted md:col-span-2">Ao ser publicado, este evento entra automaticamente em Destaques e na pagina Eventos do ano informado. Outros eventos usam detalhes em modal; mostras usam pagina propria e sao cadastradas no tipo Mostra Cinema e Ditadura.</p>
       </div>
     </section>
   );

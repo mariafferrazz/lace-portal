@@ -8,10 +8,8 @@ import { loadEventsByYear } from "../../features/content/public/navigation";
 import { contentFileUrls, contentImage, contentImageUrls, contentPlaylistUrls, sessionArchiveUrls, sessionWatchUrls, uniqueUrls } from "../../utils/contentMetadata";
 import { eventYear, showPath } from "../../utils/contentRoutes";
 
-const fallbackImage = "https://i.ytimg.com/vi/iuRlQ17bDbM/hqdefault.jpg";
-
 function eventImage(content) {
-  return contentImage(content, fallbackImage);
+  return contentImage(content, "");
 }
 
 function eventLink(content) {
@@ -43,8 +41,13 @@ function eventLinks(content) {
 }
 
 function EventCardBody({ content }) {
+  const image = eventImage(content);
   return <>
-    <img className="aspect-[4/3] w-full object-cover" src={eventImage(content)} alt="" loading="lazy" decoding="async" />
+    {image ? (
+      <img className="aspect-[4/3] w-full object-cover" src={image} alt="" loading="lazy" decoding="async" />
+    ) : (
+      <span className="grid aspect-[4/3] w-full place-items-center bg-primary/10 font-title text-4xl text-primary" aria-label="Imagem ainda nao cadastrada">LACE</span>
+    )}
     <span className="flex flex-1 flex-col p-6">
       <span className="text-xs font-semibold uppercase tracking-widest text-primary">{eventPeriod(content)}</span>
       <span className="mt-3 block font-title text-3xl">{content.title}</span>

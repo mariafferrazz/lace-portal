@@ -196,7 +196,10 @@ export default function useContentForm({ content, initialArea, initialType, onCr
       const payload = buildContentPayload(formToSave);
       const { data } = isEditing ? await api.patch(`/contents/${content.id}`, payload) : await api.post("/contents", payload);
       setForm(createInitialForm(initialArea, initialType));
-      setStatus({ ok: true, message: isEditing ? "Conteudo atualizado." : "Conteudo enviado para revisao da coordenacao." });
+      const publicationMessage = data.content?.published
+        ? "Conteudo publicado e conectado ao site."
+        : "Conteudo salvo e enviado para revisao da coordenacao.";
+      setStatus({ ok: true, message: isEditing ? `Conteudo atualizado. ${publicationMessage}` : publicationMessage });
       await onCreated(data.content);
       onClose?.();
     } catch (error) {
