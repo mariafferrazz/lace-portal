@@ -39,6 +39,21 @@ function eventLinks(content) {
     .filter((link) => link.href || link.to);
 }
 
+function EventCardBody({ content }) {
+  return <>
+    <img className="aspect-[4/3] w-full object-cover" src={eventImage(content)} alt="" loading="lazy" decoding="async" />
+    <span className="flex flex-1 flex-col p-6">
+      <span className="text-xs font-semibold uppercase tracking-widest text-primary">{eventPeriod(content)}</span>
+      <span className="mt-3 block font-title text-3xl">{content.title}</span>
+      {content.description && <span className="mt-4 flex-1 leading-7 text-muted">{content.description}</span>}
+      <span className="mt-6 inline-flex items-center gap-2 self-start font-semibold text-primary">
+        <span className="animated-underline">{content.type === "CINEMA_SHOW" ? "Abrir pagina da mostra" : "Ver detalhes"}</span>
+        <Images size={16} aria-hidden="true" />
+      </span>
+    </span>
+  </>;
+}
+
 export default function DynamicEventosYear() {
   const { year } = useParams();
   const [contents, setContents] = useState([]);
@@ -92,25 +107,19 @@ export default function DynamicEventosYear() {
           <p className="mt-14 text-muted">Carregando eventos...</p>
         ) : events.length > 0 ? (
           <section className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3" aria-label={`Eventos ${year}`}>
-            {events.map((content) => (
-              <button
-                key={content.id}
-                type="button"
-                className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-border bg-card text-left text-text transition hover:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                onClick={() => setActiveEvent(content)}
-              >
-                <img className="aspect-[4/3] w-full object-cover" src={eventImage(content)} alt="" loading="lazy" decoding="async" />
-                <span className="flex flex-1 flex-col p-6">
-                  <span className="text-xs font-semibold uppercase tracking-widest text-primary">{eventPeriod(content)}</span>
-                  <span className="mt-3 block font-title text-3xl">{content.title}</span>
-                  {content.description && <span className="mt-4 flex-1 leading-7 text-muted">{content.description}</span>}
-                  <span className="mt-6 inline-flex items-center gap-2 self-start font-semibold text-primary">
-                    <span className="animated-underline">Ver detalhes</span>
-                    <Images size={16} aria-hidden="true" />
-                  </span>
-                </span>
-              </button>
-            ))}
+            {events.map((content) => {
+              const showPage = content.type === "CINEMA_SHOW" ? eventLink(content) : "";
+              const cardClass = "group flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-border bg-card text-left text-text transition hover:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary";
+              return showPage ? (
+                <Link key={content.id} className={cardClass} to={showPage}>
+                  <EventCardBody content={content} />
+                </Link>
+              ) : (
+                <button key={content.id} type="button" className={cardClass} onClick={() => setActiveEvent(content)}>
+                  <EventCardBody content={content} />
+                </button>
+              );
+            })}
           </section>
         ) : (
           <div className="mt-14 rounded-3xl border border-dashed border-border bg-card/60 p-8 md:p-12">

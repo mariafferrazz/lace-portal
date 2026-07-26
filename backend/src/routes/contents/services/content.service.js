@@ -13,6 +13,13 @@ function normalizeRawContent(content) {
   };
 }
 
+function normalizeContentMetadata(content) {
+  return {
+    ...content,
+    metadata: parseMetadata(content.metadata),
+  };
+}
+
 const basicContentSelect = {
   id: true,
   title: true,
@@ -40,19 +47,20 @@ async function listPublishedContents(type) {
     orderBy: { title: "asc" },
   });
 
-  return enrichCinemaShows(contents);
+  return enrichCinemaShows(contents.map(normalizeContentMetadata));
 }
 
 async function listNavigationContents() {
-  return prisma.content.findMany({
+  const contents = await prisma.content.findMany({
     where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW"] } },
     select: { id: true, title: true, type: true, metadata: true },
     orderBy: { createdAt: "desc" },
   });
+  return contents.map(normalizeContentMetadata);
 }
 
 async function listHighlights() {
-  return prisma.content.findMany({
+  const contents = await prisma.content.findMany({
     where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW"] } },
     select: {
       id: true,
@@ -68,10 +76,11 @@ async function listHighlights() {
     orderBy: [{ createdAt: "desc" }],
     take: 12,
   });
+  return contents.map(normalizeContentMetadata);
 }
 
 async function listCinemaShowSourceContents() {
-  return prisma.content.findMany({
+  const contents = await prisma.content.findMany({
     where: { published: true, type: { in: ["CINEMA_SHOW", "FILM"] } },
     include: {
       createdBy: { select: { id: true, name: true, role: true } },
@@ -79,10 +88,11 @@ async function listCinemaShowSourceContents() {
     },
     orderBy: { createdAt: "desc" },
   });
+  return contents.map(normalizeContentMetadata);
 }
 
 async function listEventYearSourceContents() {
-  return prisma.content.findMany({
+  const contents = await prisma.content.findMany({
     where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW", "FILM"] } },
     include: {
       createdBy: { select: { id: true, name: true, role: true } },
@@ -90,6 +100,7 @@ async function listEventYearSourceContents() {
     },
     orderBy: { createdAt: "desc" },
   });
+  return contents.map(normalizeContentMetadata);
 }
 
 async function listManageContents() {
@@ -174,6 +185,7 @@ async function deleteContent(id) {
 
 module.exports = {
   normalizeRawContent,
+  normalizeContentMetadata,
   listPublishedContents,
   listNavigationContents,
   listHighlights,
