@@ -1,6 +1,7 @@
 export const THEME_STORAGE_KEY = "lace-theme";
 export const THEME_VERSION_KEY = "lace-theme-version";
-export const THEME_VERSION = "3";
+export const THEME_VERSION = "4";
+export const DEFAULT_THEME = "dark";
 
 export const THEME_PALETTES = {
   light: {
@@ -28,20 +29,20 @@ export const THEME_PALETTES = {
 };
 
 export function normalizeTheme(theme) {
-  return theme === "dark" || theme === "light" ? theme : "light";
+  return theme === "dark" || theme === "light" ? theme : DEFAULT_THEME;
 }
 
 export function getStoredTheme() {
   try {
     if (localStorage.getItem(THEME_VERSION_KEY) !== THEME_VERSION) {
-      localStorage.setItem(THEME_STORAGE_KEY, "light");
+      localStorage.setItem(THEME_STORAGE_KEY, DEFAULT_THEME);
       localStorage.setItem(THEME_VERSION_KEY, THEME_VERSION);
-      return "light";
+      return DEFAULT_THEME;
     }
 
     return normalizeTheme(localStorage.getItem(THEME_STORAGE_KEY));
   } catch {
-    return "light";
+    return DEFAULT_THEME;
   }
 }
 
@@ -67,6 +68,11 @@ export function applyTheme(theme, { persist = true } = {}) {
   const themeColor = document.querySelector('meta[name="theme-color"]');
   if (themeColor) {
     themeColor.setAttribute("content", palette.background);
+  }
+
+  const colorScheme = document.querySelector('meta[name="color-scheme"]');
+  if (colorScheme) {
+    colorScheme.setAttribute("content", nextTheme === "light" ? "only light" : "dark light");
   }
 
   if (persist) {
