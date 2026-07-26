@@ -56,6 +56,20 @@ function sortNewestFirst(contents) {
   ));
 }
 
+function eventYearValue(content) {
+  const metadata = parseMetadata(content.metadata);
+  const year = Number(metadata.eventYear || metadata.year || metadata.showYear || 0);
+  return Number.isFinite(year) ? year : 0;
+}
+
+function sortHighlightsNewestFirst(contents) {
+  return contents.sort((left, right) => {
+    const yearDifference = eventYearValue(right) - eventYearValue(left);
+    if (yearDifference !== 0) return yearDifference;
+    return new Date(right.createdAt || 0).getTime() - new Date(left.createdAt || 0).getTime();
+  });
+}
+
 function referenceTypeFor(type) {
   if (type === "GLOSSARY") return "FILM";
   if (type === "ARTICLE") return "ARTICLE_AUTHOR";
@@ -147,10 +161,8 @@ async function listHighlights() {
       createdAt: true,
       updatedAt: true,
     },
-    orderBy: [{ createdAt: "desc" }],
-    take: 12,
   });
-  return contents.map(normalizeContentMetadata);
+  return sortHighlightsNewestFirst(contents.map(normalizeContentMetadata)).slice(0, 12);
 }
 
 async function listCinemaShowSourceContents() {
