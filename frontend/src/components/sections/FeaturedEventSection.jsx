@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import EventCard from "../cards/EventCard";
 import Container from "../ui/Container";
@@ -125,9 +125,13 @@ export default function FeaturedEventSection() {
   const carouselRef = useRef(null);
   const carouselPausedRef = useRef(false);
   const [dynamicHighlights, setDynamicHighlights] = useState([]);
+  const [fallbackMode, setFallbackMode] = useState(false);
   const events = useMemo(() => {
     const seen = new Set();
-    const combinedHighlights = [...dynamicHighlights.map(eventCardFromContent), ...fallbackHighlights]
+    const sourceHighlights = fallbackMode
+      ? fallbackHighlights
+      : dynamicHighlights.map(eventCardFromContent);
+    const combinedHighlights = sourceHighlights
       .map((event, sourceOrder) => ({ ...event, sourceOrder }))
       .filter((event) => event.to && event.title)
       .filter((event) => {
@@ -138,7 +142,7 @@ export default function FeaturedEventSection() {
       });
 
     return sortHighlightsNewestFirst(combinedHighlights).slice(0, 8);
-  }, [dynamicHighlights]);
+  }, [dynamicHighlights, fallbackMode]);
   const loopEvents = useMemo(
     () => (events.length > 1 ? [...events, ...events] : events),
     [events],
@@ -149,16 +153,26 @@ export default function FeaturedEventSection() {
     api
       .get("/contents/highlights")
       .then(({ data }) => {
-        if (active) setDynamicHighlights(data.contents || []);
+        if (active) {
+          setFallbackMode(false);
+          setDynamicHighlights(data.contents || []);
+        }
       })
       .catch(() => {
-        if (active) setDynamicHighlights([]);
+        if (active) {
+          setDynamicHighlights([]);
+          setFallbackMode(true);
+        }
       });
 
     return () => {
       active = false;
     };
   }, []);
+
+  useLayoutEffect(() => {
+    if (carouselRef.current) carouselRef.current.scrollLeft = 0;
+  }, [events]);
 
   const cycleWidth = useCallback(() => {
     const carousel = carouselRef.current;
