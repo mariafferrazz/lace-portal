@@ -17,12 +17,13 @@ function buildFilmArchiveIndex(contents = []) {
   return contents
     .filter((content) => content.type === "FILM")
     .map((content) => {
+      const metadata = parseMetadata(content.metadata);
       const url = filmArchiveUrl(content);
       const normalizedTitle = normalizeTitleForLookup(content.title);
       return normalizedTitle ? {
         id: content.id,
         title: content.title,
-        direction: parseMetadata(content.metadata).direction || parseMetadata(content.metadata).director || null,
+        direction: metadata.direction || metadata.director || null,
         normalizedTitle,
         url,
       } : null;

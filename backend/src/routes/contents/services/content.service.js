@@ -50,6 +50,55 @@ const publicContentSelect = {
   updatedAt: true,
 };
 
+const filmEnrichmentSelect = {
+  id: true,
+  title: true,
+  type: true,
+  externalUrl: true,
+  metadata: true,
+};
+
+const manageSummarySelect = {
+  id: true,
+  title: true,
+  type: true,
+  researcherName: true,
+  metadata: true,
+  published: true,
+  createdById: true,
+  researcherMemberId: true,
+  createdAt: true,
+  updatedAt: true,
+};
+
+function eventSummaryMetadata(value) {
+  const metadata = parseMetadata(value);
+  return {
+    eventYear: metadata.eventYear,
+    year: metadata.year,
+    showYear: metadata.showYear,
+    showNumber: metadata.showNumber,
+    showSlug: metadata.showSlug,
+    createCinemaPage: metadata.createCinemaPage,
+    cinemaPath: metadata.cinemaPath,
+    eventPath: metadata.eventPath,
+    detailPath: metadata.detailPath,
+    imageUrl: metadata.imageUrl,
+    imageUrls: metadata.imageUrls,
+    fileUrls: metadata.fileUrls,
+  };
+}
+
+function manageSummaryMetadata(value) {
+  const metadata = parseMetadata(value);
+  return {
+    editorialArea: metadata.editorialArea,
+    editorialAreas: metadata.editorialAreas,
+    showNumber: metadata.showNumber,
+    sessionCount: Array.isArray(metadata.sessions) ? metadata.sessions.length : 0,
+  };
+}
+
 function sortNewestFirst(contents) {
   return contents.sort((left, right) => (
     new Date(right.createdAt || 0).getTime() - new Date(left.createdAt || 0).getTime()
@@ -144,7 +193,10 @@ async function listNavigationContents() {
     where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW"] } },
     select: { id: true, title: true, type: true, metadata: true, createdAt: true },
   });
-  return sortNewestFirst(contents.map(normalizeContentMetadata));
+  return sortNewestFirst(contents.map((content) => ({
+    ...content,
+    metadata: eventSummaryMetadata(content.metadata),
+  })));
 }
 
 async function listHighlights() {
@@ -162,29 +214,44 @@ async function listHighlights() {
       updatedAt: true,
     },
   });
-  return sortHighlightsNewestFirst(contents.map(normalizeContentMetadata)).slice(0, 12);
+  return sortHighlightsNewestFirst(contents.map((content) => ({
+    ...content,
+    metadata: eventSummaryMetadata(content.metadata),
+  }))).slice(0, 12);
 }
 
 async function listCinemaShowSourceContents() {
-  const contents = await prisma.content.findMany({
-    where: { published: true, type: { in: ["CINEMA_SHOW", "FILM"] } },
-    select: publicContentSelect,
-  });
-  return sortNewestFirst(contents.map(normalizeContentMetadata));
+  const [shows, films] = await Promise.all([
+    prisma.content.findMany({
+      where: { published: true, type: "CINEMA_SHOW" },
+      select: publicContentSelect,
+    }),
+    prisma.content.findMany({
+      where: { published: true, type: "FILM" },
+      select: filmEnrichmentSelect,
+    }),
+  ]);
+  return sortNewestFirst([...shows, ...films].map(normalizeContentMetadata));
 }
 
 async function listEventYearSourceContents() {
-  const contents = await prisma.content.findMany({
-    where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW", "FILM"] } },
-    select: publicContentSelect,
-  });
-  return sortNewestFirst(contents.map(normalizeContentMetadata));
+  const [events, films] = await Promise.all([
+    prisma.content.findMany({
+      where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW"] } },
+      select: publicContentSelect,
+    }),
+    prisma.content.findMany({
+      where: { published: true, type: "FILM" },
+      select: filmEnrichmentSelect,
+    }),
+  ]);
+  return sortNewestFirst([...events, ...films].map(normalizeContentMetadata));
 }
 
-async function listManageContents() {
+async function listManageContents({ summary = false } = {}) {
   const [contentRows, users, teamMembers] = await Promise.all([
     prisma.content.findMany({
-      select: basicContentSelect,
+      select: summary ? manageSummarySelect : basicContentSelect,
     }),
     prisma.user.findMany({ select: { id: true, name: true, role: true } }),
     prisma.teamMember.findMany({ select: { id: true, name: true, role: true } }),
@@ -192,11 +259,16 @@ async function listManageContents() {
 
   const usersById = new Map(users.map((user) => [user.id, user]));
   const teamMembersById = new Map(teamMembers.map((member) => [member.id, member]));
-  const contents = contentRows.map((content) => ({
-    ...normalizeRawContent(content),
-    createdBy: usersById.get(content.createdById) || null,
-    researcherMember: teamMembersById.get(content.researcherMemberId) || null,
-  })).sort((left, right) => (
+  const contents = contentRows.map((content) => {
+    const normalized = normalizeRawContent(content);
+    return {
+      ...normalized,
+      metadata: summary ? manageSummaryMetadata(content.metadata) : normalized.metadata,
+      summaryOnly: summary,
+      createdBy: usersById.get(content.createdById) || null,
+      researcherMember: teamMembersById.get(content.researcherMemberId) || null,
+    };
+  }).sort((left, right) => (
     new Date(right.createdAt || 0).getTime() - new Date(left.createdAt || 0).getTime()
   ));
 

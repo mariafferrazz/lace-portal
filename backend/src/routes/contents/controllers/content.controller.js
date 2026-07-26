@@ -79,9 +79,9 @@ async function listEventsByYear(req, res) {
   });
 }
 
-async function listManage(_req, res) {
+async function listManage(req, res) {
   try {
-    const contents = await listManageContents();
+    const contents = await listManageContents({ summary: req.query.summary === "1" });
     return res.json({ contents });
   } catch (error) {
     console.error("Erro ao listar painel administrativo:", error);

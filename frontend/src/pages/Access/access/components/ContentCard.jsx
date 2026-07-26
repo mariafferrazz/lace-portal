@@ -32,7 +32,7 @@ export default function ContentCard({ content, user, refresh, onEdit, onOpen }) 
           {content.type === "CINEMA_SHOW" && (
             <p className="mt-2 text-sm text-muted">
               Mostra: <strong className="text-text">{content.metadata?.showNumber || "Sem numeracao"}</strong>
-              {content.metadata?.sessions?.length ? ` - ${content.metadata.sessions.length} sessoes cadastradas` : ""}
+              {content.metadata?.sessionCount ? ` - ${content.metadata.sessionCount} sessoes cadastradas` : ""}
             </p>
           )}
           <p className="mt-2 text-sm text-muted">

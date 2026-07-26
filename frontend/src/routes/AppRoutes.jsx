@@ -1,10 +1,8 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import MainLayout from "../layouts/MainLayout";
-
-import Home from "../pages/Home/Home";
-
+const MainLayout = lazy(() => import("../layouts/MainLayout"));
+const Home = lazy(() => import("../pages/Home/Home"));
 const AccessPage = lazy(() => import("../pages/Access/AccessPage"));
 const NotFound = lazy(() => import("../pages/NotFound"));
 const Filmes = lazy(() => import("../pages/CinemaDitadura/Filmes"));
@@ -25,9 +23,9 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/admin" element={withSuspense(<AccessPage />)} />
 
-        <Route element={<MainLayout />}>
+        <Route element={withSuspense(<MainLayout />)}>
           {/* Home */}
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={withSuspense(<Home />)} />
 
           {/* Cinema e Ditadura */}
           <Route path="/cinema-e-ditadura/filmes" element={withSuspense(<Filmes />)} />

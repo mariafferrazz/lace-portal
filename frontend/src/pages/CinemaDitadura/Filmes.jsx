@@ -60,9 +60,8 @@ export default function Filmes() {
     };
 
     api.get("/contents", { params: { type: "FILM" } })
-      .then(async ({ data }) => {
-        const fallbackFilms = await getStaticContents("FILM");
-        applyFilms(mergeFilms(data.contents || [], fallbackFilms));
+      .then(({ data }) => {
+        applyFilms(mergeFilms(data.contents || []));
       })
       .catch(async () => {
         applyFilms(await getStaticContents("FILM"));
