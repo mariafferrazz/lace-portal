@@ -25,7 +25,7 @@ function disablePublicCache(res) {
 
 async function listPublished(req, res) {
   if (req.query.type && !contentTypes.has(req.query.type)) {
-    return res.status(400).json({ error: "Tipo de conteudo invalido." });
+    return res.status(400).json({ error: "Tipo de conteúdo inválido." });
   }
 
   disablePublicCache(res);
@@ -60,7 +60,7 @@ async function getCinemaShow(req, res) {
     return slug === requestedSlug || pathSlug === requestedSlug;
   });
 
-  if (!content) return res.status(404).json({ error: "Mostra nao encontrada." });
+  if (!content) return res.status(404).json({ error: "Mostra não encontrada." });
   return res.json({ content });
 }
 
@@ -85,7 +85,7 @@ async function listManage(req, res) {
     return res.json({ contents });
   } catch (error) {
     console.error("Erro ao listar painel administrativo:", error);
-    return res.status(500).json({ error: "Nao foi possivel carregar os conteudos administrativos." });
+    return res.status(500).json({ error: "Não foi possível carregar os conteúdos administrativos." });
   }
 }
 
@@ -96,7 +96,7 @@ async function listManageOptions(_req, res) {
 
 async function getManageContent(req, res) {
   const content = await findManageContent(req.params.id);
-  if (!content) return res.status(404).json({ error: "Conteudo nao encontrado." });
+  if (!content) return res.status(404).json({ error: "Conteúdo não encontrado." });
 
   if (content.type !== "CINEMA_SHOW") {
     return res.json({ content: { ...content, summaryOnly: false } });
@@ -129,14 +129,14 @@ async function create(req, res) {
 async function update(req, res) {
   try {
     const existing = await findContentById(req.params.id);
-    if (!existing) return res.status(404).json({ error: "Conteudo nao encontrado." });
+    if (!existing) return res.status(404).json({ error: "Conteúdo não encontrado." });
 
     const isCoordinator = req.user.role === "COORDINATOR";
     const data = parseContent(req.body, true);
 
     if (req.body.published !== undefined) {
       if (!isCoordinator) {
-        return res.status(403).json({ error: "Apenas a coordenacao pode publicar conteudos." });
+        return res.status(403).json({ error: "Apenas a coordenação pode publicar conteúdos." });
       }
       data.published = Boolean(req.body.published);
     } else if (!isCoordinator) {

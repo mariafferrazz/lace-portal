@@ -28,7 +28,7 @@ export default function Login({ onLogin }) {
     <div className="mx-auto max-w-lg rounded-3xl border border-border bg-card p-7 shadow-2xl md:p-10">
       <ShieldCheck className="text-primary" size={36} aria-hidden="true" />
       <h1 className="mt-5 font-title text-4xl">Acesso interno</h1>
-      <p className="mt-3 leading-7 text-muted">Area exclusiva da Equipe LACE.</p>
+      <p className="mt-3 leading-7 text-muted">Área exclusiva da Equipe LACE.</p>
       <form className="mt-8 space-y-5" onSubmit={submit}>
         <label className="block font-semibold">
           E-mail

@@ -28,7 +28,7 @@ export const menu = [
         path: "/producao-academica/artigos",
         children: [
           { title: "Joana D'Arc Fernandes Ferraz", path: "/producao-academica/artigos#joana-d-arc-fernandes-ferraz" },
-          { title: "Cecilia Maria Bouças Coimbra", path: "/producao-academica/artigos#cecilia-maria-boucas-coimbra" },
+          { title: "Cecília Maria Bouças Coimbra", path: "/producao-academica/artigos#cecilia-maria-boucas-coimbra" },
           { title: "Ana Cláudia Camuri", path: "/producao-academica/artigos#ana-claudia-camuri" },
           { title: "Flávia Mendes Ferreira", path: "/producao-academica/artigos#flavia-mendes-ferreira" },
           { title: "Carlos Contente", path: "/producao-academica/artigos#carlos-contente" },

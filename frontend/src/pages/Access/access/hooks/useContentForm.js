@@ -99,12 +99,12 @@ export default function useContentForm({ content, initialArea, initialType, onCr
     setStatus(null);
     if (!file) return;
     if (!file.type.startsWith("image/")) return setStatus({ ok: false, message: "Selecione apenas arquivos de imagem." });
-    if (file.size > maxEmbeddedImageSize) return setStatus({ ok: false, message: "Esta imagem esta muito pesada. Use uma URL publica ou escolha uma imagem com ate 2 MB." });
+    if (file.size > maxEmbeddedImageSize) return setStatus({ ok: false, message: "Esta imagem está muito pesada. Use uma URL pública ou escolha uma imagem com até 2 MB." });
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") setForm((current) => ({ ...current, imageUrl: reader.result, imageUrls: ensureUrlList(reader.result, current.imageUrls.slice(1)) }));
     };
-    reader.onerror = () => setStatus({ ok: false, message: "Nao foi possivel carregar esta imagem. Tente usar uma URL publica." });
+    reader.onerror = () => setStatus({ ok: false, message: "Não foi possível carregar esta imagem. Tente usar uma URL pública." });
     reader.readAsDataURL(file);
   }
 
@@ -147,12 +147,12 @@ export default function useContentForm({ content, initialArea, initialType, onCr
     setLoading(true);
     setStatus(null);
     if (!form.title.trim()) {
-      setStatus({ ok: false, message: "Informe o titulo." });
+      setStatus({ ok: false, message: "Informe o título." });
       setLoading(false);
       return;
     }
     if (form.type === "CINEMA_SHOW" && !extractShowNumber(form.title)) {
-      setStatus({ ok: false, message: "Comece o titulo com a numeracao da mostra, como VIII Mostra Cinema e Ditadura." });
+      setStatus({ ok: false, message: "Comece o título com a numeração da mostra, como VIII Mostra Cinema e Ditadura." });
       setLoading(false);
       return;
     }
@@ -168,7 +168,7 @@ export default function useContentForm({ content, initialArea, initialType, onCr
         const sessions = await Promise.all(form.sessions.map(async (session) => {
           if (!session.addFilmToDatabase || session.filmId) return session;
           if (!session.title.trim() || !session.filmUrl.trim()) {
-            throw new Error("Para adicionar um filme ao banco, informe o titulo alternativo e a URL do filme.");
+            throw new Error("Para adicionar um filme ao banco, informe o título alternativo e a URL do filme.");
           }
 
           const { data: filmData } = await api.post("/contents", {
@@ -197,9 +197,9 @@ export default function useContentForm({ content, initialArea, initialType, onCr
       const { data } = isEditing ? await api.patch(`/contents/${content.id}`, payload) : await api.post("/contents", payload);
       setForm(createInitialForm(initialArea, initialType));
       const publicationMessage = data.content?.published
-        ? "Conteudo publicado e conectado ao site."
-        : "Conteudo salvo e enviado para revisao da coordenacao.";
-      setStatus({ ok: true, message: isEditing ? `Conteudo atualizado. ${publicationMessage}` : publicationMessage });
+        ? "Conteúdo publicado e conectado ao site."
+        : "Conteúdo salvo e enviado para revisão da coordenação.";
+      setStatus({ ok: true, message: isEditing ? `Conteúdo atualizado. ${publicationMessage}` : publicationMessage });
       await onCreated(data.content);
       onClose?.();
     } catch (error) {

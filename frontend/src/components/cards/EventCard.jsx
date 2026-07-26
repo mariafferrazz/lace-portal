@@ -30,7 +30,7 @@ export default function EventCard({
             height="600"
           />
         ) : (
-          <div className={`grid place-items-center bg-primary/10 font-title text-4xl text-primary ${featured ? "h-full min-h-80" : "h-60"}`} aria-label="Imagem ainda nao cadastrada">
+          <div className={`grid place-items-center bg-primary/10 font-title text-4xl text-primary ${featured ? "h-full min-h-80" : "h-60"}`} aria-label="Imagem ainda não cadastrada">
             LACE
           </div>
         )}

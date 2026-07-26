@@ -13,10 +13,10 @@ export const contentTypes = [
 
 export const contentAreas = [
   { value: "CINEMA_DITADURA", label: "Cinema e Ditadura", types: ["FILM", "GLOSSARY"] },
-  { value: "PRODUCAO_AUDIOVISUAL", label: "Producao Audiovisual", types: ["INTERVIEW", "PODCAST"] },
+  { value: "PRODUCAO_AUDIOVISUAL", label: "Produção Audiovisual", types: ["INTERVIEW", "PODCAST"] },
   {
     value: "PRODUCAO_ACADEMICA",
-    label: "Producao Academica",
+    label: "Produção Acadêmica",
     types: ["VIRAL_ESCAPE_LINES", "ARTICLE", "ARTICLE_AUTHOR", "RESEARCH"],
   },
   { value: "EVENTOS_ATIVIDADES", label: "Eventos e Atividades", types: ["CINEMA_SHOW", "EVENT"] },
@@ -81,4 +81,5 @@ export const initialForm = {
 export const fieldClass = "mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-text outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20";
 export const compactFieldClass = "w-full rounded-xl border border-border bg-background px-3 py-2 text-text outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20";
 export const sectionClass = "md:col-span-2 rounded-2xl border border-primary/30 bg-primary/5 p-5";
+export const cardActionButtonClass = "inline-flex h-11 w-36 items-center justify-center gap-2 px-3 py-0 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 export const maxEmbeddedImageSize = 2 * 1024 * 1024;

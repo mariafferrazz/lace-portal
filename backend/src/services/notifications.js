@@ -2,28 +2,28 @@ const COORDINATOR_EMAIL = process.env.COORDINATOR_NOTIFY_EMAIL || process.env.CO
 const NOTIFY_ENDPOINT = process.env.COORDINATOR_NOTIFY_WEBHOOK_URL || process.env.CONTACT_ENDPOINT || process.env.VITE_CONTACT_ENDPOINT;
 
 function buildContentMessage(content, user, action) {
-  const actionLabel = action === "updated" ? "atualizou um conteudo" : "enviou um novo conteudo";
+  const actionLabel = action === "updated" ? "atualizou um conteúdo" : "enviou um novo conteúdo";
   return [
-    `O usuario ${user.name} (${user.email}) ${actionLabel} para revisao no painel LACE.`,
+    `O usuário ${user.name} (${user.email}) ${actionLabel} para revisão no painel LACE.`,
     "",
-    `Titulo: ${content.title}`,
+    `Título: ${content.title}`,
     `Pesquisador(a): ${content.researcherName}`,
     `Tipo: ${content.type}`,
     "",
-    "Acesse o dashboard da coordenacao para revisar, editar e publicar ou manter em revisao.",
+    "Acesse o painel da coordenação para revisar, editar, publicar ou manter o conteúdo em revisão.",
   ].join("\n");
 }
 
 async function notifyCoordinatorContentChange({ content, user, action = "created" }) {
   if (!NOTIFY_ENDPOINT) {
-    console.info("Notificacao de coordenacao nao enviada: COORDINATOR_NOTIFY_WEBHOOK_URL nao configurado.");
+    console.info("Notificação da coordenação não enviada: COORDINATOR_NOTIFY_WEBHOOK_URL não configurado.");
     return;
   }
 
   const payload = {
     to: COORDINATOR_EMAIL,
     email: user.email,
-    subject: action === "updated" ? "LACE: conteudo atualizado para revisao" : "LACE: novo conteudo para aprovacao",
+    subject: action === "updated" ? "LACE: conteúdo atualizado para revisão" : "LACE: novo conteúdo para aprovação",
     name: "Dashboard LACE",
     source: "dashboard.lablace.com.br",
     message: buildContentMessage(content, user, action),
@@ -43,10 +43,10 @@ async function notifyCoordinatorContentChange({ content, user, action = "created
     });
 
     if (!response.ok) {
-      console.error("Falha ao notificar coordenacao:", response.status, await response.text());
+      console.error("Falha ao notificar a coordenação:", response.status, await response.text());
     }
   } catch (error) {
-    console.error("Falha ao notificar coordenacao:", error);
+    console.error("Falha ao notificar a coordenação:", error);
   }
 }
 

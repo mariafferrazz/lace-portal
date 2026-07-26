@@ -63,12 +63,12 @@ export default function EditorialDashboard({ user, contents, refresh, teamMember
           <div className="flex items-center gap-3">
             <Database className="text-primary" aria-hidden="true" />
             <div>
-              <h2 className="font-title text-3xl">Conteudos cadastrados</h2>
-              <p className="mt-1 text-muted">Escolha uma area editorial para ver os tipos de conteudo.</p>
+              <h2 className="font-title text-3xl">Conteúdos cadastrados</h2>
+              <p className="mt-1 text-muted">Escolha uma área editorial para ver os tipos de conteúdo.</p>
             </div>
           </div>
           <Button type="button" className="inline-flex min-w-56 flex-nowrap items-center justify-center gap-2 whitespace-nowrap" onClick={() => addContent(createInitialForm())}>
-            <Plus className="shrink-0" size={17} aria-hidden="true" /> <span>Adicionar conteudo</span>
+            <Plus className="shrink-0" size={17} aria-hidden="true" /> <span>Adicionar conteúdo</span>
           </Button>
         </div>
 
@@ -84,7 +84,7 @@ export default function EditorialDashboard({ user, contents, refresh, teamMember
               >
                 <FolderUp className="text-primary" size={38} aria-hidden="true" />
                 <span className="mt-4 font-title text-3xl text-text">{area.label}</span>
-                <span className="mt-2 text-sm text-muted">{count} {count === 1 ? "conteudo" : "conteudos"}</span>
+                <span className="mt-2 text-sm text-muted">{count} {count === 1 ? "conteúdo" : "conteúdos"}</span>
                 <span className="mt-4 flex flex-wrap gap-2">
                   {area.types.map((type) => (
                     <span key={type} className="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-muted group-hover:border-primary/60">
@@ -113,7 +113,7 @@ export default function EditorialDashboard({ user, contents, refresh, teamMember
 
       {loadingContentId && (
         <div className="fixed inset-x-0 bottom-5 z-[80] mx-auto w-fit rounded-full border border-primary/40 bg-card px-4 py-2 text-sm font-semibold text-primary shadow-xl">
-          Carregando conteudo...
+          Carregando conteúdo...
         </div>
       )}
 

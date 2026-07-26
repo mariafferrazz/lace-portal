@@ -94,6 +94,7 @@ function manageSummaryMetadata(value) {
   return {
     editorialArea: metadata.editorialArea,
     editorialAreas: metadata.editorialAreas,
+    eventYear: metadata.eventYear || metadata.year || metadata.showYear,
     showNumber: metadata.showNumber,
     sessionCount: Array.isArray(metadata.sessions) ? metadata.sessions.length : 0,
   };
@@ -285,7 +286,7 @@ async function findManageContent(id) {
       },
     });
   } catch (error) {
-    console.error("Erro ao carregar relacionamentos do conteudo. Usando leitura basica:", error);
+    console.error("Erro ao carregar relacionamentos do conteúdo. Usando leitura básica:", error);
     const content = await prisma.content.findUnique({ where: { id }, select: basicContentSelect });
     return content ? normalizeRawContent(content) : null;
   }

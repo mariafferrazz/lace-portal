@@ -15,7 +15,7 @@ export default function RelationPicker({ label, description, options = [], selec
       {description && <p className="mt-1 text-sm font-normal leading-6 text-muted">{description}</p>}
       <label className="relative mt-3 block">
         <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={17} />
-        <input className={`${compactFieldClass} pl-10`} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar pelo titulo" />
+        <input className={`${compactFieldClass} pl-10`} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar pelo título" />
       </label>
       <div className="mt-3 max-h-64 space-y-2 overflow-y-auto rounded-2xl border border-border bg-background p-3">
         {visible.length === 0 ? (

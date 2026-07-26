@@ -22,6 +22,53 @@ export function extractShowNumber(title = "") {
   return match ? match[1].toUpperCase() : "";
 }
 
+function romanNumberValue(value = "") {
+  const roman = String(value).toUpperCase();
+  if (!/^[IVXLCDM]+$/.test(roman)) return 0;
+
+  const values = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+  let total = 0;
+  let previous = 0;
+
+  for (let index = roman.length - 1; index >= 0; index -= 1) {
+    const current = values[roman[index]];
+    total += current < previous ? -current : current;
+    previous = Math.max(previous, current);
+  }
+
+  return total;
+}
+
+function contentCreatedTime(content) {
+  const timestamp = Date.parse(content?.createdAt || "");
+  return Number.isFinite(timestamp) ? timestamp : 0;
+}
+
+function contentEventYear(content) {
+  const metadata = content?.metadata || {};
+  const year = Number(metadata.eventYear || metadata.year || metadata.showYear || 0);
+  return Number.isFinite(year) ? year : 0;
+}
+
+export function compareDashboardContents(left, right) {
+  if (left.type === "CINEMA_SHOW" && right.type === "CINEMA_SHOW") {
+    const yearDifference = contentEventYear(right) - contentEventYear(left);
+    if (yearDifference !== 0) return yearDifference;
+
+    const rightShowNumber = romanNumberValue(right.metadata?.showNumber || extractShowNumber(right.title));
+    const leftShowNumber = romanNumberValue(left.metadata?.showNumber || extractShowNumber(left.title));
+    const showDifference = rightShowNumber - leftShowNumber;
+    if (showDifference !== 0) return showDifference;
+  }
+
+  if (left.type === "EVENT" && right.type === "EVENT") {
+    const yearDifference = contentEventYear(right) - contentEventYear(left);
+    if (yearDifference !== 0) return yearDifference;
+  }
+
+  return contentCreatedTime(right) - contentCreatedTime(left);
+}
+
 export function selectedEventYear(form) {
   return String(form.eventYear || "").trim();
 }

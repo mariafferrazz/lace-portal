@@ -140,20 +140,20 @@ function parseContent(body, partial = false) {
   const data = {};
   const required = (field, label) => {
     if (!partial && !String(body[field] || "").trim()) {
-      throw new Error(`${label} e obrigatorio.`);
+      throw new Error(`${label} é obrigatório.`);
     }
     if (body[field] !== undefined) data[field] = String(body[field]).trim();
   };
 
-  required("title", "Titulo");
+  required("title", "Título");
   required("researcherName", "Nome do pesquisador");
 
   if (!partial && !contentTypes.has(body.type)) {
-    throw new Error("Tipo de conteudo invalido.");
+    throw new Error("Tipo de conteúdo inválido.");
   }
 
   if (body.type !== undefined) {
-    if (!contentTypes.has(body.type)) throw new Error("Tipo de conteudo invalido.");
+    if (!contentTypes.has(body.type)) throw new Error("Tipo de conteúdo inválido.");
     data.type = body.type;
   }
 

@@ -136,16 +136,16 @@ export default function FeaturedEventSection() {
   }, [events.length, scrollCarousel]);
 
   const emptyMessage = loadState === "loading"
-    ? "Carregando os ultimos eventos publicados..."
+    ? "Carregando os últimos eventos publicados..."
     : loadState === "error"
-      ? "Nao foi possivel carregar os eventos agora."
+      ? "Não foi possível carregar os eventos agora."
       : "Nenhum evento foi publicado pelo dashboard ainda.";
 
   return (
     <section className="bg-background py-24 lg:py-32">
       <Container>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <SectionTitle subtitle="Destaques" title="Ultimos eventos" />
+          <SectionTitle subtitle="Destaques" title="Últimos eventos" />
           {events.length > 1 && (
             <div className="flex gap-3">
               <button
@@ -160,7 +160,7 @@ export default function FeaturedEventSection() {
                 type="button"
                 onClick={() => scrollCarousel("next")}
                 className="inline-flex size-12 items-center justify-center rounded-full border border-border bg-card text-text transition hover:border-primary hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                aria-label="Ver proximos eventos"
+                aria-label="Ver próximos eventos"
               >
                 <ArrowRight size={20} aria-hidden="true" />
               </button>
@@ -183,7 +183,7 @@ export default function FeaturedEventSection() {
               if (!event.currentTarget.contains(event.relatedTarget)) carouselPausedRef.current = false;
             }}
             className="mt-8 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            aria-label="Ultimos eventos em destaque"
+            aria-label="Últimos eventos em destaque"
           >
             {loopEvents.map((event, index) => {
               const duplicate = index >= events.length;

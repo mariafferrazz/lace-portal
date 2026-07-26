@@ -2,10 +2,14 @@ import { useMemo } from "react";
 import { Bell, CheckCircle2, Pencil } from "lucide-react";
 import Button from "../../../../components/ui/Button";
 import api from "../../../../services/api";
-import { contentAreaLabel, typeLabel } from "../utils";
+import { cardActionButtonClass } from "../constants";
+import { compareDashboardContents, contentAreaLabel, typeLabel } from "../utils";
 
 export default function PendingApprovals({ contents, refresh, onEdit, onOpen }) {
-  const pending = useMemo(() => contents.filter((content) => !content.published), [contents]);
+  const pending = useMemo(
+    () => contents.filter((content) => !content.published).sort(compareDashboardContents),
+    [contents],
+  );
   if (pending.length === 0) return null;
 
   async function approve(content) {
@@ -19,9 +23,9 @@ export default function PendingApprovals({ contents, refresh, onEdit, onOpen }) 
         <div className="flex items-start gap-3">
           <Bell className="mt-1 text-primary" aria-hidden="true" />
           <div>
-            <h2 className="font-title text-3xl text-text">Aguardando autorizacao</h2>
+            <h2 className="font-title text-3xl text-text">Aguardando autorização</h2>
             <p className="mt-1 text-muted">
-              {pending.length} {pending.length === 1 ? "conteudo precisa" : "conteudos precisam"} de revisao da coordenacao antes de entrar no site.
+              {pending.length} {pending.length === 1 ? "conteúdo precisa" : "conteúdos precisam"} de revisão da coordenação antes de entrar no site.
             </p>
           </div>
         </div>
@@ -38,25 +42,25 @@ export default function PendingApprovals({ contents, refresh, onEdit, onOpen }) 
                 {content.title}
               </h3>
               <p className="mt-1 text-sm text-muted">
-                Enviado por {content.createdBy?.name || "usuario do LACE"} - Pesquisador(a): <strong className="text-text">{content.researcherName}</strong>
+                Enviado por {content.createdBy?.name || "usuário do LACE"} - Pesquisador(a): <strong className="text-text">{content.researcherName}</strong>
               </p>
             </div>
             <div className="flex shrink-0 flex-wrap gap-2 md:justify-end">
-              <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => onOpen(content)}>
-                Abrir pagina
+              <Button variant="outline" className={cardActionButtonClass} type="button" onClick={() => onOpen(content)}>
+                Abrir página
               </Button>
-              <Button variant="outline" className="px-3 py-2 text-sm" type="button" onClick={() => onEdit(content)}>
-                <Pencil className="inline" size={15} /> Editar
+              <Button variant="outline" className={cardActionButtonClass} type="button" onClick={() => onEdit(content)}>
+                <Pencil size={15} aria-hidden="true" /> Editar
               </Button>
-              <Button className="px-3 py-2 text-sm" type="button" onClick={() => approve(content)}>
-                <CheckCircle2 className="inline" size={15} /> Publicar
+              <Button className={cardActionButtonClass} type="button" onClick={() => approve(content)}>
+                <CheckCircle2 size={15} aria-hidden="true" /> Publicar
               </Button>
             </div>
           </article>
         ))}
         {pending.length > 6 && (
           <p className="text-sm text-muted">
-            Mais {pending.length - 6} conteudos em revisao aparecem nas areas editoriais abaixo.
+            Mais {pending.length - 6} conteúdos em revisão aparecem nas áreas editoriais abaixo.
           </p>
         )}
       </div>

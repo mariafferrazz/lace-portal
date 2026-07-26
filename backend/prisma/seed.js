@@ -74,7 +74,7 @@ async function main() {
   const seedUser = seedUserEmail
     ? await prisma.user.findUnique({ where: { email: seedUserEmail } })
     : await prisma.user.findFirst({ orderBy: { createdAt: "asc" } });
-  if (!seedUser) throw new Error("Nenhum usuario disponivel para vincular conteudos iniciais.");
+  if (!seedUser) throw new Error("Nenhum usuário disponível para vincular conteúdos iniciais.");
 
   let created = 0;
   let updated = 0;
@@ -107,7 +107,7 @@ async function main() {
     }
   }
 
-  console.log(`Conteudos iniciais configurados. Criados: ${created}. Atualizados: ${updated}.`);
+  console.log(`Conteúdos iniciais configurados. Criados: ${created}. Atualizados: ${updated}.`);
 }
 
 main()

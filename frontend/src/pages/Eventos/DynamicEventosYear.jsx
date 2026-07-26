@@ -46,14 +46,14 @@ function EventCardBody({ content }) {
     {image ? (
       <img className="aspect-[4/3] w-full object-cover" src={image} alt="" loading="lazy" decoding="async" />
     ) : (
-      <span className="grid aspect-[4/3] w-full place-items-center bg-primary/10 font-title text-4xl text-primary" aria-label="Imagem ainda nao cadastrada">LACE</span>
+      <span className="grid aspect-[4/3] w-full place-items-center bg-primary/10 font-title text-4xl text-primary" aria-label="Imagem ainda não cadastrada">LACE</span>
     )}
     <span className="flex flex-1 flex-col p-6">
       <span className="text-xs font-semibold uppercase tracking-widest text-primary">{eventPeriod(content)}</span>
       <span className="mt-3 block font-title text-3xl">{content.title}</span>
       {content.description && <span className="mt-4 flex-1 leading-7 text-muted">{content.description}</span>}
       <span className="mt-6 inline-flex items-center gap-2 self-start font-semibold text-primary">
-        <span className="animated-underline">{content.type === "CINEMA_SHOW" ? "Abrir pagina da mostra" : "Ver detalhes"}</span>
+        <span className="animated-underline">{content.type === "CINEMA_SHOW" ? "Abrir página da mostra" : "Ver detalhes"}</span>
         <Images size={16} aria-hidden="true" />
       </span>
     </span>
@@ -130,8 +130,8 @@ export default function DynamicEventosYear() {
         ) : (
           <div className="mt-14 rounded-3xl border border-dashed border-border bg-card/60 p-8 md:p-12">
             <CalendarDays className="text-primary" aria-hidden="true" />
-            <h2 className="mt-5 font-title text-4xl">Eventos em organizacao</h2>
-            <p className="mt-4 max-w-2xl leading-8 text-muted">Ainda nao ha conteudos publicados para {year}.</p>
+            <h2 className="mt-5 font-title text-4xl">Eventos em organização</h2>
+            <p className="mt-4 max-w-2xl leading-8 text-muted">Ainda não há conteúdos publicados para {year}.</p>
           </div>
         )}
       </Container>
@@ -214,7 +214,7 @@ function EventModal({ content, onClose }) {
 
             {sessions.length > 0 && (
               <section className="mt-8">
-                <h3 className="font-title text-3xl">Sessoes</h3>
+                <h3 className="font-title text-3xl">Sessões</h3>
                 <div className="mt-4 grid gap-3">
                   {sessions.map((session, index) => {
                     const sessionUrls = sessionWatchUrls(session);
@@ -223,13 +223,13 @@ function EventModal({ content, onClose }) {
                     return (
                       <article key={`${session.date}-${session.title}-${index}`} className="rounded-2xl border border-border bg-card p-4">
                         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">{session.date || "Data a confirmar"}</p>
-                        <h4 className="mt-2 font-title text-2xl">{session.title || `Sessao ${index + 1}`}</h4>
+                        <h4 className="mt-2 font-title text-2xl">{session.title || `Sessão ${index + 1}`}</h4>
                         {session.direction && <p className="mt-2 text-sm leading-6 text-muted">{session.direction}</p>}
                         {(sessionUrls.length > 0 || archiveUrls.length > 0) && (
                           <div className="mt-4 flex flex-wrap gap-2">
                             {sessionUrls.map((url, urlIndex) => (
                               <a key={url} className="inline-flex items-center gap-2 rounded-xl border border-primary px-3 py-2 text-sm font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={url} target="_blank" rel="noreferrer">
-                                Assistir sessao {sessionUrls.length > 1 ? urlIndex + 1 : ""} <ExternalLink size={14} aria-hidden="true" />
+                                Assistir sessão {sessionUrls.length > 1 ? urlIndex + 1 : ""} <ExternalLink size={14} aria-hidden="true" />
                               </a>
                             ))}
                             {archiveUrls.map((url, urlIndex) => (
@@ -250,7 +250,7 @@ function EventModal({ content, onClose }) {
               <div className="mt-8 flex flex-wrap gap-3">
                 {link.startsWith("/") ? (
                   <Link className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" to={link} onClick={onClose}>
-                    Abrir pagina <ExternalLink size={16} aria-hidden="true" />
+                    Abrir página <ExternalLink size={16} aria-hidden="true" />
                   </Link>
                 ) : fileUrls.length > 0 ? (
                   fileUrls.map((url, index) => (
