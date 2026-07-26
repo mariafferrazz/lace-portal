@@ -35,8 +35,8 @@ const aracruzResearchers = [
   },
   {
     name: "João Pedro Cavalcanti de Carvalho",
-    description: "Graduado em Sociologia (UFF).",
-    lattes: "http://lattes.cnpq.br/0115053069778572",
+    description: "Bacharel em Sociologia pela UFF. Integra o LACE/UFF e realiza pesquisa na área de memória sobre as ditaduras empresarial-militares do Brasil, da Argentina, do Uruguai e do Chile. Fez parte da pesquisa, desenvolvida pela UFF junto ao Ministério Público do Trabalho, sobre as violações de direitos humanos empreendidas pela ditadura empresarial-militar (1964-1988) e pela empresa Aracruz Celulose. Atualmente, desenvolve, por conta própria, investigação sobre vítimas das ditaduras empresarial-militares na América Latina e os mecanismos e as estratégias de repressão pelo Estado. Atua nas áreas de violência de Estado, responsabilidade empresarial e reparação, memória social e movimentos sociais.",
+    lattes: "https://lattes.cnpq.br/0115053069778572",
   },
   {
     name: "Livia dos Santos Chagas",

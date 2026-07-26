@@ -32,8 +32,8 @@ export const teamMembers = [
   {
     "name": "Carlos Contente",
     "role": "Equipe LACE",
-    "bio": "Artista plástico e pesquisador. Doutorando do Programa de Pós-Graduação em Estudos Contemporâneos das Artes da Universidade Federal Fluminense (PPGCA/UFF).",
-    "profileUrl": null
+    "bio": "Artista plástico com um voo institucional no circuito de arte contemporânea carioca, um grande amor pela comunicação popular no Rio de Janeiro e fã das charges (political cartoons), participou da organização de cursos pré-vestibulares populares, aulas de arte, ilustrou para a Revista de História da Biblioteca Nacional e para os jornais comunitários O Cidadão (Maré), A Folha do Bairro (Méier) e A Voz do Jacarezinho. Em paralelo, expôs em lugares como Paço Imperial/RJ, CCBB (RJ & SP), Paço das Artes (SP) e em eventos e feiras de arte internacionais, como a Art Rio, SP Arte, Frieze Art Fair (NY), SIART (La Paz, Bolívia), Zona Maco (Mex-DF), Drawing Now (Carrousel du Louvre-Paris), PhICA (Phoenix, Arizona), Darling Foundry (Montréal), etc. Concluiu o seu bacharelado em Artes em um curso tradicional na mais antiga escola de artes do Brasil (EBA/UFRJ, 2005) e logo ingressou em espaços legitimados do circuito de arte contemporânea. Contente jamais abandonou a prática de desenhar histórias em quadrinhos e, dessa maneira, quebra hierarquias entre diferentes manifestações artísticas. Seus trabalhos frequentemente se utilizam de personagens repetidos e espalhados como rizoma pelos espaços expositivos, a partir dos quais o artista desenvolve narrativas absurdas que questionam diferentes papéis e representações de poder em arte contemporânea ou idiossincrasias sócio-políticas. Mestre em Artes pelo PPGArtes da UERJ (2019), com uma dissertação que articula arte urbana carioca do início do século XXI com referências na Pop Art e no minimalismo estadunidense dos anos sessenta e setenta. Atualmente é doutorando em Sociologia pelo PPGS/UFF, com uma pesquisa debruçada sobre texto e imagem, arte e movimentos sociais e a produção de artivistas cariocas a partir dos levantes da década passada.",
+    "profileUrl": "http://lattes.cnpq.br/6512769777132919"
   },
   {
     "name": "Cecília Maria Bouças Coimbra",
@@ -58,6 +58,24 @@ export const teamMembers = [
     "role": "Equipe LACE",
     "bio": "Professora do Departamento de Sociologia e Metodologia das Ciências Sociais (GSO) e do Programa de Pós-Graduação em Sociologia da Universidade Federal Fluminense (PPGS/UFF). Lidera o Grupo de Pesquisa certificado no CNPq “Subjetividade, Memória e Violência do Estado”.",
     "profileUrl": null
+  },
+  {
+    "name": "João Pedro Cavalcanti de Carvalho",
+    "role": "Equipe LACE",
+    "bio": "Bacharel em Sociologia pela UFF. Integra o LACE/UFF e realiza pesquisa na área de memória sobre as ditaduras empresarial-militares do Brasil, da Argentina, do Uruguai e do Chile. Fez parte da pesquisa, desenvolvida pela UFF junto ao Ministério Público do Trabalho, sobre as violações de direitos humanos empreendidas pela ditadura empresarial-militar (1964-1988) e pela empresa Aracruz Celulose. Atualmente, desenvolve, por conta própria, investigação sobre vítimas das ditaduras empresarial-militares na América Latina e os mecanismos e as estratégias de repressão pelo Estado. Atua nas áreas de violência de Estado, responsabilidade empresarial e reparação, memória social e movimentos sociais.",
+    "profileUrl": "https://lattes.cnpq.br/0115053069778572"
+  },
+  {
+    "name": "João Vitor Rodrigues Martins da Silva",
+    "role": "Equipe LACE",
+    "bio": "Bacharel em Sociologia pela UFF e mestrando, como bolsista CAPES, no Programa de Pós-Graduação em Sociologia e Direito (PPGSD/UFF). Integra o LACE/UFF e o LAJA/UFF. Desenvolve, atualmente, pesquisa sobre os navios-prisões empregados pela ditadura empresarial-militar. Atua também no projeto de pesquisa Universal (CNPq): Cumplicidade econômica e responsabilidade de empresas nas violações de direitos humanos na Amazônia Legal durante a Ditadura civil-empresarial-militar brasileira (1964-1988), coordenado pela professora Mônica Piccolo (UEMA). Atua nas áreas de memória social, responsabilidade empresarial, conflitos socioambientais, movimentos sociais e justiça de transição.",
+    "profileUrl": "http://lattes.cnpq.br/1393190421712751"
+  },
+  {
+    "name": "Liza Franco Busse Reis dos Santos",
+    "role": "Equipe LACE",
+    "bio": "Professora e pesquisadora. Doutora em Sociologia pelo Programa de Pós-Graduação em Sociologia da Universidade Federal de Goiás - UFG (2022). Pesquisadora associada do Laboratório de Agenciamentos Cotidianos e Experiências (LACE/UFF). Atua nas áreas de Direitos Humanos, violência institucional, história da sociologia e sociologia da diferença.",
+    "profileUrl": "http://lattes.cnpq.br/2161831978090854"
   },
   {
     "name": "Lívia de Barros Salgado",
@@ -88,5 +106,11 @@ export const teamMembers = [
     "role": "Equipe LACE",
     "bio": "Licenciado em História (UFF) e em Letras - Português (Unilasalle). Atualmente, é mestrando no Programa de Pós-Graduação em Sociologia (PPGS/UFF), como bolsista CAPES. Integra os grupos LACE/UFF e NEGRA/UFF, desenvolvendo estudos sobre sociologia da literatura, memória, relações raciais e pensamento social. Em sua pesquisa de mestrado, dedica-se a pensar as relações entre memória e reflexividade na obra de Jeferson Tenório.",
     "profileUrl": "http://lattes.cnpq.br/8348880173451556"
+  },
+  {
+    "name": "Stella Friederichs Roia Moreira",
+    "role": "Equipe LACE",
+    "bio": "Graduada em licenciatura e bacharelado em História pela Universidade Federal Fluminense (2025). Atualmente, mestranda em História pelo Programa de Pós-Graduação em História (PPGH) da Universidade Federal Fluminense (UFF), bolsista Nota 10 pela FAPERJ, e pesquisadora associada do Laboratório de História Oral e Imagem (LABHOI/UFF) e do Laboratório de Agenciamentos Cotidianos e Experiências (LACE/UFF). Tem experiência na área de História Contemporânea, com ênfase nos seguintes temas: história do Brasil, ditadura e redemocratização, história do tempo presente, lugares de memória e políticas de reparação. Durante a graduação, estagiou por dois anos na Secretaria Municipal de Educação do Rio de Janeiro como mediadora na Educação Especial.",
+    "profileUrl": "http://lattes.cnpq.br/7072646374970547"
   }
 ];
