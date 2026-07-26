@@ -40,10 +40,12 @@ function sortHighlightsNewestFirst(events) {
 }
 
 export default function FeaturedEventSection() {
+  const sectionRef = useRef(null);
   const carouselRef = useRef(null);
   const carouselPausedRef = useRef(false);
   const [dynamicHighlights, setDynamicHighlights] = useState([]);
   const [loadState, setLoadState] = useState("loading");
+  const [carouselActive, setCarouselActive] = useState(false);
   const events = useMemo(() => {
     const seen = new Set();
     const dashboardHighlights = dynamicHighlights
@@ -90,6 +92,27 @@ export default function FeaturedEventSection() {
     if (carouselRef.current) carouselRef.current.scrollLeft = 0;
   }, [events]);
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return undefined;
+
+    if (!("IntersectionObserver" in window)) {
+      const fallbackId = window.setTimeout(() => setCarouselActive(true), 0);
+      return () => window.clearTimeout(fallbackId);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setCarouselActive(entry.isIntersecting),
+      {
+        rootMargin: "0px 0px -33% 0px",
+        threshold: 0,
+      },
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   const cycleWidth = useCallback(() => {
     const carousel = carouselRef.current;
     if (!carousel || events.length < 2) return 0;
@@ -127,13 +150,15 @@ export default function FeaturedEventSection() {
   }, [cycleWidth, normalizeCarouselPosition]);
 
   useEffect(() => {
-    if (events.length < 2) return undefined;
+    if (!carouselActive || events.length < 2) return undefined;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+
     const intervalId = window.setInterval(() => {
       if (!carouselPausedRef.current) scrollCarousel("next");
-    }, 5500);
+    }, 8000);
 
     return () => window.clearInterval(intervalId);
-  }, [events.length, scrollCarousel]);
+  }, [carouselActive, events.length, scrollCarousel]);
 
   const emptyMessage = loadState === "loading"
     ? "Carregando os últimos eventos publicados..."
@@ -142,7 +167,7 @@ export default function FeaturedEventSection() {
       : "Nenhum evento foi publicado pelo dashboard ainda.";
 
   return (
-    <section className="bg-background py-24 lg:py-32">
+    <section ref={sectionRef} className="bg-background py-24 lg:py-32">
       <Container>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <SectionTitle subtitle="Destaques" title="Últimos eventos" />

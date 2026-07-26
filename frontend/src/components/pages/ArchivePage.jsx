@@ -114,6 +114,10 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
     () => (contentType === "VIRAL_ESCAPE_LINES" ? visibleItems : []),
     [contentType, visibleItems],
   );
+  const interviewItems = useMemo(
+    () => (contentType === "INTERVIEW" ? visibleItems : []),
+    [contentType, visibleItems],
+  );
   const mediaCards = contentType === "INTERVIEW" || contentType === "PODCAST";
   const isPodcastModalOpen = Boolean(activePodcast);
   const isResearchersModalOpen = Boolean(activeResearchersPodcast);
@@ -129,9 +133,14 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
     () => viralItems.findIndex((item) => item.id === activeViralItem?.id || item.title === activeViralItem?.title),
     [activeViralItem?.id, activeViralItem?.title, viralItems],
   );
+  const activeInterviewIndex = useMemo(
+    () => interviewItems.findIndex((item) => item.id === activeInterview?.id || item.title === activeInterview?.title),
+    [activeInterview?.id, activeInterview?.title, interviewItems],
+  );
   const isAlineViralItem = activeViralItem?.meta === "Aline Ribeiro Nascimento";
   const authorAboutLabel = isAlineViralItem ? "Sobre a autora" : "Sobre o autor";
   const hasMultipleViralItems = viralItems.length > 1;
+  const hasMultipleInterviews = interviewItems.length > 1;
   const referenceSections = useMemo(
     () => activeEpisodeReferences
       ? [
@@ -220,7 +229,19 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
     if (!isInterviewModalOpen) return undefined;
 
     const handleKeyDown = (event) => {
-      if (event.key === "Escape") setActiveInterview(null);
+      if (event.key === "Escape") {
+        setActiveInterview(null);
+        return;
+      }
+      if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+      if (!hasMultipleInterviews) return;
+
+      event.preventDefault();
+      const fallbackIndex = activeInterviewIndex === -1 ? 0 : activeInterviewIndex;
+      const nextIndex = event.key === "ArrowRight"
+        ? (fallbackIndex + 1) % interviewItems.length
+        : (fallbackIndex - 1 + interviewItems.length) % interviewItems.length;
+      setActiveInterview(interviewItems[nextIndex]);
     };
 
     document.body.style.overflow = "hidden";
@@ -230,7 +251,7 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isInterviewModalOpen]);
+  }, [activeInterviewIndex, hasMultipleInterviews, interviewItems, isInterviewModalOpen]);
 
   useEffect(() => {
     if (!isViralModalOpen) return undefined;
@@ -587,6 +608,36 @@ export default function ArchivePage({ eyebrow, title, description, items = [], e
             >
               <X size={24} aria-hidden="true" />
             </button>
+
+            {hasMultipleInterviews && (
+              <div className="mb-5 flex items-center justify-between gap-3 pr-14">
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-3 font-semibold text-text transition hover:border-primary hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  aria-label="Entrevista anterior"
+                  onClick={() => {
+                    const fallbackIndex = activeInterviewIndex === -1 ? 0 : activeInterviewIndex;
+                    setActiveInterview(interviewItems[(fallbackIndex - 1 + interviewItems.length) % interviewItems.length]);
+                  }}
+                >
+                  <ArrowLeft size={18} aria-hidden="true" /> <span className="hidden sm:inline">Anterior</span>
+                </button>
+                <span className="text-sm font-semibold text-muted">
+                  {activeInterviewIndex + 1} de {interviewItems.length}
+                </span>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-3 font-semibold text-text transition hover:border-primary hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  aria-label="Próxima entrevista"
+                  onClick={() => {
+                    const fallbackIndex = activeInterviewIndex === -1 ? 0 : activeInterviewIndex;
+                    setActiveInterview(interviewItems[(fallbackIndex + 1) % interviewItems.length]);
+                  }}
+                >
+                  <span className="hidden sm:inline">Próxima</span> <ArrowRight size={18} aria-hidden="true" />
+                </button>
+              </div>
+            )}
 
             <div className="overflow-hidden rounded-2xl border border-border bg-black">
               <iframe

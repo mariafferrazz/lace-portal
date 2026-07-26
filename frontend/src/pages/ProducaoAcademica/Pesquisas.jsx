@@ -104,22 +104,42 @@ function researchSlug(title) {
     .replace(/^-|-$/g, "");
 }
 
+function canonicalResearchSlug(content) {
+  if (content.metadata?.slug) return content.metadata.slug;
+
+  const derivedSlug = researchSlug(content.title);
+  const matchingStaticResearch = researches.find((research) => (
+    [research.slug, researchSlug(research.title), researchSlug(research.shortTitle)]
+      .filter(Boolean)
+      .some((candidate) => candidate === derivedSlug
+        || candidate.includes(derivedSlug)
+        || derivedSlug.includes(candidate))
+  ));
+
+  return matchingStaticResearch?.slug || derivedSlug;
+}
+
 function researchFromContent(content) {
-  const team = Array.isArray(content.metadata?.team) ? content.metadata.team : [];
+  const metadata = content.metadata || {};
+  const team = Array.isArray(metadata.team) && metadata.team.length
+    ? metadata.team
+    : Array.isArray(metadata.researchers) ? metadata.researchers : [];
   return {
     title: content.title,
-    shortTitle: content.metadata?.shortTitle || content.title,
-    slug: researchSlug(content.title),
+    shortTitle: metadata.shortTitle || content.title,
+    slug: canonicalResearchSlug(content),
+    url: content.externalUrl || "",
     image: contentImage(content),
-    summary: content.description ? content.description.split(/\n{2,}/).filter(Boolean) : ["Pesquisa em organização."],
-    publicReportUrl: contentFileUrls(content)[0],
+    summary: content.description ? content.description.split(/\n{2,}/).filter(Boolean) : [],
+    publicReportUrl: contentFileUrls(content)[0] || metadata.publicReportUrl,
     researchers: team.map((person) => ({
       name: person.name,
       description: [person.role, person.description].filter(Boolean).join(" — "),
-      lattes: person.lattesUrl,
+      lattes: person.lattesUrl || person.lattes,
     })),
-    additionalInfo: Array.isArray(content.metadata?.additionalInfo) ? content.metadata.additionalInfo : [],
-    resources: Array.isArray(content.metadata?.resources) ? content.metadata.resources : [],
+    commission: metadata.commission || "",
+    additionalInfo: Array.isArray(metadata.additionalInfo) ? metadata.additionalInfo : [],
+    resources: Array.isArray(metadata.resources) ? metadata.resources : [],
   };
 }
 
@@ -128,7 +148,19 @@ function mergeDynamicResearches(dynamicContents) {
 
   dynamicContents.forEach((content) => {
     const research = researchFromContent(content);
-    if (!grouped.has(research.slug)) grouped.set(research.slug, research);
+    const fallback = grouped.get(research.slug);
+    grouped.set(research.slug, fallback ? {
+      ...fallback,
+      ...research,
+      url: research.url || fallback.url,
+      image: research.image || fallback.image,
+      summary: research.summary.length ? research.summary : fallback.summary,
+      publicReportUrl: research.publicReportUrl || fallback.publicReportUrl,
+      researchers: research.researchers.length ? research.researchers : fallback.researchers,
+      commission: research.commission || fallback.commission,
+      additionalInfo: research.additionalInfo.length ? research.additionalInfo : fallback.additionalInfo,
+      resources: research.resources.length ? research.resources : fallback.resources,
+    } : research);
   });
 
   return [...grouped.values()];
