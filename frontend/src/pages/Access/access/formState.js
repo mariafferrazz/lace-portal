@@ -1,0 +1,231 @@
+import {
+  cinemaShowAreas,
+  contentAreas,
+  emptyCredit,
+  emptyEpisode,
+  emptyInfo,
+  emptyPerson,
+  emptyResource,
+  emptySession,
+  eventYearOptions,
+  initialForm,
+} from "./constants";
+import {
+  areaForType,
+  cleanUrlList,
+  ensureTextList,
+  ensureUrlList,
+  extractShowNumber,
+  nonEmptyObjects,
+  selectedEventYear,
+  showSlugFromTitle,
+} from "./utils";
+
+const clone = (value) => JSON.parse(JSON.stringify(value));
+
+export function createInitialForm(areaValue = "CINEMA_DITADURA", typeValue) {
+  const area = contentAreas.find((item) => item.value === areaValue) || contentAreas[0];
+  const type = typeValue && area.types.includes(typeValue) ? typeValue : area.types[0];
+  return { ...clone(initialForm), area: area.value, type };
+}
+
+export function formFromContent(content) {
+  const metadata = content.metadata || {};
+  const areaValue = content.type === "CINEMA_SHOW"
+    ? "EVENTOS_ATIVIDADES"
+    : Array.isArray(metadata.editorialAreas)
+      ? metadata.editorialAreas[0]
+      : metadata.editorialArea || areaForType(content.type)?.value || "CINEMA_DITADURA";
+  const base = createInitialForm(areaValue, content.type);
+  const storedYear = String(metadata.eventYear || metadata.showYear || metadata.year || "");
+
+  return {
+    ...base,
+    title: content.title || "",
+    researcherName: content.researcherMember?.name || content.researcherName || "",
+    researcherMemberId: content.researcherMemberId
+      || content.researcherMember?.id
+      || metadata.researcherMemberId
+      || (content.researcherName ? `name:${content.researcherName}` : ""),
+    description: content.description || "",
+    bodyText: metadata.bodyText || "",
+    imageUrl: metadata.imageUrl || "",
+    imageUrls: ensureUrlList(metadata.imageUrls, metadata.imageUrl),
+    fileUrl: content.fileUrl || "",
+    fileUrls: ensureUrlList(metadata.fileUrls, content.fileUrl),
+    videoUrl: metadata.videoUrl || (content.type === "INTERVIEW" || content.type === "FILM" ? content.externalUrl : "") || "",
+    podcastUrl: metadata.podcastUrl || (content.type === "PODCAST" ? content.externalUrl : "") || "",
+    pdfUrl: metadata.pdfUrl || (content.type === "ARTICLE" ? content.fileUrl || content.externalUrl : "") || "",
+    alphabetLetter: String(metadata.alphabetLetter || metadata.letter || "A").toUpperCase(),
+    direction: metadata.direction || "",
+    authorNames: ensureTextList(metadata.authors, metadata.authorNames),
+    articleAuthorIds: Array.isArray(metadata.authorIds) ? metadata.authorIds : [],
+    relatedFilmIds: Array.isArray(metadata.relatedFilmIds) ? metadata.relatedFilmIds : [],
+    references: ensureTextList(metadata.references),
+    episodes: Array.isArray(metadata.episodes) && metadata.episodes.length
+      ? metadata.episodes.map((item) => ({ ...emptyEpisode, ...item }))
+      : [{ ...emptyEpisode }],
+    people: Array.isArray(metadata.people) && metadata.people.length
+      ? metadata.people.map((item) => ({ ...emptyPerson, ...item }))
+      : [{ ...emptyPerson }],
+    credits: Array.isArray(metadata.credits) && metadata.credits.length
+      ? metadata.credits.map((item) => ({ ...emptyCredit, ...item }))
+      : [{ ...emptyCredit }],
+    researchTeam: Array.isArray(metadata.team) && metadata.team.length
+      ? metadata.team.map((item) => ({ ...emptyPerson, ...item }))
+      : [{ ...emptyPerson }],
+    additionalInfo: Array.isArray(metadata.additionalInfo) && metadata.additionalInfo.length
+      ? metadata.additionalInfo.map((item) => ({ ...emptyInfo, ...item }))
+      : [{ ...emptyInfo }],
+    resources: Array.isArray(metadata.resources) && metadata.resources.length
+      ? metadata.resources.map((item) => ({ ...emptyResource, ...item }))
+      : [{ ...emptyResource }],
+    showNumber: metadata.showNumber || "",
+    eventYear: eventYearOptions.includes(storedYear) ? storedYear : "2026",
+    createCinemaPage: metadata.createCinemaPage !== false && metadata.cinemaPath !== null,
+    playlistUrl: metadata.playlistUrl || (content.type === "CINEMA_SHOW" ? content.externalUrl : "") || "",
+    playlistUrls: ensureUrlList(metadata.playlistUrls, metadata.playlistUrl, content.type === "CINEMA_SHOW" ? content.externalUrl : ""),
+    sessions: Array.isArray(metadata.sessions) && metadata.sessions.length
+      ? metadata.sessions.map((session) => ({
+        ...emptySession,
+        ...session,
+        filmId: session.filmId || session.archiveFilmId || "",
+        sessionUrls: ensureUrlList(session.sessionUrls, session.sessionUrl),
+      }))
+      : [{ ...emptySession }],
+  };
+}
+
+function commonMetadata(form) {
+  const imageUrls = cleanUrlList(form.imageUrls);
+  return {
+    editorialArea: form.area,
+    imageUrl: imageUrls[0] || null,
+    imageUrls,
+  };
+}
+
+export function buildContentPayload(form) {
+  const metadata = commonMetadata(form);
+  const payload = {
+    title: form.title.trim(),
+    researcherName: form.researcherName.trim(),
+    researcherMemberId: form.researcherMemberId && !form.researcherMemberId.startsWith("name:")
+      ? form.researcherMemberId
+      : null,
+    type: form.type,
+    description: form.description.trim(),
+    externalUrl: "",
+    fileUrl: "",
+    metadata,
+  };
+
+  switch (form.type) {
+    case "INTERVIEW":
+      metadata.videoUrl = form.videoUrl.trim() || null;
+      metadata.people = nonEmptyObjects(form.people, ["name", "role", "description", "lattesUrl"]);
+      metadata.credits = nonEmptyObjects(form.credits, ["title", "value", "description", "url"]);
+      payload.externalUrl = metadata.videoUrl || "";
+      break;
+
+    case "PODCAST":
+      metadata.podcastUrl = form.podcastUrl.trim() || null;
+      metadata.episodes = nonEmptyObjects(form.episodes, ["title", "description", "url"]);
+      metadata.people = nonEmptyObjects(form.people, ["name", "role", "description", "lattesUrl"]);
+      metadata.credits = nonEmptyObjects(form.credits, ["title", "value", "description", "url"]);
+      payload.externalUrl = metadata.podcastUrl || "";
+      break;
+
+    case "VIRAL_ESCAPE_LINES":
+      metadata.authors = ensureTextList(form.authorNames).filter(Boolean);
+      metadata.bodyText = form.bodyText.trim() || null;
+      break;
+
+    case "ARTICLE":
+      metadata.pdfUrl = form.pdfUrl.trim() || null;
+      metadata.authorIds = [...new Set(form.articleAuthorIds.filter(Boolean))];
+      payload.fileUrl = metadata.pdfUrl || "";
+      payload.externalUrl = metadata.pdfUrl || "";
+      break;
+
+    case "ARTICLE_AUTHOR":
+      metadata.pageKind = "ARTICLE_AUTHOR";
+      break;
+
+    case "RESEARCH":
+      metadata.team = nonEmptyObjects(form.researchTeam, ["name", "role", "description", "lattesUrl"]);
+      metadata.additionalInfo = nonEmptyObjects(form.additionalInfo, ["title", "description"]);
+      metadata.resources = nonEmptyObjects(form.resources, ["title", "kind", "url"]);
+      break;
+
+    case "FILM":
+      metadata.alphabetLetter = form.alphabetLetter;
+      metadata.direction = form.direction.trim() || null;
+      metadata.videoUrl = form.videoUrl.trim() || null;
+      metadata.cardExcerptWords = 45;
+      payload.externalUrl = metadata.videoUrl || "";
+      break;
+
+    case "GLOSSARY":
+      metadata.alphabetLetter = form.alphabetLetter;
+      metadata.authors = ensureTextList(form.authorNames).filter(Boolean);
+      metadata.relatedFilmIds = [...new Set(form.relatedFilmIds.filter(Boolean))];
+      metadata.references = ensureTextList(form.references).filter(Boolean);
+      metadata.cardExcerptWords = 55;
+      break;
+
+    case "CINEMA_SHOW": {
+      const year = selectedEventYear(form);
+      const showNumber = extractShowNumber(form.title);
+      const slug = showSlugFromTitle(form.title);
+      const playlistUrls = cleanUrlList(form.playlistUrls);
+
+      metadata.editorialArea = form.createCinemaPage ? "CINEMA_DITADURA" : "EVENTOS_ATIVIDADES";
+      metadata.editorialAreas = form.createCinemaPage ? cinemaShowAreas : ["EVENTOS_ATIVIDADES"];
+      metadata.createCinemaPage = form.createCinemaPage;
+      metadata.showNumber = showNumber;
+      metadata.showSlug = slug;
+      metadata.eventYear = year;
+      metadata.showYear = year;
+      metadata.year = year;
+      metadata.cinemaPath = form.createCinemaPage && slug ? `/cinema-e-ditadura/${slug}` : null;
+      metadata.eventPath = year ? `/eventos/${year}` : null;
+      metadata.detailMode = "PAGE";
+      metadata.detailPath = metadata.cinemaPath;
+      metadata.playlistUrl = playlistUrls[0] || null;
+      metadata.playlistUrls = playlistUrls;
+      metadata.sessions = form.sessions
+        .map((session) => {
+          const sessionUrls = cleanUrlList(session.sessionUrls);
+          return {
+            date: session.date.trim(),
+            filmId: session.filmId || null,
+            title: session.title.trim(),
+            direction: session.direction.trim() || null,
+            sessionUrl: sessionUrls[0] || null,
+            sessionUrls,
+          };
+        })
+        .filter((session) => session.date || session.filmId || session.title || session.sessionUrl);
+      payload.externalUrl = metadata.playlistUrl || "";
+      break;
+    }
+
+    case "EVENT": {
+      const year = selectedEventYear(form);
+      metadata.eventYear = year;
+      metadata.year = year;
+      metadata.eventPath = year ? `/eventos/${year}` : null;
+      metadata.detailMode = "MODAL";
+      metadata.fileUrls = cleanUrlList(form.fileUrls);
+      payload.fileUrl = metadata.fileUrls[0] || "";
+      payload.externalUrl = metadata.fileUrls[0] || "";
+      break;
+    }
+
+    default:
+      break;
+  }
+
+  return payload;
+}

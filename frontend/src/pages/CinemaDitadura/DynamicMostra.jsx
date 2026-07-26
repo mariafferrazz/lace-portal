@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { CalendarDays, Film, Library, PlayCircle } from "lucide-react";
 import Container from "../../components/ui/Container";
 import SocialShare from "../../components/ui/SocialShare";
-import api from "../../services/api";
+import { loadCinemaShow } from "../../features/content/public/navigation";
 import { contentImageUrls, contentPlaylistUrls, sessionArchiveUrls, sessionWatchUrls } from "../../utils/contentMetadata";
 import { showLabel, showPath } from "../../utils/contentRoutes";
 
@@ -37,12 +37,9 @@ export default function DynamicMostra() {
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
-
-    api
-      .get(`/contents/cinema-shows/${showSlug}`)
-      .then(({ data }) => {
-        if (active) setShow(data.content || null);
+    loadCinemaShow(showSlug)
+      .then((content) => {
+        if (active) setShow(content || null);
       })
       .catch(() => {
         if (active) setShow(null);

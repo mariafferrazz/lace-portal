@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { CalendarDays, ExternalLink, Images, X } from "lucide-react";
 import Container from "../../components/ui/Container";
 import SocialShare from "../../components/ui/SocialShare";
-import api from "../../services/api";
+import { loadEventsByYear } from "../../features/content/public/navigation";
 import { contentFileUrls, contentImage, contentImageUrls, contentPlaylistUrls, sessionArchiveUrls, sessionWatchUrls, uniqueUrls } from "../../utils/contentMetadata";
 import { eventYear, showPath } from "../../utils/contentRoutes";
 
@@ -53,10 +53,9 @@ export default function DynamicEventosYear() {
 
   useEffect(() => {
     let active = true;
-    api
-      .get(`/contents/events/year/${year}`)
-      .then(({ data }) => {
-        if (active) setContents(data.contents || []);
+    loadEventsByYear(year)
+      .then((items) => {
+        if (active) setContents(items);
       })
       .catch(() => {
         if (active) setContents([]);

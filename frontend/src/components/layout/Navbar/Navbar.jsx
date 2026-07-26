@@ -6,7 +6,7 @@ import DesktopMenu from "./DesktopMenu";
 import MobileMenu from "./MobileMenu";
 import ThemeToggle from "../../ui/ThemeToggle";
 import { menu } from "../../../data/menu";
-import api from "../../../services/api";
+import { loadContentNavigation } from "../../../features/content/public/navigation";
 import { eventYear, eventYearPath, isKnownEventYear, isKnownShowSlug, showLabel, showPath } from "../../../utils/contentRoutes";
 
 function mergeDynamicMenu(contents = []) {
@@ -45,10 +45,9 @@ export default function Navbar() {
 
   useEffect(() => {
     let active = true;
-    api
-      .get("/contents/navigation")
-      .then(({ data }) => {
-        if (active) setItems(mergeDynamicMenu(data.contents || []));
+    loadContentNavigation()
+      .then((contents) => {
+        if (active) setItems(mergeDynamicMenu(contents));
       })
       .catch(() => {
         if (active) setItems(menu);
