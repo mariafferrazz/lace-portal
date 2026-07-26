@@ -102,6 +102,7 @@ async function getManageContent(req, res) {
 async function create(req, res) {
   try {
     const data = parseContent(req.body);
+    if (req.user.role === "COORDINATOR") data.published = true;
     const content = await createContent(data, req.user.id);
 
     if (req.user.role !== "COORDINATOR") {

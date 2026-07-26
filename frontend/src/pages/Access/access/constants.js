@@ -35,6 +35,8 @@ export const emptyReference = { value: "" };
 export const emptySession = {
   date: "",
   filmId: "",
+  filmUrl: "",
+  addFilmToDatabase: false,
   title: "",
   direction: "",
   sessionUrl: "",
