@@ -191,12 +191,12 @@ async function listPublishedContents(type) {
 
 async function listNavigationContents() {
   const contents = await prisma.content.findMany({
-    where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW"] } },
+    where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW", "ARTICLE_AUTHOR"] } },
     select: { id: true, title: true, type: true, metadata: true, createdAt: true },
   });
   return sortNewestFirst(contents.map((content) => ({
     ...content,
-    metadata: eventSummaryMetadata(content.metadata),
+    metadata: content.type === "ARTICLE_AUTHOR" ? {} : eventSummaryMetadata(content.metadata),
   })));
 }
 
