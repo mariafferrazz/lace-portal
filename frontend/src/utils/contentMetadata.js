@@ -11,13 +11,23 @@ export function uniqueUrls(...values) {
 }
 
 export function contentImage(content, fallback = "") {
-  return uniqueUrls(
+  const explicitImage = uniqueUrls(
     content?.metadata?.imageUrls,
     content?.metadata?.imageUrl,
     content?.metadata?.thumbnail,
     content?.metadata?.images,
-    fallback,
   )[0] || "";
+  if (explicitImage) return explicitImage;
+
+  const videoCandidates = uniqueUrls(
+    content?.metadata?.youtubeId,
+    content?.metadata?.videoUrl,
+    content?.externalUrl,
+  );
+  const youtubeId = videoCandidates.map(youtubeVideoId).find(Boolean);
+  if (youtubeId) return `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
+
+  return fallback;
 }
 
 export function contentFileUrls(content) {
@@ -103,5 +113,9 @@ export function sessionWatchUrls(session) {
 }
 
 export function sessionArchiveUrls(session) {
-  return uniqueUrls(session?.archiveFilmUrls, session?.archiveFilmUrl);
+  return uniqueUrls(
+    session?.films?.flatMap((film) => [film?.archiveFilmUrls, film?.archiveFilmUrl, film?.filmUrl, film?.url]),
+    session?.archiveFilmUrls,
+    session?.archiveFilmUrl,
+  );
 }

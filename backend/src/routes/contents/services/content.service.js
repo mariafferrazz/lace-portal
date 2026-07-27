@@ -297,12 +297,17 @@ async function listManageReferenceOptions() {
     where: { type: { in: ["FILM", "ARTICLE_AUTHOR"] } },
     select: { id: true, title: true, type: true, researcherName: true, externalUrl: true, metadata: true },
   });
-  const toOption = (content) => ({
-    id: content.id,
-    title: content.title,
-    subtitle: content.researcherName || undefined,
-    url: content.externalUrl || parseMetadata(content.metadata).videoUrl || "",
-  });
+  const toOption = (content) => {
+    const metadata = parseMetadata(content.metadata);
+    return {
+      id: content.id,
+      title: content.title,
+      subtitle: content.researcherName || undefined,
+      url: content.externalUrl || metadata.videoUrl || "",
+      direction: metadata.direction || metadata.director || "",
+      year: String(metadata.year || metadata.releaseYear || ""),
+    };
+  };
   const byTitle = (left, right) => left.title.localeCompare(right.title, "pt-BR");
 
   return {

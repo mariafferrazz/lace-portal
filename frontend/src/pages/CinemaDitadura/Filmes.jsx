@@ -46,6 +46,36 @@ function mergeFilms(apiFilms = [], fallbackFilms = []) {
   });
 }
 
+function FilmCover({ film, className = "aspect-video w-full" }) {
+  const [imageFailed, setImageFailed] = useState(false);
+  const imageUrl = contentImage(film);
+
+  if (imageUrl && !imageFailed) {
+    return (
+      <img
+        className={`${className} object-cover`}
+        src={imageUrl}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        onError={() => setImageFailed(true)}
+      />
+    );
+  }
+
+  return (
+    <div className={`${className} relative grid place-items-center overflow-hidden bg-gradient-to-br from-primary/35 via-card to-surface p-6 text-center`}>
+      <span className="absolute -right-10 -top-12 size-40 rounded-full border border-primary/30 bg-primary/10" aria-hidden="true" />
+      <span className="absolute -bottom-16 -left-10 size-48 rounded-full border border-primary/20 bg-primary/5" aria-hidden="true" />
+      <span className="relative z-10">
+        <Film className="mx-auto text-primary" size={38} aria-hidden="true" />
+        <span className="mt-3 line-clamp-3 block font-title text-2xl leading-tight text-text">{film.title}</span>
+        <span className="mt-2 block text-xs font-bold uppercase tracking-[0.2em] text-primary">Acervo LACE</span>
+      </span>
+    </div>
+  );
+}
+
 export default function Filmes() {
   const [films, setFilms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -143,7 +173,7 @@ export default function Filmes() {
             {visibleFilms.map((film) => (
               <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-1 hover:border-primary" key={film.id}>
                 <button className="relative cursor-pointer text-left" type="button" onClick={() => setSelectedFilm(film)} aria-label={`Abrir ${film.title}`}>
-                  {contentImage(film) ? <img className="aspect-video w-full object-cover" src={contentImage(film)} alt="" loading="lazy" decoding="async" /> : <div className="grid aspect-video place-items-center bg-surface"><Film className="text-primary" /></div>}
+                  <FilmCover film={film} />
                   <span className="absolute inset-0 grid place-items-center bg-black/20 transition group-hover:bg-black/40"><span className="grid size-14 place-items-center rounded-full bg-primary-fill text-on-primary shadow-xl"><Play fill="currentColor" aria-hidden="true" /></span></span>
                 </button>
                 <div className="flex flex-1 flex-col p-6">
@@ -174,7 +204,6 @@ function FilmModal({ film, onClose, onPrevious, onNext, navigationEnabled }) {
   const embedUrl = videoId
     ? `https://www.youtube.com/embed/${videoId}?wmode=opaque&autoplay=1`
     : vimeoId ? `https://player.vimeo.com/video/${vimeoId}?autoplay=1` : null;
-  const previewImage = contentImage(film);
   const filmLinks = contentFileUrls(film);
 
   useEffect(() => {
@@ -211,7 +240,7 @@ function FilmModal({ film, onClose, onPrevious, onNext, navigationEnabled }) {
             />
           ) : embedUrl ? (
             <button className="group absolute inset-0 h-full w-full cursor-pointer bg-black" type="button" onClick={() => setPlayerStarted(true)} aria-label={`Reproduzir ${film.title}`}>
-              {previewImage ? <img className="h-full w-full object-cover" src={previewImage} alt="" decoding="async" /> : <span className="absolute inset-0 grid place-items-center px-8 text-center font-title text-3xl text-white md:text-5xl">{film.title}</span>}
+              <FilmCover film={film} className="h-full w-full" />
               <span className="absolute inset-0 grid place-items-center bg-black/15 transition group-hover:bg-black/30">
                 <span className="grid h-16 w-24 place-items-center rounded-2xl bg-red-600 text-white shadow-2xl transition group-hover:scale-110 md:h-20 md:w-28">
                   <Play size={40} fill="currentColor" aria-hidden="true" />

@@ -31,13 +31,18 @@ export const emptyCredit = { title: "", value: "", description: "", url: "" };
 export const emptyInfo = { title: "", description: "" };
 export const emptyResource = { title: "", kind: "DOCUMENT", url: "" };
 export const emptyReference = { value: "" };
+export const emptySessionFilm = {
+  filmId: "",
+  addToDatabase: false,
+  title: "",
+  filmUrl: "",
+  direction: "",
+  year: "",
+};
 export const emptySession = {
   date: "",
-  filmId: "",
-  filmUrl: "",
-  addFilmToDatabase: false,
   title: "",
-  direction: "",
+  films: [{ ...emptySessionFilm }],
   sessionUrl: "",
   sessionUrls: [""],
 };
@@ -59,6 +64,7 @@ export const initialForm = {
   pdfUrl: "",
   alphabetLetter: "A",
   direction: "",
+  filmYear: "",
   authorNames: [""],
   articleAuthorIds: [],
   relatedFilmIds: [],

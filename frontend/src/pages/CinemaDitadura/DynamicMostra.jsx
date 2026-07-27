@@ -367,7 +367,13 @@ export default function DynamicMostra() {
                     <div className="flex min-w-0 flex-col justify-between py-1">
                       <div>
                         <h3 className="font-title text-3xl leading-tight text-text">{session.title || `Sessão ${index + 1}`}</h3>
-                        {session.direction && <p className="mt-3 text-sm text-muted">Direção: {session.direction}</p>}
+                        {(session.direction || session.year) && (
+                          <p className="mt-3 text-sm text-muted">
+                            {session.direction && <>Direção: {session.direction}</>}
+                            {session.direction && session.year && <span> · </span>}
+                            {session.year && <>Ano: {session.year}</>}
+                          </p>
+                        )}
                         {session.note && <p className="mt-3 text-sm text-muted">{session.note}</p>}
                       </div>
 

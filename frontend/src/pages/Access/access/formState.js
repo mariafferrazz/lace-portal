@@ -7,6 +7,7 @@ import {
   emptyPerson,
   emptyResource,
   emptySession,
+  emptySessionFilm,
   eventYearOptions,
   initialForm,
 } from "./constants";
@@ -22,6 +23,46 @@ import {
 } from "./utils";
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
+
+function formFilmsFromSession(session = {}) {
+  const hasStoredFilms = Object.prototype.hasOwnProperty.call(session, "films");
+  let storedFilms = Array.isArray(session.films) ? session.films.filter(Boolean) : [];
+
+  if (!hasStoredFilms) {
+    const archiveUrls = ensureUrlList(session.archiveFilmUrls, session.archiveFilmUrl, session.filmUrl)
+      .filter(Boolean);
+    const filmIds = Array.isArray(session.filmIds) && session.filmIds.length
+      ? session.filmIds.filter(Boolean)
+      : session.filmId || session.archiveFilmId
+        ? [session.filmId || session.archiveFilmId]
+        : [];
+    const itemCount = Math.max(archiveUrls.length, filmIds.length, 1);
+
+    storedFilms = Array.from({ length: itemCount }, (_, index) => ({
+      filmId: filmIds[index] || "",
+      title: index === 0 ? session.filmTitle || session.title || "" : "",
+      filmUrl: archiveUrls[index] || "",
+      direction: index === 0 ? session.direction || session.director || "" : "",
+      year: index === 0 ? session.year || session.filmYear || "" : "",
+    }));
+  }
+
+  if (storedFilms.length === 0) return [{ ...emptySessionFilm }];
+
+  return storedFilms.map((film) => {
+    const filmId = film.filmId || film.id || "";
+    const filmUrl = film.filmUrl || film.archiveFilmUrl || film.url || "";
+    return {
+      ...emptySessionFilm,
+      filmId,
+      addToDatabase: Boolean(film.addToDatabase) || (!filmId && Boolean(film.title || filmUrl)),
+      title: film.title || "",
+      filmUrl,
+      direction: film.direction || film.director || "",
+      year: String(film.year || film.filmYear || ""),
+    };
+  });
+}
 
 export function createInitialForm(areaValue = "CINEMA_DITADURA", typeValue) {
   const area = contentAreas.find((item) => item.value === areaValue) || contentAreas[0];
@@ -57,7 +98,8 @@ export function formFromContent(content) {
     podcastUrl: metadata.podcastUrl || (content.type === "PODCAST" ? content.externalUrl : "") || "",
     pdfUrl: metadata.pdfUrl || (content.type === "ARTICLE" ? content.fileUrl || content.externalUrl : "") || "",
     alphabetLetter: String(metadata.alphabetLetter || metadata.letter || "A").toUpperCase(),
-    direction: metadata.direction || "",
+    direction: metadata.direction || metadata.director || "",
+    filmYear: String(metadata.year || metadata.releaseYear || ""),
     authorNames: ensureTextList(metadata.authors, metadata.authorNames),
     articleAuthorIds: Array.isArray(metadata.authorIds) ? metadata.authorIds : [],
     relatedFilmIds: Array.isArray(metadata.relatedFilmIds) ? metadata.relatedFilmIds : [],
@@ -89,26 +131,26 @@ export function formFromContent(content) {
       ? metadata.sessions.map((session) => ({
         ...emptySession,
         ...session,
-        filmId: session.filmId || session.archiveFilmId || "",
-        filmUrl: session.filmUrl || session.archiveFilmUrl || "",
-        addFilmToDatabase: false,
+        title: session.sessionTitle || session.title || "",
+        films: formFilmsFromSession(session),
         sessionUrls: ensureUrlList(session.sessionUrls, session.sessionUrl),
       }))
       : [{ ...emptySession }],
   };
 }
 
-function commonMetadata(form) {
+function commonMetadata(form, existingMetadata = {}) {
   const imageUrls = cleanUrlList(form.imageUrls);
   return {
+    ...existingMetadata,
     editorialArea: form.area,
     imageUrl: imageUrls[0] || null,
     imageUrls,
   };
 }
 
-export function buildContentPayload(form) {
-  const metadata = commonMetadata(form);
+export function buildContentPayload(form, existingMetadata = {}) {
+  const metadata = commonMetadata(form, existingMetadata);
   const payload = {
     title: form.title.trim(),
     researcherName: form.researcherName.trim(),
@@ -159,6 +201,9 @@ export function buildContentPayload(form) {
     case "FILM":
       metadata.alphabetLetter = form.alphabetLetter;
       metadata.direction = form.direction.trim() || null;
+      metadata.year = form.filmYear.trim() || null;
+      delete metadata.director;
+      delete metadata.releaseYear;
       metadata.videoUrl = form.videoUrl.trim() || null;
       metadata.cardExcerptWords = 45;
       payload.externalUrl = metadata.videoUrl || "";
@@ -195,18 +240,30 @@ export function buildContentPayload(form) {
       metadata.sessions = form.sessions
         .map((session) => {
           const sessionUrls = cleanUrlList(session.sessionUrls);
+          const films = session.films
+            .map((film) => {
+              const usesFilmDatabase = Boolean(film.filmId);
+              const filmUrl = film.filmUrl.trim();
+              return {
+                filmId: film.filmId || null,
+                title: usesFilmDatabase ? "" : film.title.trim(),
+                archiveFilmUrl: usesFilmDatabase ? null : filmUrl || null,
+                archiveFilmUrls: usesFilmDatabase ? [] : filmUrl ? [filmUrl] : [],
+                direction: usesFilmDatabase ? null : film.direction.trim() || null,
+                year: usesFilmDatabase ? null : film.year.trim() || null,
+              };
+            })
+            .filter((film) => film.filmId || film.title || film.archiveFilmUrl);
           return {
             date: session.date.trim(),
-            filmId: session.filmId || null,
-            archiveFilmUrl: session.filmUrl.trim() || null,
-            archiveFilmUrls: session.filmUrl.trim() ? [session.filmUrl.trim()] : [],
             title: session.title.trim(),
-            direction: session.direction.trim() || null,
+            films,
+            filmIds: films.map((film) => film.filmId).filter(Boolean),
             sessionUrl: sessionUrls[0] || null,
             sessionUrls,
           };
         })
-        .filter((session) => session.date || session.filmId || session.title || session.sessionUrl);
+        .filter((session) => session.date || session.films.length || session.title || session.sessionUrl);
       payload.externalUrl = metadata.playlistUrl || "";
       break;
     }

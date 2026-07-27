@@ -26,6 +26,7 @@ function buildFilmArchiveIndex(contents = []) {
         id: content.id,
         title: content.title,
         direction: metadata.direction || metadata.director || null,
+        year: String(metadata.year || metadata.releaseYear || "") || null,
         normalizedTitle,
         url,
       } : null;
@@ -33,12 +34,12 @@ function buildFilmArchiveIndex(contents = []) {
     .filter(Boolean);
 }
 
-function findFilmArchiveUrl(filmIndex, title = "") {
+function findFilmArchive(filmIndex, title = "") {
   const normalizedTitle = normalizeTitleForLookup(title);
   if (!normalizedTitle) return null;
 
   const exact = filmIndex.find((film) => film.normalizedTitle === normalizedTitle);
-  if (exact) return exact.url;
+  if (exact) return exact;
 
   if (normalizedTitle.length < 6) return null;
 
@@ -47,7 +48,56 @@ function findFilmArchiveUrl(filmIndex, title = "") {
     || normalizedTitle.includes(film.normalizedTitle)
   ));
 
-  return partial?.url || null;
+  return partial || null;
+}
+
+function findFilmArchiveUrl(filmIndex, title = "") {
+  return findFilmArchive(filmIndex, title)?.url || null;
+}
+
+function legacySessionFilms(session, archiveUrls = []) {
+  if (Object.prototype.hasOwnProperty.call(session, "films")) {
+    return Array.isArray(session.films) ? session.films.filter(Boolean) : [];
+  }
+
+  const filmIds = Array.isArray(session.filmIds) && session.filmIds.length
+    ? session.filmIds.filter(Boolean)
+    : session.filmId || session.archiveFilmId
+      ? [session.filmId || session.archiveFilmId]
+      : [];
+  const legacyTitle = session.filmTitle || session.title || "";
+  const itemCount = Math.max(filmIds.length, archiveUrls.length, legacyTitle ? 1 : 0);
+
+  return Array.from({ length: itemCount }, (_, index) => ({
+    filmId: filmIds[index] || null,
+    title: index === 0 ? legacyTitle : "",
+    direction: index === 0 ? session.direction || session.director || null : null,
+    year: index === 0 ? session.year || session.filmYear || null : null,
+    archiveFilmUrl: archiveUrls[index] || null,
+  }));
+}
+
+function enrichSessionFilm(film, filmIndex) {
+  const linkedFilm = film.filmId
+    ? filmIndex.find((archiveFilm) => archiveFilm.id === film.filmId)
+    : null;
+  const matchedFilm = linkedFilm || findFilmArchive(filmIndex, film.title);
+  const archiveFilmUrls = uniqueValues(
+    matchedFilm?.url,
+    film.archiveFilmUrls,
+    film.archiveFilmUrl,
+    film.filmUrl,
+    film.url,
+  );
+
+  return {
+    filmId: film.filmId || matchedFilm?.id || null,
+    title: film.title || matchedFilm?.title || "",
+    direction: film.direction || film.director || matchedFilm?.direction || null,
+    year: String(film.year || film.filmYear || matchedFilm?.year || "") || null,
+    archiveFilmUrl: archiveFilmUrls[0] || null,
+    archiveFilmUrls,
+  };
 }
 
 function enrichCinemaShowContent(content, filmIndex = []) {
@@ -58,7 +108,8 @@ function enrichCinemaShowContent(content, filmIndex = []) {
   const enrichedSessions = sessions.map((session) => {
     const storedSessionUrls = uniqueValues(session.sessionUrls, session.sessionUrl);
     const storedArchiveUrls = uniqueValues(session.archiveFilmUrls, session.archiveFilmUrl);
-    const hasMisplacedSessionUrl = normalizeTitleForLookup(session.title) === vouContarParaOsMeusFilhosTitle
+    const firstStoredFilmTitle = Array.isArray(session.films) ? session.films[0]?.title : "";
+    const hasMisplacedSessionUrl = normalizeTitleForLookup(firstStoredFilmTitle || session.title) === vouContarParaOsMeusFilhosTitle
       && storedSessionUrls.length === 0
       && storedArchiveUrls.length > 1;
     const sessionUrls = hasMisplacedSessionUrl
@@ -66,17 +117,18 @@ function enrichCinemaShowContent(content, filmIndex = []) {
       : storedSessionUrls;
     const existingArchiveUrls = (hasMisplacedSessionUrl ? storedArchiveUrls.slice(0, 1) : storedArchiveUrls)
       .filter((url) => !sessionUrls.includes(url));
-    const linkedFilm = session.filmId
-      ? filmIndex.find((film) => film.id === session.filmId)
-      : null;
-    const matchedArchiveUrl = linkedFilm?.url
-      || findFilmArchiveUrl(filmIndex, session.filmTitle || session.title);
-    const archiveFilmUrls = uniqueValues(matchedArchiveUrl, existingArchiveUrls);
+    const films = legacySessionFilms(session, existingArchiveUrls)
+      .map((film) => enrichSessionFilm(film, filmIndex));
+    const archiveFilmUrls = uniqueValues(films.flatMap((film) => film.archiveFilmUrls));
+    const onlyFilm = films.length === 1 ? films[0] : null;
 
     return {
       ...session,
-      title: session.title || linkedFilm?.title || "",
-      direction: session.direction || linkedFilm?.direction || null,
+      title: session.sessionTitle || session.title || onlyFilm?.title || "",
+      films,
+      filmIds: films.map((film) => film.filmId).filter(Boolean),
+      direction: session.direction || session.director || onlyFilm?.direction || null,
+      year: String(session.year || session.filmYear || onlyFilm?.year || "") || null,
       sessionUrl: sessionUrls[0] || null,
       sessionUrls,
       archiveFilmUrl: archiveFilmUrls[0] || null,
@@ -101,7 +153,10 @@ function enrichCinemaShows(contents = []) {
 module.exports = {
   filmArchiveUrl,
   buildFilmArchiveIndex,
+  findFilmArchive,
   findFilmArchiveUrl,
+  legacySessionFilms,
+  enrichSessionFilm,
   enrichCinemaShowContent,
   enrichCinemaShows,
 };

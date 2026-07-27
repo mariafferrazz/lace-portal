@@ -49,12 +49,20 @@ function normalizeEditorialMetadata(data, metadata) {
     metadata.youtubeId = youtubeVideoId(metadata.youtubeId || videoUrl);
     metadata.vimeoId = vimeoVideoId(metadata.vimeoId || videoUrl);
     data.externalUrl = videoUrl || null;
+
+    if (data.type === "FILM" && !metadata.imageUrl && metadata.youtubeId) {
+      metadata.imageUrl = `https://i.ytimg.com/vi/${metadata.youtubeId}/hqdefault.jpg`;
+      metadata.imageUrls = [metadata.imageUrl];
+    }
   }
 
   if (data.type === "FILM") {
     const direction = String(metadata.direction || metadata.director || "").trim();
+    const year = String(metadata.year || metadata.releaseYear || "").trim();
     metadata.direction = direction || null;
-    metadata.director = direction || null;
+    metadata.year = year || null;
+    delete metadata.director;
+    delete metadata.releaseYear;
     metadata.alphabetLetter = String(metadata.alphabetLetter || metadata.letter || "").trim().toUpperCase() || null;
   } else if (data.type === "GLOSSARY") {
     metadata.alphabetLetter = String(metadata.alphabetLetter || metadata.letter || "").trim().toUpperCase() || null;

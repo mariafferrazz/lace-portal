@@ -8,6 +8,7 @@ import {
   emptyPerson,
   emptyResource,
   emptySession,
+  emptySessionFilm,
   maxEmbeddedImageSize,
 } from "../constants";
 import { buildContentPayload, createInitialForm, formFromContent } from "../formState";
@@ -60,6 +61,36 @@ export default function useContentForm({ content, initialArea, initialType, onCr
 
   function updateObject(field, index, key, value) {
     setForm((current) => ({ ...current, [field]: current[field].map((item, itemIndex) => itemIndex === index ? { ...item, [key]: value } : item) }));
+  }
+
+  function updateNestedObject(field, index, nestedField, nestedIndex, key, value) {
+    setForm((current) => ({ ...current, [field]: current[field].map((item, itemIndex) => {
+      if (itemIndex !== index) return item;
+      return {
+        ...item,
+        [nestedField]: item[nestedField].map((nestedItem, currentNestedIndex) => (
+          currentNestedIndex === nestedIndex ? { ...nestedItem, [key]: value } : nestedItem
+        )),
+      };
+    }) }));
+  }
+
+  function addNestedObject(field, index, nestedField, emptyValue) {
+    setForm((current) => ({ ...current, [field]: current[field].map((item, itemIndex) => (
+      itemIndex === index
+        ? { ...item, [nestedField]: [...item[nestedField], { ...emptyValue }] }
+        : item
+    )) }));
+  }
+
+  function removeNestedObject(field, index, nestedField, nestedIndex, emptyValue) {
+    setForm((current) => ({ ...current, [field]: current[field].map((item, itemIndex) => {
+      if (itemIndex !== index) return item;
+      const nestedItems = item[nestedField].length === 1
+        ? [{ ...emptyValue }]
+        : item[nestedField].filter((_, currentNestedIndex) => currentNestedIndex !== nestedIndex);
+      return { ...item, [nestedField]: nestedItems };
+    }) }));
   }
 
   function addObject(field, emptyValue) {
@@ -176,34 +207,38 @@ export default function useContentForm({ content, initialArea, initialType, onCr
       let formToSave = form;
       if (form.type === "CINEMA_SHOW") {
         const sessions = await Promise.all(form.sessions.map(async (session) => {
-          if (!session.addFilmToDatabase || session.filmId) return session;
-          if (!session.title.trim() || !session.filmUrl.trim()) {
-            throw new Error("Para adicionar um filme ao banco, informe o título alternativo e a URL do filme.");
-          }
+          const films = await Promise.all(session.films.map(async (film) => {
+            if (!film.addToDatabase || film.filmId) return film;
+            if (!film.title.trim() || !film.filmUrl.trim()) {
+              throw new Error("Para cadastrar um novo filme, informe o título e a URL do filme.");
+            }
 
-          const { data: filmData } = await api.post("/contents", {
-            title: session.title.trim(),
-            researcherName: form.researcherName.trim(),
-            researcherMemberId: form.researcherMemberId && !form.researcherMemberId.startsWith("name:")
-              ? form.researcherMemberId
-              : null,
-            type: "FILM",
-            description: "",
-            externalUrl: session.filmUrl.trim(),
-            metadata: {
-              editorialArea: "CINEMA_DITADURA",
-              direction: session.direction.trim() || null,
-              videoUrl: session.filmUrl.trim(),
-              cardExcerptWords: 45,
-            },
-          });
-          return { ...session, filmId: filmData.content.id, addFilmToDatabase: false };
+            const { data: filmData } = await api.post("/contents", {
+              title: film.title.trim(),
+              researcherName: form.researcherName.trim(),
+              researcherMemberId: form.researcherMemberId && !form.researcherMemberId.startsWith("name:")
+                ? form.researcherMemberId
+                : null,
+              type: "FILM",
+              description: "",
+              externalUrl: film.filmUrl.trim(),
+              metadata: {
+                editorialArea: "CINEMA_DITADURA",
+                direction: film.direction.trim() || null,
+                year: film.year.trim() || null,
+                videoUrl: film.filmUrl.trim(),
+                cardExcerptWords: 45,
+              },
+            });
+            return { ...film, filmId: filmData.content.id, addToDatabase: false };
+          }));
+          return { ...session, films };
         }));
         formToSave = { ...form, sessions };
         await onReferenceCreated?.();
       }
 
-      const payload = buildContentPayload(formToSave);
+      const payload = buildContentPayload(formToSave, content?.metadata);
       const { data } = isEditing ? await api.patch(`/contents/${content.id}`, payload) : await api.post("/contents", payload);
       setForm(createInitialForm(initialArea, initialType));
       const publicationMessage = data.content?.published
@@ -238,6 +273,9 @@ export default function useContentForm({ content, initialArea, initialType, onCr
     updateObject,
     addObject,
     removeObject,
+    updateNestedObject,
+    addNestedObject,
+    removeNestedObject,
     updateNestedUrlList,
     addNestedUrl,
     removeNestedUrl,
@@ -250,6 +288,7 @@ export default function useContentForm({ content, initialArea, initialType, onCr
     emptyInfo,
     emptyResource,
     emptySession,
+    emptySessionFilm,
     submit,
   };
 }
