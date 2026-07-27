@@ -9,9 +9,26 @@ const slugify = (value) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-export default function TeamCard({ name, role, bio, profileUrl }) {
+function linkName(url = "") {
+  if (url.includes("lattes.cnpq.br")) return "Lattes";
+  if (url.includes("linkedin.com")) return "LinkedIn";
+  return "Site";
+}
+
+function profileLinks(links, profileUrl) {
+  const normalized = (Array.isArray(links) ? links : [])
+    .map((link) => ({ name: String(link?.name || "").trim(), url: String(link?.url || "").trim() }))
+    .filter((link) => link.name && /^https?:\/\//i.test(link.url));
+  if (profileUrl && !normalized.some((link) => link.url === profileUrl)) {
+    normalized.push({ name: linkName(profileUrl), url: profileUrl });
+  }
+  return [...new Map(normalized.map((link) => [link.url, link])).values()];
+}
+
+export default function TeamCard({ name, role, bio, profileUrl, links }) {
   const [open, setOpen] = useState(false);
   const contentId = useId();
+  const visibleLinks = profileLinks(links, profileUrl);
 
   return (
     <article id={slugify(name)} className="scroll-mt-24 rounded-2xl border border-border bg-card p-6 transition hover:border-primary/60">
@@ -32,15 +49,20 @@ export default function TeamCard({ name, role, bio, profileUrl }) {
       {open && (
         <div id={contentId} className="overflow-hidden">
           <p className="mt-6 border-t border-border pt-5 leading-7 text-muted">{bio}</p>
-          {profileUrl && (
-            <a
-              className="mt-5 inline-flex items-center gap-2 rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              href={profileUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Lattes / LinkedIn <ExternalLink size={16} aria-hidden="true" />
-            </a>
+          {visibleLinks.length > 0 && (
+            <div className="mt-5 flex flex-wrap gap-3" aria-label={`Links de ${name}`}>
+              {visibleLinks.map((link) => (
+                <a
+                  key={link.url}
+                  className="inline-flex items-center gap-2 rounded-xl border border-primary/60 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary-fill hover:text-on-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  href={link.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {link.name} <ExternalLink size={16} aria-hidden="true" />
+                </a>
+              ))}
+            </div>
           )}
         </div>
       )}

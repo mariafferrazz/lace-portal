@@ -30,6 +30,21 @@ function articleAuthorNames(content) {
     .filter(Boolean);
 }
 
+function profileLinkName(url = "") {
+  if (url.includes("lattes.cnpq.br")) return "Lattes";
+  if (url.includes("linkedin.com")) return "LinkedIn";
+  return "Site";
+}
+
+function memberLinks(member) {
+  if (Array.isArray(member.links)) {
+    return member.links
+      .map((link) => ({ name: String(link.name || "").trim(), url: String(link.url || "").trim() }))
+      .filter((link) => link.name && link.url);
+  }
+  return member.profileUrl ? [{ name: profileLinkName(member.profileUrl), url: member.profileUrl }] : [];
+}
+
 async function main() {
   let seedUserEmail = null;
 
@@ -74,6 +89,7 @@ async function main() {
         role: member.role,
         bio: member.bio,
         profileUrl: member.profileUrl || null,
+        links: memberLinks(member),
         group: member.group,
         sortOrder: member.sortOrder,
         active: true,
@@ -83,6 +99,7 @@ async function main() {
         role: member.role,
         bio: member.bio,
         profileUrl: member.profileUrl || null,
+        links: memberLinks(member),
         group: member.group,
         sortOrder: member.sortOrder,
       },

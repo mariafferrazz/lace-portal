@@ -33,7 +33,11 @@ export const teamMembers = [
     "name": "Carlos Contente",
     "role": "Equipe LACE",
     "bio": "Artista plástico com um voo institucional no circuito de arte contemporânea carioca, um grande amor pela comunicação popular no Rio de Janeiro e fã das charges (political cartoons), participou da organização de cursos pré-vestibulares populares, aulas de arte, ilustrou para a Revista de História da Biblioteca Nacional e para os jornais comunitários O Cidadão (Maré), A Folha do Bairro (Méier) e A Voz do Jacarezinho. Em paralelo, expôs em lugares como Paço Imperial/RJ, CCBB (RJ & SP), Paço das Artes (SP) e em eventos e feiras de arte internacionais, como a Art Rio, SP Arte, Frieze Art Fair (NY), SIART (La Paz, Bolívia), Zona Maco (Mex-DF), Drawing Now (Carrousel du Louvre-Paris), PhICA (Phoenix, Arizona), Darling Foundry (Montréal), etc. Concluiu o seu bacharelado em Artes em um curso tradicional na mais antiga escola de artes do Brasil (EBA/UFRJ, 2005) e logo ingressou em espaços legitimados do circuito de arte contemporânea. Contente jamais abandonou a prática de desenhar histórias em quadrinhos e, dessa maneira, quebra hierarquias entre diferentes manifestações artísticas. Seus trabalhos frequentemente se utilizam de personagens repetidos e espalhados como rizoma pelos espaços expositivos, a partir dos quais o artista desenvolve narrativas absurdas que questionam diferentes papéis e representações de poder em arte contemporânea ou idiossincrasias sócio-políticas. Mestre em Artes pelo PPGArtes da UERJ (2019), com uma dissertação que articula arte urbana carioca do início do século XXI com referências na Pop Art e no minimalismo estadunidense dos anos sessenta e setenta. Atualmente é doutorando em Sociologia pelo PPGS/UFF, com uma pesquisa debruçada sobre texto e imagem, arte e movimentos sociais e a produção de artivistas cariocas a partir dos levantes da década passada.",
-    "profileUrl": "http://lattes.cnpq.br/6512769777132919"
+    "profileUrl": "http://lattes.cnpq.br/6512769777132919",
+    "links": [
+      { "name": "Lattes", "url": "http://lattes.cnpq.br/6512769777132919" },
+      { "name": "Site", "url": "https://www.carloscontente.com.br/arquivoscontente" }
+    ]
   },
   {
     "name": "Cecília Maria Bouças Coimbra",
@@ -52,6 +56,12 @@ export const teamMembers = [
     "role": "Equipe LACE",
     "bio": "Professor de Sociologia na Universidade Politécnica Kwantlen, no Canadá. Doutor pelo Programa de Pós-Graduação de Ciências Sociais em Desenvolvimento, Agricultura e Sociedade da Universidade Federal Rural do Rio de Janeiro (CPDA/UFRRJ), onde também cursou seu mestrado. Graduado em Ciências Sociais pela Universidade Federal de Santa Maria. Atuou, entre 2016 e 2017, como professor substituto no Departamento de Sociologia e Metodologia das Ciências Sociais da Universidade Federal Fluminense. Membro da Comissão Camponesa da Verdade. Atua principalmente nos seguintes temas: sociologia rural, movimentos sociais, responsabilidade empresarial, violência política e justiça de transição.",
     "profileUrl": "http://lattes.cnpq.br/2556212624317350"
+  },
+  {
+    "name": "Gabriel da Silva Rivas",
+    "role": "Equipe LACE",
+    "bio": "Mestrando em Sociologia pelo Programa de Pós-Graduação em Sociologia da Universidade Federal Fluminense (PPGS/UFF) e licenciado em História pela mesma instituição. É membro do Laboratório de Agenciamentos Cotidianos e Experiências (LACE/UFF) e vinculado ao grupo de pesquisa “Subjetividade, Memória e Violência de Estado”. Atualmente, é bolsista de Iniciação Científica no projeto “Mecanismos de repressão e vigilância da ditadura empresarial-militar no âmbito da UFF e o perfil dos atingidos” e também integra a equipe de pesquisa do projeto “Aprofundamento da investigação sobre as violações de direitos trabalhistas do Grupo Aracruz Celulose, no contexto da justiça de transição e seus reflexos contemporâneos”, ambos sob orientação da Prof.ª Dr.ª Joana D’Arc Fernandes Ferraz. Tem interesse no campo de discussão sobre Teoria da Memória, com ênfase nos seguintes temas: ditadura empresarial-militar brasileira, memória e trauma, lugares de memória, direitos humanos, ensino de História e temas sensíveis.",
+    "profileUrl": "http://lattes.cnpq.br/3302537497811650"
   },
   {
     "name": "Joana D’Arc Fernandes Ferraz",

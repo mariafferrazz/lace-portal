@@ -44,6 +44,7 @@ model TeamMember {
   role      String
   bio       String    @db.Text
   profileUrl String?  @db.Text
+  links     Json?
   group     String
   sortOrder Int       @default(0)
   active    Boolean   @default(true)
