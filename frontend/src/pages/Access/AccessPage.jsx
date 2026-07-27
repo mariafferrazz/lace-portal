@@ -26,9 +26,9 @@ export default function AccessPage() {
     }
   }, []);
 
-  const loadTeamMembers = useCallback(async () => {
+  const loadTeamMembers = useCallback(async (manage = false) => {
     try {
-      const { data } = await api.get("/team");
+      const { data } = await api.get(manage ? "/team/manage" : "/team");
       setTeamMembers(data.members || []);
       return data.members || [];
     } catch {
@@ -51,7 +51,7 @@ export default function AccessPage() {
   }, []);
 
   const ensureFormData = useCallback(async () => Promise.all([
-    teamMembers.length ? teamMembers : loadTeamMembers(),
+    teamMembers.length ? teamMembers : loadTeamMembers(true),
     referenceOptions.films.length || referenceOptions.articleAuthors.length ? referenceOptions : loadReferenceOptions(),
   ]), [loadReferenceOptions, loadTeamMembers, referenceOptions, teamMembers]);
 
@@ -63,15 +63,16 @@ export default function AccessPage() {
     api.get("/auth/me")
       .then(async ({ data }) => {
         setUser(data.user);
-        await Promise.all([loadContents(), loadReferenceOptions()]);
+        await Promise.all([loadContents(), loadReferenceOptions(), loadTeamMembers(true)]);
       })
       .catch(() => setUser(null))
       .finally(() => setChecking(false));
-  }, [loadContents, loadReferenceOptions]);
+  }, [loadContents, loadReferenceOptions, loadTeamMembers]);
 
   function handleLogin(authenticatedUser) {
     setUser(authenticatedUser);
     refreshAll();
+    loadTeamMembers(true);
   }
 
   async function logout() {
@@ -100,7 +101,7 @@ export default function AccessPage() {
             </div>
           </header>
           {dashboardError && <p className="mb-6 rounded-2xl border border-primary/40 bg-primary/10 p-4 text-sm font-semibold text-primary" role="status">{dashboardError}</p>}
-          <EditorialDashboard user={user} contents={contents} refresh={refreshAll} teamMembers={teamMembers} referenceOptions={referenceOptions} ensureFormData={ensureFormData} onReferenceCreated={refreshAll} />
+          <EditorialDashboard user={user} contents={contents} refresh={refreshAll} refreshTeam={() => loadTeamMembers(true)} teamMembers={teamMembers} referenceOptions={referenceOptions} ensureFormData={ensureFormData} onReferenceCreated={refreshAll} />
         </>}
       </Container>
     </main>

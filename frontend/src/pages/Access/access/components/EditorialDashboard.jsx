@@ -10,8 +10,9 @@ import ContentForm from "./ContentForm";
 import ContentPreviewModal from "./ContentPreviewModal";
 import Modal from "./Modal";
 import PendingApprovals from "./PendingApprovals";
+import TeamManagement from "./TeamManagement";
 
-export default function EditorialDashboard({ user, contents, refresh, teamMembers, referenceOptions, ensureFormData, onReferenceCreated }) {
+export default function EditorialDashboard({ user, contents, refresh, refreshTeam, teamMembers, referenceOptions, ensureFormData, onReferenceCreated }) {
   const [activeArea, setActiveArea] = useState(null);
   const [addDefaults, setAddDefaults] = useState(null);
   const [editingContent, setEditingContent] = useState(null);
@@ -57,6 +58,7 @@ export default function EditorialDashboard({ user, contents, refresh, teamMember
       {user.role === "COORDINATOR" && (
         <PendingApprovals contents={contents} refresh={refresh} onEdit={editContent} onOpen={openContent} />
       )}
+      <TeamManagement members={teamMembers} refresh={refreshTeam} user={user} />
 
       <section className="rounded-3xl border border-border bg-card p-6 md:p-9">
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">

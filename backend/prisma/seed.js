@@ -74,40 +74,54 @@ async function main() {
   console.log("Contas iniciais configuradas.");
 
   let teamCount = 0;
-  const teamSeedNames = teamSeeds.map((member) => member.name);
-
-  await prisma.teamMember.deleteMany({
-    where: {
-      name: { notIn: teamSeedNames },
-    },
+  const initialTeamSeedKey = "initial-team-members-v1";
+  const initialTeamSeed = await prisma.seedState.findUnique({
+    where: { key: initialTeamSeedKey },
   });
 
-  for (const member of teamSeeds) {
-    await prisma.teamMember.upsert({
-      where: { name: member.name },
-      update: {
-        role: member.role,
-        bio: member.bio,
-        profileUrl: member.profileUrl || null,
-        links: memberLinks(member),
-        group: member.group,
-        sortOrder: member.sortOrder,
-        active: true,
-      },
-      create: {
-        name: member.name,
-        role: member.role,
-        bio: member.bio,
-        profileUrl: member.profileUrl || null,
-        links: memberLinks(member),
-        group: member.group,
-        sortOrder: member.sortOrder,
+  if (!initialTeamSeed) {
+    const teamSeedNames = teamSeeds.map((member) => member.name);
+    await prisma.teamMember.deleteMany({
+      where: {
+        name: { notIn: teamSeedNames },
       },
     });
-    teamCount += 1;
+
+    for (const member of teamSeeds) {
+      await prisma.teamMember.upsert({
+        where: { name: member.name },
+        update: {
+          role: member.role,
+          bio: member.bio,
+          profileUrl: member.profileUrl || null,
+          links: memberLinks(member),
+          group: member.group,
+          sortOrder: member.sortOrder,
+          active: true,
+        },
+        create: {
+          name: member.name,
+          role: member.role,
+          bio: member.bio,
+          profileUrl: member.profileUrl || null,
+          links: memberLinks(member),
+          group: member.group,
+          sortOrder: member.sortOrder,
+        },
+      });
+      teamCount += 1;
+    }
+
+    await prisma.seedState.upsert({
+      where: { key: initialTeamSeedKey },
+      update: {},
+      create: { key: initialTeamSeedKey },
+    });
   }
 
-  console.log(`Equipe configurada. Membros: ${teamCount}.`);
+  console.log(teamCount > 0
+    ? `Equipe inicial configurada. Membros: ${teamCount}.`
+    : "Equipe preservada conforme o dashboard administrativo.");
 
   const seedUser = seedUserEmail
     ? await prisma.user.findUnique({ where: { email: seedUserEmail } })

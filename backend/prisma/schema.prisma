@@ -34,6 +34,8 @@ model User {
   role         Role
   active       Boolean   @default(true)
   contents     Content[]
+  teamChangesSubmitted TeamMemberChange[] @relation("TeamChangeSubmitter")
+  teamChangesReviewed  TeamMemberChange[] @relation("TeamChangeReviewer")
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }
@@ -49,8 +51,28 @@ model TeamMember {
   sortOrder Int       @default(0)
   active    Boolean   @default(true)
   contents  Content[]
+  changes   TeamMemberChange[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+}
+
+model TeamMemberChange {
+  id             String      @id @default(cuid())
+  status         String      @default("PENDING")
+  payload        Json
+  teamMemberId   String
+  teamMember     TeamMember  @relation(fields: [teamMemberId], references: [id], onDelete: Cascade)
+  submittedById  String
+  submittedBy    User        @relation("TeamChangeSubmitter", fields: [submittedById], references: [id], onDelete: Restrict)
+  reviewedById   String?
+  reviewedBy     User?       @relation("TeamChangeReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt     DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([status, createdAt])
+  @@index([teamMemberId])
+  @@index([submittedById])
 }
 
 model Content {

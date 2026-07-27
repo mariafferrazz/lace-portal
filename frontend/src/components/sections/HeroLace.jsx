@@ -10,10 +10,10 @@ export default function HeroLace({ onOpenAbout }) {
           <div className="relative w-full max-w-5xl">
             <div className="relative overflow-hidden rounded-3xl border border-primary/40 bg-black shadow-[0_16px_44px_rgba(0,0,0,0.35)]">
               <img
-                src="https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000101-1bbcb1bbcf/LACEE-6.webp?ph=3554c7d1fd"
-                alt="Integrantes do Laboratório LACE"
-                width="800"
-                height="600"
+                src="/lace-home.png"
+                alt="LACE — Laboratório de Agenciamentos Cotidianos e Experiências"
+                width="1983"
+                height="793"
                 className="h-auto w-full object-contain"
                 loading="eager"
                 fetchPriority="high"
