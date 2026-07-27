@@ -55,7 +55,7 @@ export default function ArticleFields({ form, actions, referenceOptions }) {
         </div>
         <RelationPicker label="Autores cadastrados *" description="Marque a autoria deste artigo." searchPlaceholder="Buscar autor pelo nome" options={referenceOptions.articleAuthors || []} selectedIds={form.articleAuthorIds} onToggle={(id) => actions.toggleId("articleAuthorIds", id)} emptyMessage="Nenhum autor cadastrado. Use o botão Adicionar autor." />
         <div>
-          <Button type="button" variant="outline" onClick={() => setShowAuthorForm((value) => !value)}><Plus size={15} /> Adicionar autor</Button>
+          <Button className="inline-flex min-w-56 flex-nowrap items-center justify-center gap-2 whitespace-nowrap" type="button" variant="outline" onClick={() => setShowAuthorForm((value) => !value)}><Plus className="shrink-0" size={15} /><span>Adicionar autor</span></Button>
           {showAuthorForm && <div className="mt-4 grid gap-4 rounded-2xl border border-border bg-background p-4"><label className="font-semibold">Nome do autor *<input className={fieldClass} value={authorName} onChange={(event) => setAuthorName(event.target.value)} /></label><label className="font-semibold">Descrição do autor (opcional)<textarea className={`${fieldClass} min-h-24 resize-y`} value={authorDescription} onChange={(event) => setAuthorDescription(event.target.value)} /></label><Button type="button" disabled={creating || !authorName.trim()} onClick={createAuthor}>{creating ? "Salvando autor..." : "Salvar autor e selecionar"}</Button></div>}
         </div>
         <div className="border-t border-border pt-5">

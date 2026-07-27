@@ -10,6 +10,26 @@ const accounts = [
   { prefix: "CONTRIBUTOR", role: "CONTRIBUTOR", required: false, displayName: "Pesquisadores" },
 ];
 
+function metadataObject(value) {
+  if (!value) return {};
+  if (typeof value !== "string") return value;
+
+  try {
+    return JSON.parse(value);
+  } catch {
+    return {};
+  }
+}
+
+function articleAuthorNames(content) {
+  const metadata = metadataObject(content.metadata);
+  if (Array.isArray(metadata.authors)) return metadata.authors.filter(Boolean);
+
+  return [metadata.authorName || metadata.authors || content.researcherName]
+    .map((name) => String(name || "").trim())
+    .filter(Boolean);
+}
+
 async function main() {
   let seedUserEmail = null;
 
@@ -108,7 +128,61 @@ async function main() {
     }
   }
 
+  const legacyArticleAuthorNames = [...new Set(
+    contentSeeds
+      .filter((seed) => seed.type === "ARTICLE")
+      .flatMap(articleAuthorNames),
+  )];
+  const articleAuthorsByName = new Map();
+
+  for (const authorName of legacyArticleAuthorNames) {
+    const existingAuthor = await prisma.content.findFirst({
+      where: { type: "ARTICLE_AUTHOR", title: authorName },
+    });
+    const authorMetadata = {
+      ...metadataObject(existingAuthor?.metadata),
+      editorialArea: "PRODUCAO_ACADEMICA",
+      pageKind: "ARTICLE_AUTHOR",
+    };
+    const author = existingAuthor
+      ? await prisma.content.update({
+        where: { id: existingAuthor.id },
+        data: { published: true, metadata: authorMetadata },
+      })
+      : await prisma.content.create({
+        data: {
+          title: authorName,
+          type: "ARTICLE_AUTHOR",
+          researcherName: "Equipe LACE",
+          published: true,
+          metadata: authorMetadata,
+          createdById: seedUser.id,
+        },
+      });
+
+    articleAuthorsByName.set(authorName, author.id);
+  }
+
+  const legacyArticles = await prisma.content.findMany({ where: { type: "ARTICLE" } });
+  let linkedArticles = 0;
+  for (const article of legacyArticles) {
+    const metadata = metadataObject(article.metadata);
+    if (Array.isArray(metadata.authorIds) && metadata.authorIds.length > 0) continue;
+
+    const authorIds = articleAuthorNames(article)
+      .map((name) => articleAuthorsByName.get(name))
+      .filter(Boolean);
+    if (authorIds.length === 0) continue;
+
+    await prisma.content.update({
+      where: { id: article.id },
+      data: { metadata: { ...metadata, authorIds } },
+    });
+    linkedArticles += 1;
+  }
+
   console.log(`Conteúdos iniciais configurados. Criados: ${created}. Atualizados: ${updated}.`);
+  console.log(`Autores de artigos configurados: ${articleAuthorsByName.size}. Artigos vinculados: ${linkedArticles}.`);
 }
 
 main()

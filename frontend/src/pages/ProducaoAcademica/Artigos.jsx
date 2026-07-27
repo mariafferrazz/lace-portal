@@ -242,8 +242,19 @@ function articleFromContent(content) {
   };
 }
 
-function mergeDynamicAuthors(dynamicContents) {
+function mergeDynamicAuthors(dynamicContents, dynamicAuthorContents) {
   const grouped = new Map(authors.map((author) => [author.name, { ...author, articles: [...author.articles] }]));
+
+  dynamicAuthorContents.forEach((authorContent) => {
+    const current = grouped.get(authorContent.title) || { name: authorContent.title, articles: [] };
+    grouped.set(authorContent.title, {
+      ...current,
+      bio: authorContent.description || current.bio,
+      image: contentImage(authorContent) || current.image,
+      website: authorContent.externalUrl || authorContent.metadata?.website || current.website,
+      articles: [...current.articles],
+    });
+  });
 
   dynamicContents.forEach((content) => {
     const article = articleFromContent(content);
@@ -276,14 +287,18 @@ function mergeDynamicAuthors(dynamicContents) {
     });
   });
 
-  return [...grouped.values()];
+  return [...grouped.values()].sort((first, second) => first.name.localeCompare(second.name, "pt-BR"));
 }
 
 export default function Artigos() {
   const location = useLocation();
   const navigate = useNavigate();
   const [dynamicContents, setDynamicContents] = useState([]);
-  const allAuthors = useMemo(() => mergeDynamicAuthors(dynamicContents), [dynamicContents]);
+  const [dynamicAuthorContents, setDynamicAuthorContents] = useState([]);
+  const allAuthors = useMemo(
+    () => mergeDynamicAuthors(dynamicContents, dynamicAuthorContents),
+    [dynamicAuthorContents, dynamicContents],
+  );
   const activeAuthor = useMemo(() => {
     const hash = location.hash.replace("#", "");
     return hash ? allAuthors.find((item) => authorSlug(item.name) === hash) || null : null;
@@ -291,13 +306,19 @@ export default function Artigos() {
 
   useEffect(() => {
     let active = true;
-    api
-      .get("/contents", { params: { type: "ARTICLE" } })
-      .then(({ data }) => {
-        if (active) setDynamicContents(data.contents || []);
+    Promise.all([
+      api.get("/contents", { params: { type: "ARTICLE" } }),
+      api.get("/contents", { params: { type: "ARTICLE_AUTHOR" } }),
+    ])
+      .then(([articlesResponse, authorsResponse]) => {
+        if (!active) return;
+        setDynamicContents(articlesResponse.data.contents || []);
+        setDynamicAuthorContents(authorsResponse.data.contents || []);
       })
       .catch(() => {
-        if (active) setDynamicContents([]);
+        if (!active) return;
+        setDynamicContents([]);
+        setDynamicAuthorContents([]);
       });
     return () => {
       active = false;
