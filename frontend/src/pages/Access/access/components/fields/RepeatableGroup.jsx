@@ -9,8 +9,8 @@ export default function RepeatableGroup({ title, description, items, onAdd, onRe
           <h4 className="font-title text-xl text-text">{title}</h4>
           {description && <p className="mt-1 text-sm leading-6 text-muted">{description}</p>}
         </div>
-        <Button type="button" variant="outline" className="self-start" onClick={onAdd}>
-          <Plus size={15} aria-hidden="true" /> {addLabel}
+        <Button type="button" variant="outline" className="inline-flex min-w-56 flex-none flex-nowrap items-center justify-center gap-2 self-start whitespace-nowrap" onClick={onAdd}>
+          <Plus className="shrink-0" size={15} aria-hidden="true" /> <span>{addLabel}</span>
         </Button>
       </div>
 

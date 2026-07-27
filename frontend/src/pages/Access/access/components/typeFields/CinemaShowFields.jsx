@@ -54,21 +54,22 @@ export default function CinemaShowFields({ form, actions, referenceOptions }) {
           onRemove={(index) => actions.removeObject("sessions", index, actions.emptySession)}
           addLabel="Adicionar sessão"
           renderItem={(session, sessionIndex) => (
-            <div className="grid gap-5">
-              <div className="grid gap-4 md:grid-cols-2">
+            <div className="flex min-w-0 flex-col gap-5">
+              <div className="grid min-w-0 gap-4 md:grid-cols-2">
                 <label className="font-semibold">Data<input className={fieldClass} inputMode="numeric" placeholder="dd/mm/aaaa" maxLength={10} value={session.date} onChange={(event) => actions.updateObject("sessions", sessionIndex, "date", formatDateInput(event.target.value))} /></label>
                 <label className="font-semibold">Título da sessão <span className="font-normal text-muted">(opcional)</span><input className={fieldClass} placeholder="Ex.: Debate com realizadores" value={session.title} onChange={(event) => actions.updateObject("sessions", sessionIndex, "title", event.target.value)} /></label>
               </div>
 
-              <RepeatableGroup
-                title="Filmes desta sessão"
-                description="No calendário público, cada filme terá seu próprio botão: Assistir ao filme 1, 2, 3 e assim por diante."
-                items={session.films}
-                onAdd={() => actions.addNestedObject("sessions", sessionIndex, "films", actions.emptySessionFilm)}
-                onRemove={(filmIndex) => actions.removeNestedObject("sessions", sessionIndex, "films", filmIndex, actions.emptySessionFilm)}
-                addLabel="Adicionar outro filme"
-                renderItem={(sessionFilm, filmIndex) => (
-                  <div className="grid gap-4 md:grid-cols-2">
+              <div className="min-w-0 w-full">
+                <RepeatableGroup
+                  title="Filmes desta sessão"
+                  description="No calendário público, cada filme terá seu próprio botão: Assistir ao filme 1, 2, 3 e assim por diante."
+                  items={session.films}
+                  onAdd={() => actions.addNestedObject("sessions", sessionIndex, "films", actions.emptySessionFilm)}
+                  onRemove={(filmIndex) => actions.removeNestedObject("sessions", sessionIndex, "films", filmIndex, actions.emptySessionFilm)}
+                  addLabel="Adicionar outro filme"
+                  renderItem={(sessionFilm, filmIndex) => (
+                    <div className="grid gap-4 md:grid-cols-2">
                     <label className="font-semibold md:col-span-2">Filme do acervo
                       <select
                         className={`${fieldClass} ${sessionFilm.addToDatabase ? "cursor-not-allowed opacity-60" : ""}`}
@@ -100,9 +101,10 @@ export default function CinemaShowFields({ form, actions, referenceOptions }) {
                         {sessionFilm.filmId && <p className="text-sm leading-6 text-muted md:col-span-2">Título, URL, direção e ano vêm diretamente do cadastro do filme. Para alterá-los em todas as páginas vinculadas, edite o filme na área Cinema e Ditadura → Filmes.</p>}
                       </>
                     )}
-                  </div>
-                )}
-              />
+                    </div>
+                  )}
+                />
+              </div>
 
               <MultiUrlField className="md:col-span-2" label="Link do vídeo da sessão" values={session.sessionUrls} onChange={(urlIndex, value) => actions.updateNestedUrlList("sessions", sessionIndex, "sessionUrls", urlIndex, value)} onAdd={() => actions.addNestedUrl("sessions", sessionIndex, "sessionUrls")} onRemove={(urlIndex) => actions.removeNestedUrl("sessions", sessionIndex, "sessionUrls", urlIndex)} />
             </div>
