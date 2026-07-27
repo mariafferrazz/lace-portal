@@ -6,7 +6,7 @@ import Container from "../../components/ui/Container";
 import api from "../../services/api";
 import { contentFileUrls, contentImage } from "../../utils/contentMetadata";
 
-const authors = [
+const legacyAuthorsFallback = [
   {
     name: "Joana D'Arc Fernandes Ferraz",
     articles: [
@@ -242,8 +242,9 @@ function articleFromContent(content) {
   };
 }
 
-function mergeDynamicAuthors(dynamicContents, dynamicAuthorContents) {
-  const grouped = new Map(authors.map((author) => [author.name, { ...author, articles: [...author.articles] }]));
+function mergeDynamicAuthors(dynamicContents, dynamicAuthorContents, useFallback) {
+  const fallbackAuthors = useFallback ? legacyAuthorsFallback : [];
+  const grouped = new Map(fallbackAuthors.map((author) => [author.name, { ...author, articles: [...author.articles] }]));
 
   dynamicAuthorContents.forEach((authorContent) => {
     const current = grouped.get(authorContent.title) || { name: authorContent.title, articles: [] };
@@ -295,9 +296,10 @@ export default function Artigos() {
   const navigate = useNavigate();
   const [dynamicContents, setDynamicContents] = useState([]);
   const [dynamicAuthorContents, setDynamicAuthorContents] = useState([]);
+  const [sourceUnavailable, setSourceUnavailable] = useState(false);
   const allAuthors = useMemo(
-    () => mergeDynamicAuthors(dynamicContents, dynamicAuthorContents),
-    [dynamicAuthorContents, dynamicContents],
+    () => mergeDynamicAuthors(dynamicContents, dynamicAuthorContents, sourceUnavailable),
+    [dynamicAuthorContents, dynamicContents, sourceUnavailable],
   );
   const activeAuthor = useMemo(() => {
     const hash = location.hash.replace("#", "");
@@ -314,11 +316,13 @@ export default function Artigos() {
         if (!active) return;
         setDynamicContents(articlesResponse.data.contents || []);
         setDynamicAuthorContents(authorsResponse.data.contents || []);
+        setSourceUnavailable(false);
       })
       .catch(() => {
         if (!active) return;
         setDynamicContents([]);
         setDynamicAuthorContents([]);
+        setSourceUnavailable(true);
       });
     return () => {
       active = false;

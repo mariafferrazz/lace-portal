@@ -173,6 +173,31 @@ export default function useContentForm({ content, initialArea, initialType, onCr
     }
   }
 
+  async function removeArticleAuthor(author) {
+    try {
+      setStatus(null);
+      const { data } = await api.delete(`/contents/${author.id}`);
+      setForm((current) => ({
+        ...current,
+        articleAuthorIds: current.articleAuthorIds.filter((authorId) => authorId !== author.id),
+      }));
+      await onReferenceCreated?.();
+      const deletedWorks = Number(data.deletedWorks || 0);
+      const preservedSharedWorks = Number(data.preservedSharedWorks || 0);
+      const sharedMessage = preservedSharedWorks > 0
+        ? ` ${preservedSharedWorks} ${preservedSharedWorks === 1 ? "artigo em coautoria foi preservado" : "artigos em coautoria foram preservados"}.`
+        : "";
+      setStatus({
+        ok: true,
+        message: `${author.title} foi removido(a). ${deletedWorks} ${deletedWorks === 1 ? "artigo exclusivo foi excluído" : "artigos exclusivos foram excluídos"}.${sharedMessage}`,
+      });
+      return data;
+    } catch (error) {
+      setStatus({ ok: false, message: apiError(error) });
+      throw error;
+    }
+  }
+
   async function submit(event) {
     event.preventDefault();
     setLoading(true);
@@ -282,6 +307,7 @@ export default function useContentForm({ content, initialArea, initialType, onCr
     toggleId,
     updateImageFile,
     createArticleAuthor,
+    removeArticleAuthor,
     emptyEpisode,
     emptyPerson,
     emptyCredit,

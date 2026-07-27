@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { compactFieldClass } from "../../constants";
 
-export default function RelationPicker({ label, description, options = [], selectedIds = [], onToggle, emptyMessage = "Nenhum item cadastrado.", searchPlaceholder = "Buscar pelo título" }) {
+export default function RelationPicker({ label, description, options = [], selectedIds = [], onToggle, onRemoveOption, removingOptionId = "", emptyMessage = "Nenhum item cadastrado.", searchPlaceholder = "Buscar pelo título" }) {
   const [query, setQuery] = useState("");
   const visible = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -21,13 +21,27 @@ export default function RelationPicker({ label, description, options = [], selec
         {visible.length === 0 ? (
           <p className="text-sm font-normal text-muted">{emptyMessage}</p>
         ) : visible.map((option) => (
-          <label key={option.id} className="flex cursor-pointer items-start gap-3 rounded-xl border border-transparent p-2 font-normal transition hover:border-primary/30 hover:bg-primary/5">
-            <input className="mt-1 size-4 accent-primary" type="checkbox" checked={selectedIds.includes(option.id)} onChange={() => onToggle(option.id)} />
-            <span>
-              <span className="block font-semibold text-text">{option.title}</span>
-              {option.subtitle && <span className="mt-1 block text-xs text-muted">{option.subtitle}</span>}
-            </span>
-          </label>
+          <div key={option.id} className="flex items-start gap-2 rounded-xl border border-transparent p-2 font-normal transition hover:border-primary/30 hover:bg-primary/5">
+            <label className="flex min-w-0 flex-1 cursor-pointer items-start gap-3">
+              <input className="mt-1 size-4 shrink-0 accent-primary" type="checkbox" checked={selectedIds.includes(option.id)} onChange={() => onToggle(option.id)} />
+              <span className="min-w-0">
+                <span className="block font-semibold text-text">{option.title}</span>
+                {option.subtitle && <span className="mt-1 block text-xs text-muted">{option.subtitle}</span>}
+              </span>
+            </label>
+            {onRemoveOption && (
+              <button
+                className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-xl border border-red-500/50 text-red-700 transition hover:border-red-500 hover:bg-red-600 hover:text-white disabled:cursor-wait disabled:opacity-50 dark:text-red-300 dark:hover:text-white"
+                type="button"
+                aria-label={`Remover ${option.title} e suas obras`}
+                title="Remover autor e suas obras"
+                disabled={removingOptionId === option.id}
+                onClick={() => onRemoveOption(option)}
+              >
+                <Trash2 size={17} aria-hidden="true" />
+              </button>
+            )}
+          </div>
         ))}
       </div>
     </div>

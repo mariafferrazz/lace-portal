@@ -100,7 +100,7 @@ export default function AccessPage() {
             </div>
           </header>
           {dashboardError && <p className="mb-6 rounded-2xl border border-primary/40 bg-primary/10 p-4 text-sm font-semibold text-primary" role="status">{dashboardError}</p>}
-          <EditorialDashboard user={user} contents={contents} refresh={refreshAll} teamMembers={teamMembers} referenceOptions={referenceOptions} ensureFormData={ensureFormData} onReferenceCreated={loadReferenceOptions} />
+          <EditorialDashboard user={user} contents={contents} refresh={refreshAll} teamMembers={teamMembers} referenceOptions={referenceOptions} ensureFormData={ensureFormData} onReferenceCreated={refreshAll} />
         </>}
       </Container>
     </main>

@@ -20,7 +20,7 @@ const components = {
   EVENT: EventFields,
 };
 
-export default function ContentTypeFields({ form, actions, referenceOptions }) {
+export default function ContentTypeFields({ form, actions, referenceOptions, canManageAuthors = false }) {
   const Component = components[form.type];
-  return Component ? <Component form={form} actions={actions} referenceOptions={referenceOptions} /> : null;
+  return Component ? <Component form={form} actions={actions} referenceOptions={referenceOptions} canManageAuthors={canManageAuthors} /> : null;
 }

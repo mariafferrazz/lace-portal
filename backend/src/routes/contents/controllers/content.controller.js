@@ -169,8 +169,9 @@ async function update(req, res) {
 }
 
 async function remove(req, res) {
-  await deleteContent(req.params.id);
-  return res.status(204).end();
+  const result = await deleteContent(req.params.id);
+  if (!result) return res.status(404).json({ error: "Conteúdo não encontrado." });
+  return res.json(result);
 }
 
 module.exports = {

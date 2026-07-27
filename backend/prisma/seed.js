@@ -97,9 +97,15 @@ async function main() {
     : await prisma.user.findFirst({ orderBy: { createdAt: "asc" } });
   if (!seedUser) throw new Error("Nenhum usuário disponível para vincular conteúdos iniciais.");
 
+  const legacyArticleSeedKey = "legacy-article-library-v1";
+  const legacyArticleLibrary = await prisma.seedState.findUnique({
+    where: { key: legacyArticleSeedKey },
+  });
   let created = 0;
   let updated = 0;
   for (const seed of contentSeeds) {
+    if (seed.type === "ARTICLE" && legacyArticleLibrary) continue;
+
     const existing = await prisma.content.findFirst({
       where: {
         title: seed.title,
@@ -128,61 +134,73 @@ async function main() {
     }
   }
 
-  const legacyArticleAuthorNames = [...new Set(
-    contentSeeds
-      .filter((seed) => seed.type === "ARTICLE")
-      .flatMap(articleAuthorNames),
-  )];
-  const articleAuthorsByName = new Map();
-
-  for (const authorName of legacyArticleAuthorNames) {
-    const existingAuthor = await prisma.content.findFirst({
-      where: { type: "ARTICLE_AUTHOR", title: authorName },
-    });
-    const authorMetadata = {
-      ...metadataObject(existingAuthor?.metadata),
-      editorialArea: "PRODUCAO_ACADEMICA",
-      pageKind: "ARTICLE_AUTHOR",
-    };
-    const author = existingAuthor
-      ? await prisma.content.update({
-        where: { id: existingAuthor.id },
-        data: { published: true, metadata: authorMetadata },
-      })
-      : await prisma.content.create({
-        data: {
-          title: authorName,
-          type: "ARTICLE_AUTHOR",
-          researcherName: "Equipe LACE",
-          published: true,
-          metadata: authorMetadata,
-          createdById: seedUser.id,
-        },
-      });
-
-    articleAuthorsByName.set(authorName, author.id);
-  }
-
-  const legacyArticles = await prisma.content.findMany({ where: { type: "ARTICLE" } });
+  let configuredAuthors = 0;
   let linkedArticles = 0;
-  for (const article of legacyArticles) {
-    const metadata = metadataObject(article.metadata);
-    if (Array.isArray(metadata.authorIds) && metadata.authorIds.length > 0) continue;
+  if (!legacyArticleLibrary) {
+    const legacyArticleAuthorNames = [...new Set(
+      contentSeeds
+        .filter((seed) => seed.type === "ARTICLE")
+        .flatMap(articleAuthorNames),
+    )];
+    const articleAuthorsByName = new Map();
 
-    const authorIds = articleAuthorNames(article)
-      .map((name) => articleAuthorsByName.get(name))
-      .filter(Boolean);
-    if (authorIds.length === 0) continue;
+    for (const authorName of legacyArticleAuthorNames) {
+      const existingAuthor = await prisma.content.findFirst({
+        where: { type: "ARTICLE_AUTHOR", title: authorName },
+      });
+      const authorMetadata = {
+        ...metadataObject(existingAuthor?.metadata),
+        editorialArea: "PRODUCAO_ACADEMICA",
+        pageKind: "ARTICLE_AUTHOR",
+      };
+      const author = existingAuthor
+        ? await prisma.content.update({
+          where: { id: existingAuthor.id },
+          data: { published: true, metadata: authorMetadata },
+        })
+        : await prisma.content.create({
+          data: {
+            title: authorName,
+            type: "ARTICLE_AUTHOR",
+            researcherName: "Equipe LACE",
+            published: true,
+            metadata: authorMetadata,
+            createdById: seedUser.id,
+          },
+        });
 
-    await prisma.content.update({
-      where: { id: article.id },
-      data: { metadata: { ...metadata, authorIds } },
+      articleAuthorsByName.set(authorName, author.id);
+    }
+
+    const legacyArticles = await prisma.content.findMany({ where: { type: "ARTICLE" } });
+    for (const article of legacyArticles) {
+      const metadata = metadataObject(article.metadata);
+      if (Array.isArray(metadata.authorIds) && metadata.authorIds.length > 0) continue;
+
+      const authorIds = articleAuthorNames(article)
+        .map((name) => articleAuthorsByName.get(name))
+        .filter(Boolean);
+      if (authorIds.length === 0) continue;
+
+      await prisma.content.update({
+        where: { id: article.id },
+        data: { metadata: { ...metadata, authorIds } },
+      });
+      linkedArticles += 1;
+    }
+
+    configuredAuthors = articleAuthorsByName.size;
+    await prisma.seedState.upsert({
+      where: { key: legacyArticleSeedKey },
+      update: {},
+      create: { key: legacyArticleSeedKey },
     });
-    linkedArticles += 1;
   }
 
   console.log(`Conteúdos iniciais configurados. Criados: ${created}. Atualizados: ${updated}.`);
-  console.log(`Autores de artigos configurados: ${articleAuthorsByName.size}. Artigos vinculados: ${linkedArticles}.`);
+  if (configuredAuthors > 0) {
+    console.log(`Autores de artigos configurados: ${configuredAuthors}. Artigos vinculados: ${linkedArticles}.`);
+  }
 }
 
 main()

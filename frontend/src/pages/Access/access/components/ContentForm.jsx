@@ -4,7 +4,7 @@ import { contentAreas, contentTypes, fieldClass } from "../constants";
 import useContentForm from "../hooks/useContentForm";
 import ContentTypeFields from "./typeFields/ContentTypeFields";
 
-export default function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, onClose, content = null, teamMembers = [], referenceOptions = {}, onReferenceCreated }) {
+export default function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, onClose, content = null, teamMembers = [], referenceOptions = {}, onReferenceCreated, canManageAuthors = false }) {
   const actions = useContentForm({ content, initialArea, initialType, onCreated, onClose, teamMembers, onReferenceCreated });
   const { form, status, loading, isEditing, submit } = actions;
 
@@ -20,7 +20,7 @@ export default function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA"
           <label className="font-semibold md:col-span-2">Título *<input className={fieldClass} required maxLength={200} placeholder={form.type === "CINEMA_SHOW" ? "VIII Mostra Cinema e Ditadura" : ""} value={form.title} onChange={actions.update("title")} /></label>
         )}
 
-        <ContentTypeFields form={form} actions={actions} referenceOptions={referenceOptions} />
+        <ContentTypeFields form={form} actions={actions} referenceOptions={referenceOptions} canManageAuthors={canManageAuthors} />
 
         <label className="font-semibold md:col-span-2">Responsável pelo cadastro<select className={fieldClass} value={form.researcherMemberId} onChange={actions.updateResearcher}><option value="">Equipe LACE / não informar</option>{teamMembers.map((member) => <option key={member.id} value={member.id}>{member.name}</option>)}{form.researcherMemberId.startsWith("name:") && <option value={form.researcherMemberId}>{form.researcherName}</option>}</select></label>
 

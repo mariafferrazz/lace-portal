@@ -127,6 +127,7 @@ export default function EditorialDashboard({ user, contents, refresh, teamMember
             teamMembers={teamMembers}
             referenceOptions={referenceOptions}
             onReferenceCreated={onReferenceCreated}
+            canManageAuthors={user.role === "COORDINATOR"}
           />
         </Modal>
       )}
@@ -140,6 +141,7 @@ export default function EditorialDashboard({ user, contents, refresh, teamMember
             teamMembers={teamMembers}
             referenceOptions={referenceOptions}
             onReferenceCreated={onReferenceCreated}
+            canManageAuthors={user.role === "COORDINATOR"}
           />
         </Modal>
       )}

@@ -294,18 +294,30 @@ async function findManageContent(id) {
 
 async function listManageReferenceOptions() {
   const rows = await prisma.content.findMany({
-    where: { type: { in: ["FILM", "ARTICLE_AUTHOR"] } },
+    where: { type: { in: ["FILM", "ARTICLE_AUTHOR", "ARTICLE"] } },
     select: { id: true, title: true, type: true, researcherName: true, externalUrl: true, metadata: true },
+  });
+  const articleCountsByAuthor = new Map();
+  rows.filter((content) => content.type === "ARTICLE").forEach((content) => {
+    const metadata = parseMetadata(content.metadata);
+    const authorIds = Array.isArray(metadata.authorIds) ? metadata.authorIds : [];
+    authorIds.forEach((authorId) => {
+      articleCountsByAuthor.set(authorId, (articleCountsByAuthor.get(authorId) || 0) + 1);
+    });
   });
   const toOption = (content) => {
     const metadata = parseMetadata(content.metadata);
+    const articleCount = content.type === "ARTICLE_AUTHOR" ? articleCountsByAuthor.get(content.id) || 0 : undefined;
     return {
       id: content.id,
       title: content.title,
-      subtitle: content.researcherName || undefined,
+      subtitle: content.type === "ARTICLE_AUTHOR"
+        ? `${articleCount} ${articleCount === 1 ? "artigo vinculado" : "artigos vinculados"}`
+        : content.researcherName || undefined,
       url: content.externalUrl || metadata.videoUrl || "",
       direction: metadata.direction || metadata.director || "",
       year: String(metadata.year || metadata.releaseYear || ""),
+      articleCount,
     };
   };
   const byTitle = (left, right) => left.title.localeCompare(right.title, "pt-BR");
@@ -336,7 +348,41 @@ async function updateContent(id, data) {
 }
 
 async function deleteContent(id) {
-  return prisma.content.delete({ where: { id } });
+  const content = await prisma.content.findUnique({ where: { id } });
+  if (!content) return null;
+
+  if (content.type !== "ARTICLE_AUTHOR") {
+    const deletedContent = await prisma.content.delete({ where: { id } });
+    return { deletedContent, deletedWorks: 0, preservedSharedWorks: 0 };
+  }
+
+  const articles = await prisma.content.findMany({
+    where: { type: "ARTICLE" },
+    select: { id: true, metadata: true },
+  });
+  const relatedArticles = articles
+    .map((article) => ({ article, metadata: parseMetadata(article.metadata) }))
+    .filter(({ metadata }) => Array.isArray(metadata.authorIds) && metadata.authorIds.includes(id));
+  const exclusiveArticles = relatedArticles.filter(({ metadata }) => metadata.authorIds.length === 1);
+  const sharedArticles = relatedArticles.filter(({ metadata }) => metadata.authorIds.length > 1);
+  const operations = sharedArticles.map(({ article, metadata }) => prisma.content.update({
+    where: { id: article.id },
+    data: { metadata: { ...metadata, authorIds: metadata.authorIds.filter((authorId) => authorId !== id) } },
+  }));
+
+  if (exclusiveArticles.length > 0) {
+    operations.push(prisma.content.deleteMany({
+      where: { id: { in: exclusiveArticles.map(({ article }) => article.id) } },
+    }));
+  }
+  operations.push(prisma.content.delete({ where: { id } }));
+
+  await prisma.$transaction(operations);
+  return {
+    deletedContent: content,
+    deletedWorks: exclusiveArticles.length,
+    preservedSharedWorks: sharedArticles.length,
+  };
 }
 
 module.exports = {

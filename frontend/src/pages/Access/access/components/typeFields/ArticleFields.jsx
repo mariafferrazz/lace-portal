@@ -12,11 +12,12 @@ function normalizedName(value = "") {
     .toLocaleLowerCase("pt-BR");
 }
 
-export default function ArticleFields({ form, actions, referenceOptions }) {
+export default function ArticleFields({ form, actions, referenceOptions, canManageAuthors = false }) {
   const [showAuthorForm, setShowAuthorForm] = useState(false);
   const [authorName, setAuthorName] = useState("");
   const [authorDescription, setAuthorDescription] = useState("");
   const [creating, setCreating] = useState(false);
+  const [removingAuthorId, setRemovingAuthorId] = useState("");
 
   async function createAuthor() {
     if (!authorName.trim()) return;
@@ -46,6 +47,24 @@ export default function ArticleFields({ form, actions, referenceOptions }) {
     }
   }
 
+  async function removeAuthor(author) {
+    const articleCount = Number(author.articleCount || 0);
+    const workMessage = articleCount === 0
+      ? "Este autor ainda não possui artigos vinculados."
+      : `${articleCount} ${articleCount === 1 ? "artigo está vinculado" : "artigos estão vinculados"} a este autor.`;
+    const confirmed = window.confirm(
+      `Remover "${author.title}"?\n\n${workMessage}\nOs artigos exclusivos serão excluídos. Artigos em coautoria serão preservados para os demais autores.`,
+    );
+    if (!confirmed) return;
+
+    setRemovingAuthorId(author.id);
+    try {
+      await actions.removeArticleAuthor(author);
+    } finally {
+      setRemovingAuthorId("");
+    }
+  }
+
   return (
     <section className={sectionClass}>
       <div className="grid gap-5">
@@ -53,7 +72,7 @@ export default function ArticleFields({ form, actions, referenceOptions }) {
           <h3 className="font-title text-2xl text-text">Autoria do artigo</h3>
           <p className="mt-1 text-sm font-normal leading-6 text-muted">Selecione uma ou mais autorias. Ao salvar o artigo, cada novo autor passa a aparecer na página de Artigos do site.</p>
         </div>
-        <RelationPicker label="Autores cadastrados *" description="Marque a autoria deste artigo." searchPlaceholder="Buscar autor pelo nome" options={referenceOptions.articleAuthors || []} selectedIds={form.articleAuthorIds} onToggle={(id) => actions.toggleId("articleAuthorIds", id)} emptyMessage="Nenhum autor cadastrado. Use o botão Adicionar autor." />
+        <RelationPicker label="Autores cadastrados *" description={canManageAuthors ? "Marque a autoria deste artigo. A lixeira remove o autor e suas obras exclusivas." : "Marque a autoria deste artigo."} searchPlaceholder="Buscar autor pelo nome" options={referenceOptions.articleAuthors || []} selectedIds={form.articleAuthorIds} onToggle={(id) => actions.toggleId("articleAuthorIds", id)} onRemoveOption={canManageAuthors ? removeAuthor : undefined} removingOptionId={removingAuthorId} emptyMessage="Nenhum autor cadastrado. Use o botão Adicionar autor." />
         <div>
           <Button className="inline-flex min-w-56 flex-nowrap items-center justify-center gap-2 whitespace-nowrap" type="button" variant="outline" onClick={() => setShowAuthorForm((value) => !value)}><Plus className="shrink-0" size={15} /><span>Adicionar autor</span></Button>
           {showAuthorForm && <div className="mt-4 grid gap-4 rounded-2xl border border-border bg-background p-4"><label className="font-semibold">Nome do autor *<input className={fieldClass} value={authorName} onChange={(event) => setAuthorName(event.target.value)} /></label><label className="font-semibold">Descrição do autor (opcional)<textarea className={`${fieldClass} min-h-24 resize-y`} value={authorDescription} onChange={(event) => setAuthorDescription(event.target.value)} /></label><Button type="button" disabled={creating || !authorName.trim()} onClick={createAuthor}>{creating ? "Salvando autor..." : "Salvar autor e selecionar"}</Button></div>}
