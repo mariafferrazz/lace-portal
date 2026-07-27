@@ -37,7 +37,7 @@ export default function CinemaShowFields({ form, actions, referenceOptions }) {
         <EventYearField value={form.eventYear} onYearChange={actions.update("eventYear")} label="Ano da mostra *" />
         <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-primary/30 bg-background p-4 font-semibold transition hover:border-primary">
           <input className="mt-1 size-5 accent-primary" type="checkbox" checked={form.createCinemaPage} onChange={actions.updateCheckbox("createCinemaPage")} />
-          <span>Criar página em Cinema e Ditadura<span className="mt-1 block text-sm font-normal leading-6 text-muted">O card em Eventos apontará para esta página, em vez de abrir somente um modal.</span></span>
+          <span>Criar página em Cinema e Ditadura</span>
         </label>
         <ImageSourceField className="md:col-span-2" label="Imagem da mostra" values={form.imageUrls} onUrlChange={(index, value) => actions.updateUrlList("imageUrls", index, value)} onUrlAdd={() => actions.addUrl("imageUrls")} onUrlRemove={(index) => actions.removeUrl("imageUrls", index)} onFileChange={actions.updateImageFile} />
         <MultiUrlField className="md:col-span-2" label="Playlist da mostra" values={form.playlistUrls} onChange={(index, value) => actions.updateUrlList("playlistUrls", index, value)} onAdd={() => actions.addUrl("playlistUrls")} onRemove={(index) => actions.removeUrl("playlistUrls", index)} />

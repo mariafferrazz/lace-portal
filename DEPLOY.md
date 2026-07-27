@@ -76,13 +76,13 @@ O arquivo `scripts/google-apps-script-contact.js` tambem precisa estar publicado
 Tambem configure as contas iniciais usadas pelo seed:
 
 ```env
-COORDINATOR_1_NAME=
+COORDINATOR_1_NAME=Joana
 COORDINATOR_1_EMAIL=
 COORDINATOR_1_PASSWORD=
 COORDINATOR_2_NAME=
 COORDINATOR_2_EMAIL=
 COORDINATOR_2_PASSWORD=
-CONTRIBUTOR_NAME=
+CONTRIBUTOR_NAME=Pesquisadores
 CONTRIBUTOR_EMAIL=
 CONTRIBUTOR_PASSWORD=
 ```

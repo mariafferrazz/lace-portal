@@ -5,21 +5,22 @@ const contentSeeds = require("./static-content-seeds.json");
 const teamSeeds = require("./team-seeds.json");
 
 const accounts = [
-  { prefix: "COORDINATOR_1", role: "COORDINATOR", required: true },
+  { prefix: "COORDINATOR_1", role: "COORDINATOR", required: true, displayName: "Joana" },
   { prefix: "COORDINATOR_2", role: "COORDINATOR", required: false },
-  { prefix: "CONTRIBUTOR", role: "CONTRIBUTOR", required: false },
+  { prefix: "CONTRIBUTOR", role: "CONTRIBUTOR", required: false, displayName: "Pesquisadores" },
 ];
 
 async function main() {
   let seedUserEmail = null;
 
-  for (const { prefix, role, required } of accounts) {
-    const name = process.env[`${prefix}_NAME`];
+  for (const { prefix, role, required, displayName } of accounts) {
+    const configuredName = process.env[`${prefix}_NAME`]?.trim();
+    const name = displayName || configuredName;
     const email = process.env[`${prefix}_EMAIL`]?.trim().toLowerCase();
     const password = process.env[`${prefix}_PASSWORD`];
 
+    if (!required && !configuredName && !email && !password) continue;
     if (!name || !email || !password) {
-      if (!required && !name && !email && !password) continue;
       throw new Error(`Configure ${prefix}_NAME, ${prefix}_EMAIL e ${prefix}_PASSWORD.`);
     }
     if (password.length < 8) {
