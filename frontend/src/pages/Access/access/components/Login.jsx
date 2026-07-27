@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck } from "lucide-react";
 import Button from "../../../../components/ui/Button";
 import api, { apiError } from "../../../../services/api";
 import { fieldClass } from "../constants";
@@ -8,6 +8,7 @@ export default function Login({ onLogin }) {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function submit(event) {
     event.preventDefault();
@@ -42,15 +43,27 @@ export default function Login({ onLogin }) {
           />
         </label>
         <label className="block font-semibold">
-          Senha
-          <input
-            className={fieldClass}
-            type="password"
-            autoComplete="current-password"
-            required
-            value={form.password}
-            onChange={(event) => setForm({ ...form, password: event.target.value })}
-          />
+          <span>Senha</span>
+          <div className="relative">
+            <input
+              className={`${fieldClass} pr-14`}
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              required
+              value={form.password}
+              onChange={(event) => setForm({ ...form, password: event.target.value })}
+            />
+            <button
+              type="button"
+              className="absolute bottom-0 right-1 grid size-11 cursor-pointer place-items-center rounded-xl text-muted transition hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+              aria-pressed={showPassword}
+              title={showPassword ? "Ocultar senha" : "Mostrar senha"}
+              onClick={() => setShowPassword((visible) => !visible)}
+            >
+              {showPassword ? <EyeOff size={20} aria-hidden="true" /> : <Eye size={20} aria-hidden="true" />}
+            </button>
+          </div>
         </label>
         {error && (
           <p className="rounded-xl border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-700 dark:text-red-300" role="alert">
