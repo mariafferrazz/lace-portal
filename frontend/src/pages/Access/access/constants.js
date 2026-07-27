@@ -66,6 +66,8 @@ export const initialForm = {
   direction: "",
   filmYear: "",
   authorNames: [""],
+  viralAuthorNames: [""],
+  viralAuthorBio: "",
   articleAuthorIds: [],
   relatedFilmIds: [],
   references: [""],

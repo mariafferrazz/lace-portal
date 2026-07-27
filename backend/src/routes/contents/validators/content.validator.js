@@ -80,8 +80,21 @@ function normalizeEditorialMetadata(data, metadata) {
     metadata.credits = objectList(metadata.credits);
     data.externalUrl = podcastUrl || null;
   } else if (data.type === "VIRAL_ESCAPE_LINES") {
-    metadata.authors = uniqueValues(metadata.authors, metadata.authorNames);
+    const viralAuthors = uniqueValues(
+      metadata.viralAuthors,
+      metadata.authors,
+      metadata.authorNames,
+      metadata.authorName,
+    );
+    metadata.viralAuthors = viralAuthors.length ? viralAuthors : uniqueValues(data.researcherName);
+    metadata.authorBio = String(metadata.viralAuthorBio || metadata.authorBio || data.description || "").trim() || null;
     metadata.bodyText = String(metadata.bodyText || "").trim() || null;
+    delete metadata.authors;
+    delete metadata.authorNames;
+    delete metadata.authorName;
+    delete metadata.viralAuthorBio;
+    delete metadata.images;
+    delete metadata.thumbnail;
   } else if (data.type === "ARTICLE") {
     const pdfUrl = String(metadata.pdfUrl || data.fileUrl || data.externalUrl || "").trim();
     metadata.pdfUrl = pdfUrl || null;

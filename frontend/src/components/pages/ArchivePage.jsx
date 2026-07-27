@@ -24,7 +24,10 @@ function mapContentToItem(content) {
   const { youtubeId, vimeoId, url: videoUrl } = contentVideo(content);
   const fileUrls = contentFileUrls(content);
   const imageUrls = contentImageUrls(content);
-  const authors = Array.isArray(content.metadata?.authors) ? content.metadata.authors.filter(Boolean) : [];
+  const storedAuthors = content.type === "VIRAL_ESCAPE_LINES"
+    ? content.metadata?.viralAuthors || content.metadata?.authors
+    : content.metadata?.authors;
+  const authors = Array.isArray(storedAuthors) ? storedAuthors.filter(Boolean) : [];
 
   return {
     id: content.id,
@@ -47,7 +50,8 @@ function mapContentToItem(content) {
     credits: contentCredits(content),
     soundtrack: content.metadata?.soundtrack || [],
     platform: content.metadata?.platform,
-    authorBio: content.metadata?.authorBio
+    authorBio: content.metadata?.viralAuthorBio
+      || content.metadata?.authorBio
       || (content.type === "VIRAL_ESCAPE_LINES" ? content.description : null),
     researcherUrl: content.metadata?.researcherUrl || content.metadata?.researcherProfileUrl || content.metadata?.lattesUrl || content.metadata?.curriculumUrl || content.metadata?.linkedinUrl,
     images: imageUrls,

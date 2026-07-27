@@ -13,8 +13,9 @@ function ObjectCards({ title, items = [], render }) {
 
 export default function ContentPreviewDetails({ content }) {
   const metadata = content.metadata || {};
+  const descriptionTitle = content.type === "VIRAL_ESCAPE_LINES" ? "Descrição do autor ou autora" : "Descrição";
   return <div className="mt-6 space-y-6">
-    {content.description && <section className="rounded-2xl border border-border bg-card p-5"><h3 className="font-title text-2xl">Descrição</h3><div className="mt-3 whitespace-pre-line leading-7 text-muted">{content.description}</div></section>}
+    {content.description && <section className="rounded-2xl border border-border bg-card p-5"><h3 className="font-title text-2xl">{descriptionTitle}</h3><div className="mt-3 whitespace-pre-line leading-7 text-muted">{content.description}</div></section>}
     {metadata.bodyText && <section className="rounded-2xl border border-border bg-card p-5"><h3 className="font-title text-2xl">Texto</h3><div className="mt-3 whitespace-pre-line leading-7 text-muted">{metadata.bodyText}</div></section>}
     <LinkList title="Mídia principal" urls={[metadata.videoUrl, metadata.podcastUrl, metadata.pdfUrl, content.externalUrl, content.fileUrl]} />
     <ObjectCards title="Episódios" items={metadata.episodes} render={(item) => <><strong>{item.title || "Sem título"}</strong>{item.description && <p className="mt-2 text-muted">{item.description}</p>}{item.url && <a className="mt-3 inline-block text-primary" href={item.url} target="_blank" rel="noreferrer">Abrir episódio</a>}</>} />

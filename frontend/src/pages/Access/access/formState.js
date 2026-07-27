@@ -24,6 +24,31 @@ import {
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 
+function viralAuthorNamesFromContent(content, metadata) {
+  const storedNames = ensureTextList(
+    metadata.viralAuthors,
+    metadata.authors,
+    metadata.authorNames,
+    metadata.authorName,
+  ).filter(Boolean);
+
+  return storedNames.length ? storedNames : ensureTextList(content.researcherName);
+}
+
+function viralAuthorBioFromContent(content, metadata) {
+  return metadata.viralAuthorBio
+    || metadata.authorBio
+    || (content.type === "VIRAL_ESCAPE_LINES" ? content.description : "")
+    || "";
+}
+
+function viralBodyTextFromContent(content, metadata) {
+  if (metadata.bodyText) return metadata.bodyText;
+  return content.type === "VIRAL_ESCAPE_LINES" && metadata.authorBio
+    ? content.description || ""
+    : "";
+}
+
 function formFilmsFromSession(session = {}) {
   const hasStoredFilms = Object.prototype.hasOwnProperty.call(session, "films");
   let storedFilms = Array.isArray(session.films) ? session.films.filter(Boolean) : [];
@@ -89,9 +114,15 @@ export function formFromContent(content) {
       || metadata.researcherMemberId
       || (content.researcherName ? `name:${content.researcherName}` : ""),
     description: content.description || "",
-    bodyText: metadata.bodyText || "",
+    bodyText: viralBodyTextFromContent(content, metadata),
     imageUrl: metadata.imageUrl || "",
-    imageUrls: ensureUrlList(metadata.imageUrls, metadata.imageUrl),
+    imageUrls: ensureUrlList(
+      metadata.imageUrls,
+      metadata.images,
+      metadata.imageUrl,
+      metadata.thumbnail,
+      content.type === "VIRAL_ESCAPE_LINES" ? content.fileUrl : "",
+    ),
     fileUrl: content.fileUrl || "",
     fileUrls: ensureUrlList(metadata.fileUrls, content.fileUrl),
     videoUrl: metadata.videoUrl || (content.type === "INTERVIEW" || content.type === "FILM" ? content.externalUrl : "") || "",
@@ -101,6 +132,8 @@ export function formFromContent(content) {
     direction: metadata.direction || metadata.director || "",
     filmYear: String(metadata.year || metadata.releaseYear || ""),
     authorNames: ensureTextList(metadata.authors, metadata.authorNames),
+    viralAuthorNames: viralAuthorNamesFromContent(content, metadata),
+    viralAuthorBio: viralAuthorBioFromContent(content, metadata),
     articleAuthorIds: Array.isArray(metadata.authorIds) ? metadata.authorIds : [],
     relatedFilmIds: Array.isArray(metadata.relatedFilmIds) ? metadata.relatedFilmIds : [],
     references: ensureTextList(metadata.references),
@@ -181,8 +214,17 @@ export function buildContentPayload(form, existingMetadata = {}) {
       break;
 
     case "VIRAL_ESCAPE_LINES":
-      metadata.authors = ensureTextList(form.authorNames).filter(Boolean);
+      metadata.viralAuthors = ensureTextList(form.viralAuthorNames).filter(Boolean);
+      metadata.authorBio = form.viralAuthorBio.trim() || null;
       metadata.bodyText = form.bodyText.trim() || null;
+      delete metadata.authors;
+      delete metadata.authorNames;
+      delete metadata.authorName;
+      delete metadata.viralAuthorBio;
+      delete metadata.images;
+      delete metadata.thumbnail;
+      payload.description = metadata.authorBio || "";
+      payload.fileUrl = metadata.imageUrl || "";
       break;
 
     case "ARTICLE":
