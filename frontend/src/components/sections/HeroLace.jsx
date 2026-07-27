@@ -10,7 +10,7 @@ export default function HeroLace({ onOpenAbout }) {
           <div className="relative w-full max-w-5xl">
             <div className="relative overflow-hidden rounded-3xl border border-primary/40 bg-black shadow-[0_16px_44px_rgba(0,0,0,0.35)]">
               <img
-                src="/lace-home.png"
+                src="/lace-home.webp"
                 alt="LACE — Laboratório de Agenciamentos Cotidianos e Experiências"
                 width="1983"
                 height="793"

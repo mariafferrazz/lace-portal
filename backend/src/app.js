@@ -1,4 +1,5 @@
 const express = require("express");
+const compression = require("compression");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth");
@@ -34,7 +35,9 @@ app.use(cors({
     callback(null, !origin || allowedOrigins.has(origin));
   },
   credentials: true,
+  maxAge: 86400,
 }));
+app.use(compression({ threshold: 1024 }));
 app.use(express.json({ limit: "2mb" }));
 app.use(cookieParser());
 

@@ -47,6 +47,7 @@ export default function SupportersSection() {
                 alt={supporter.alt}
                 className="max-h-32 w-full object-contain"
                 loading="lazy"
+                decoding="async"
                 width="450"
                 height="180"
               />

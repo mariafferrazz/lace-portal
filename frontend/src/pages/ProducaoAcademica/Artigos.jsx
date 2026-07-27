@@ -503,7 +503,7 @@ function AuthorModal({ author, authorPosition, authorCount, onClose, onNavigate 
         <h2 id="author-articles-title" className="mt-3 pr-12 font-title text-4xl md:text-5xl">
           {author.name}
         </h2>
-        {author.image && <img className="mt-6 max-h-80 w-full rounded-2xl border border-border object-cover" src={author.image} alt={author.name} loading="lazy" />}
+        {author.image && <img className="mt-6 max-h-80 w-full rounded-2xl border border-border object-cover" src={author.image} alt={author.name} loading="lazy" decoding="async" />}
         {author.bio && <p className="mt-5 max-w-3xl whitespace-pre-line leading-8 text-muted">{author.bio}</p>}
         {author.website && (
           <a

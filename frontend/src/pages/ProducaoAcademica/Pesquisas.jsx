@@ -338,6 +338,7 @@ function ResearchModal({ research, researchPosition, researchCount, onClose, onN
             src={research.image}
             alt={research.title}
             loading="lazy"
+            decoding="async"
           />
         )}
 

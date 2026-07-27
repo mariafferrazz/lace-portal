@@ -16,7 +16,7 @@ function filmArchiveUrl(content) {
 }
 
 function buildFilmArchiveIndex(contents = []) {
-  return contents
+  const films = contents
     .filter((content) => content.type === "FILM")
     .map((content) => {
       const metadata = parseMetadata(content.metadata);
@@ -32,13 +32,21 @@ function buildFilmArchiveIndex(contents = []) {
       } : null;
     })
     .filter(Boolean);
+
+  Object.defineProperties(films, {
+    byId: { value: new Map(films.map((film) => [film.id, film])) },
+    byTitle: { value: new Map(films.map((film) => [film.normalizedTitle, film])) },
+  });
+
+  return films;
 }
 
 function findFilmArchive(filmIndex, title = "") {
   const normalizedTitle = normalizeTitleForLookup(title);
   if (!normalizedTitle) return null;
 
-  const exact = filmIndex.find((film) => film.normalizedTitle === normalizedTitle);
+  const exact = filmIndex.byTitle?.get(normalizedTitle)
+    || filmIndex.find((film) => film.normalizedTitle === normalizedTitle);
   if (exact) return exact;
 
   if (normalizedTitle.length < 6) return null;
@@ -79,7 +87,7 @@ function legacySessionFilms(session, archiveUrls = []) {
 
 function enrichSessionFilm(film, filmIndex) {
   const linkedFilm = film.filmId
-    ? filmIndex.find((archiveFilm) => archiveFilm.id === film.filmId)
+    ? filmIndex.byId?.get(film.filmId) || filmIndex.find((archiveFilm) => archiveFilm.id === film.filmId)
     : null;
   const matchedFilm = linkedFilm || findFilmArchive(filmIndex, film.title);
   const archiveFilmUrls = uniqueValues(

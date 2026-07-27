@@ -26,6 +26,7 @@ export default function EventCard({
               featured ? "h-full min-h-80" : "h-60"
             }`}
             loading="lazy"
+            decoding="async"
             width="800"
             height="600"
           />

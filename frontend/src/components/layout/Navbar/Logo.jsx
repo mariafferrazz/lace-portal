@@ -8,11 +8,13 @@ export default function Logo() {
     >
       <img
         src="/logo-lace-transparent.png"
+        decoding="async"
         alt="LACE - Laboratório de Agenciamentos Cotidianos e Experiências"
         className="site-logo-image site-logo-image-light h-14 w-auto object-contain md:h-16"
       />
       <img
         src="/logo-lace-transparent-dark.png"
+        decoding="async"
         alt=""
         aria-hidden="true"
         className="site-logo-image site-logo-image-dark h-14 w-auto object-contain md:h-16"

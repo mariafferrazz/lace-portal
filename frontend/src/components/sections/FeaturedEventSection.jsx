@@ -43,6 +43,8 @@ export default function FeaturedEventSection() {
   const sectionRef = useRef(null);
   const carouselRef = useRef(null);
   const carouselPausedRef = useRef(false);
+  const carouselCycleWidthRef = useRef(0);
+  const scrollFrameRef = useRef(null);
   const [dynamicHighlights, setDynamicHighlights] = useState([]);
   const [loadState, setLoadState] = useState("loading");
   const [carouselActive, setCarouselActive] = useState(false);
@@ -88,9 +90,33 @@ export default function FeaturedEventSection() {
     };
   }, []);
 
+  const measureCycleWidth = useCallback(() => {
+    const carousel = carouselRef.current;
+    if (!carousel || events.length < 2) {
+      carouselCycleWidthRef.current = 0;
+      return;
+    }
+
+    const cards = carousel.querySelectorAll("[data-carousel-card]");
+    carouselCycleWidthRef.current = cards[events.length]?.offsetLeft - cards[0]?.offsetLeft || 0;
+  }, [events.length]);
+
   useLayoutEffect(() => {
-    if (carouselRef.current) carouselRef.current.scrollLeft = 0;
-  }, [events]);
+    const carousel = carouselRef.current;
+    if (!carousel) return undefined;
+
+    carousel.scrollLeft = 0;
+    measureCycleWidth();
+
+    if (!("ResizeObserver" in window)) {
+      window.addEventListener("resize", measureCycleWidth);
+      return () => window.removeEventListener("resize", measureCycleWidth);
+    }
+
+    const resizeObserver = new ResizeObserver(measureCycleWidth);
+    resizeObserver.observe(carousel);
+    return () => resizeObserver.disconnect();
+  }, [events, measureCycleWidth]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -114,12 +140,10 @@ export default function FeaturedEventSection() {
   }, []);
 
   const cycleWidth = useCallback(() => {
-    const carousel = carouselRef.current;
-    if (!carousel || events.length < 2) return 0;
-
-    const cards = carousel.querySelectorAll("[data-carousel-card]");
-    return cards[events.length]?.offsetLeft - cards[0]?.offsetLeft || 0;
-  }, [events.length]);
+    if (events.length < 2) return 0;
+    if (!carouselCycleWidthRef.current) measureCycleWidth();
+    return carouselCycleWidthRef.current;
+  }, [events.length, measureCycleWidth]);
 
   const normalizeCarouselPosition = useCallback(() => {
     const carousel = carouselRef.current;
@@ -128,6 +152,19 @@ export default function FeaturedEventSection() {
 
     if (carousel.scrollLeft >= width - 1) carousel.scrollLeft -= width;
   }, [cycleWidth]);
+
+  const handleCarouselScroll = useCallback(() => {
+    if (scrollFrameRef.current) return;
+
+    scrollFrameRef.current = window.requestAnimationFrame(() => {
+      scrollFrameRef.current = null;
+      normalizeCarouselPosition();
+    });
+  }, [normalizeCarouselPosition]);
+
+  useEffect(() => () => {
+    if (scrollFrameRef.current) window.cancelAnimationFrame(scrollFrameRef.current);
+  }, []);
 
   const scrollCarousel = useCallback((direction) => {
     const carousel = carouselRef.current;
@@ -200,7 +237,7 @@ export default function FeaturedEventSection() {
         ) : (
           <div
             ref={carouselRef}
-            onScroll={normalizeCarouselPosition}
+            onScroll={handleCarouselScroll}
             onMouseEnter={() => { carouselPausedRef.current = true; }}
             onMouseLeave={() => { carouselPausedRef.current = false; }}
             onFocusCapture={() => { carouselPausedRef.current = true; }}

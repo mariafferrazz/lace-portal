@@ -165,7 +165,7 @@ function PlaylistBrowser({ media }) {
             className="group grid overflow-hidden rounded-2xl border border-border bg-card text-left transition hover:-translate-y-0.5 hover:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:grid-cols-[180px_minmax(0,1fr)]"
             onClick={() => setSelectedVideo(item)}
           >
-            <img className="aspect-video h-full w-full object-cover" src={item.thumbnail} alt="" loading="lazy" />
+            <img className="aspect-video h-full w-full object-cover" src={item.thumbnail} alt="" loading="lazy" decoding="async" />
             <span className="flex min-w-0 items-center gap-3 p-4">
               <span className="grid size-10 shrink-0 place-items-center rounded-full bg-primary-fill text-on-primary"><PlayCircle size={20} aria-hidden="true" /></span>
               <span>

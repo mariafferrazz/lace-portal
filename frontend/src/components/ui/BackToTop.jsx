@@ -18,21 +18,26 @@ export default function BackToTop() {
 
   useEffect(() => {
     let ticking = false;
+    let frameId = null;
 
     function updateVisibility() {
       if (ticking) return;
 
       ticking = true;
-      window.requestAnimationFrame(() => {
+      frameId = window.requestAnimationFrame(() => {
         setIsVisible(window.scrollY > 500);
         ticking = false;
+        frameId = null;
       });
     }
 
     updateVisibility();
     window.addEventListener("scroll", updateVisibility, { passive: true });
 
-    return () => window.removeEventListener("scroll", updateVisibility);
+    return () => {
+      window.removeEventListener("scroll", updateVisibility);
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+    };
   }, []);
 
   function scrollToTop() {
