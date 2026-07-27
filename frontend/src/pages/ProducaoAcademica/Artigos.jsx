@@ -231,20 +231,24 @@ function authorSlug(name) {
 }
 
 function articleFromContent(content) {
-  const legacyAuthors = Array.isArray(content.metadata?.authors)
-    ? content.metadata.authors.filter(Boolean).join(", ")
-    : content.metadata?.authors;
   return {
     title: content.title,
     url: contentFileUrls(content)[0] || content.externalUrl || content.fileUrl || "#",
-    note: content.metadata?.note || legacyAuthors || content.createdBy?.name,
+    responsible: content.researcherMember?.name || content.researcherName || "Equipe LACE",
     summary: content.description,
   };
 }
 
 function mergeDynamicAuthors(dynamicContents, dynamicAuthorContents, useFallback) {
   const fallbackAuthors = useFallback ? legacyAuthorsFallback : [];
-  const grouped = new Map(fallbackAuthors.map((author) => [author.name, { ...author, articles: [...author.articles] }]));
+  const grouped = new Map(fallbackAuthors.map((author) => [author.name, {
+    ...author,
+    articles: author.articles.map((article) => ({
+      ...article,
+      responsible: author.name,
+      summary: article.summary || article.note || "",
+    })),
+  }]));
 
   dynamicAuthorContents.forEach((authorContent) => {
     const current = grouped.get(authorContent.title) || { name: authorContent.title, articles: [] };
@@ -429,7 +433,7 @@ function AuthorArticleCard({ article }) {
   return (
     <article className="flex h-full flex-col rounded-2xl border border-border bg-card p-5 transition hover:border-primary/60 md:p-6">
       <h3 className="font-title text-2xl leading-tight text-text">{article.title}</h3>
-      {article.note && <p className="mt-3 line-clamp-2 text-sm font-semibold leading-6 text-primary">{article.note}</p>}
+      {article.responsible && <p className="mt-3 text-sm font-semibold leading-6 text-primary">{article.responsible}</p>}
       {summary && (
         <div className="mt-4">
           <p className="leading-7 text-muted">{summaryExpanded ? summary : summaryPreview(summary)}</p>
