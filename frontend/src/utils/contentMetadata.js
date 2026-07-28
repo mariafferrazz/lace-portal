@@ -10,13 +10,19 @@ export function uniqueUrls(...values) {
   ];
 }
 
+export function instagramImageUrl(value) {
+  const originalUrl = String(value || "").trim();
+  const url = safeUrl(originalUrl);
+  if (!url || !/(^|\.)instagram\.com$/i.test(url.hostname)) return originalUrl;
+
+  const shortcode = url.pathname.match(/^\/(?:p|reel|reels|tv)\/([^/?#]+)/i)?.[1];
+  return shortcode
+    ? `https://www.instagram.com/p/${shortcode}/media/?size=l`
+    : originalUrl;
+}
+
 export function contentImage(content, fallback = "") {
-  const explicitImage = uniqueUrls(
-    content?.metadata?.imageUrls,
-    content?.metadata?.imageUrl,
-    content?.metadata?.thumbnail,
-    content?.metadata?.images,
-  )[0] || "";
+  const explicitImage = contentImageUrls(content)[0] || "";
   if (explicitImage) return explicitImage;
 
   const videoCandidates = uniqueUrls(
@@ -35,7 +41,14 @@ export function contentFileUrls(content) {
 }
 
 export function contentImageUrls(content) {
-  return uniqueUrls(content?.metadata?.imageUrls, content?.metadata?.imageUrl, content?.metadata?.images, content?.metadata?.thumbnail);
+  return uniqueUrls(
+    uniqueUrls(
+      content?.metadata?.imageUrls,
+      content?.metadata?.imageUrl,
+      content?.metadata?.images,
+      content?.metadata?.thumbnail,
+    ).map(instagramImageUrl),
+  );
 }
 
 export function contentPlaylistUrls(content) {

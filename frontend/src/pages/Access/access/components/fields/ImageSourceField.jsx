@@ -19,6 +19,9 @@ export default function ImageSourceField({
         onAdd={onUrlAdd}
         onRemove={onUrlRemove}
       />
+      <p className="mt-2 text-sm font-normal leading-6 text-muted">
+        Aceita URL direta de imagem ou link público de uma publicação ou Reel do Instagram. Em publicações com várias imagens, a primeira será usada como capa.
+      </p>
 
       <label className="mt-3 block">
         Ou selecionar imagem do PC
@@ -26,7 +29,7 @@ export default function ImageSourceField({
           <FolderUp className="text-primary" size={34} aria-hidden="true" />
           <span className="mt-3 text-base font-semibold text-text">Escolher imagem do computador</span>
           <span className="mt-2 max-w-xl text-sm font-normal leading-6 text-muted">
-            Use JPG, PNG ou WEBP. Para imagens muito grandes, prefira uma URL publica.
+            Use JPG, PNG ou WEBP. Para imagens muito grandes, prefira uma URL pública.
           </span>
           <input
             className="sr-only"

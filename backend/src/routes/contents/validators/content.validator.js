@@ -11,6 +11,35 @@ function objectList(value) {
     : [];
 }
 
+function relatedLinkList(value) {
+  if (!Array.isArray(value)) return [];
+
+  const links = value
+    .map((link) => ({
+      label: String(link?.label || link?.name || "").trim(),
+      url: String(link?.href || link?.url || link?.to || "").trim(),
+    }))
+    .filter((link) => link.label || link.url);
+
+  for (const link of links) {
+    if (!link.label || !link.url) throw new Error("Preencha o nome e a URL de cada link relacionado.");
+    if (/^\/(?!\/)/.test(link.url)) continue;
+
+    try {
+      const url = new URL(link.url);
+      if (!["http:", "https:"].includes(url.protocol)) throw new Error();
+    } catch {
+      throw new Error(`Informe uma URL válida para o link “${link.label}”.`);
+    }
+  }
+
+  return [...new Map(links.map((link) => [link.url, (
+    link.url.startsWith("/")
+      ? { label: link.label, to: link.url }
+      : { label: link.label, href: link.url }
+  )])).values()];
+}
+
 function youtubeVideoId(value) {
   const raw = String(value || "").trim();
   if (/^[A-Za-z0-9_-]{11}$/.test(raw)) return raw;
@@ -144,11 +173,14 @@ function normalizeContentData(data) {
     metadata.sessions = Array.isArray(metadata.sessions) ? metadata.sessions : [];
     data.externalUrl = playlistUrls[0] || data.externalUrl || null;
   } else if (data.type === "EVENT") {
+    const links = relatedLinkList(metadata.links);
+    const namedExternalUrls = links.map((link) => link.href).filter(Boolean);
     metadata.editorialArea = "EVENTOS_ATIVIDADES";
     metadata.eventYear = String(metadata.eventYear || metadata.year || "").trim();
     metadata.year = metadata.eventYear;
     metadata.eventPath = metadata.eventYear ? `/eventos/${metadata.eventYear}` : null;
-    metadata.fileUrls = uniqueValues(metadata.fileUrls, data.fileUrl, data.externalUrl);
+    metadata.links = links;
+    metadata.fileUrls = uniqueValues(namedExternalUrls, metadata.fileUrls, data.fileUrl, data.externalUrl);
     data.fileUrl = metadata.fileUrls[0] || null;
     data.externalUrl = metadata.fileUrls[0] || null;
   }

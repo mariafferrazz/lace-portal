@@ -14,6 +14,17 @@ import {
 import { buildContentPayload, createInitialForm, formFromContent } from "../formState";
 import { ensureUrlList, extractShowNumber, selectedEventYear } from "../utils";
 
+function validRelatedLinkUrl(value) {
+  const url = String(value || "").trim();
+  if (/^\/(?!\/)/.test(url)) return true;
+
+  try {
+    return ["http:", "https:"].includes(new URL(url).protocol);
+  } catch {
+    return false;
+  }
+}
+
 export default function useContentForm({ content, initialArea, initialType, onCreated, onClose, teamMembers, onReferenceCreated }) {
   const isEditing = Boolean(content);
   const [form, setForm] = useState(() => (content ? formFromContent(content) : createInitialForm(initialArea, initialType)));
@@ -221,6 +232,19 @@ export default function useContentForm({ content, initialArea, initialType, onCr
       setStatus({ ok: false, message: "Informe o link do artigo em PDF." });
       setLoading(false);
       return;
+    }
+    if (form.type === "EVENT") {
+      const relatedLinks = form.relatedLinks.filter((link) => link.name.trim() || link.url.trim());
+      if (relatedLinks.some((link) => !link.name.trim() || !link.url.trim())) {
+        setStatus({ ok: false, message: "Preencha o nome e a URL de cada link relacionado." });
+        setLoading(false);
+        return;
+      }
+      if (relatedLinks.some((link) => !validRelatedLinkUrl(link.url))) {
+        setStatus({ ok: false, message: "Use uma URL pública válida ou um caminho interno iniciado por / nos links relacionados." });
+        setLoading(false);
+        return;
+      }
     }
     if (["CINEMA_SHOW", "EVENT"].includes(form.type) && !selectedEventYear(form)) {
       setStatus({ ok: false, message: "Informe o ano do evento ou da mostra." });

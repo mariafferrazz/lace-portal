@@ -30,6 +30,7 @@ export const emptyPerson = { name: "", role: "", description: "", lattesUrl: "" 
 export const emptyCredit = { title: "", value: "", description: "", url: "" };
 export const emptyInfo = { title: "", description: "" };
 export const emptyResource = { title: "", kind: "DOCUMENT", url: "" };
+export const emptyRelatedLink = { name: "", url: "" };
 export const emptyReference = { value: "" };
 export const emptySessionFilm = {
   filmId: "",
@@ -59,6 +60,7 @@ export const initialForm = {
   imageUrls: [""],
   fileUrl: "",
   fileUrls: [""],
+  relatedLinks: [{ ...emptyRelatedLink }],
   videoUrl: "",
   podcastUrl: "",
   pdfUrl: "",

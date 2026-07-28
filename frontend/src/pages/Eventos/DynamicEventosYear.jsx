@@ -31,13 +31,22 @@ function eventGalleryUrls(content) {
 
 function eventLinks(content) {
   const metadataLinks = Array.isArray(content?.metadata?.links) ? content.metadata.links : [];
-  return metadataLinks
+  const links = metadataLinks
     .map((link) => ({
-      label: link.label || "Abrir link",
+      label: link.label || link.name || "Abrir link",
       href: link.href || link.url || "",
       to: link.to || "",
     }))
     .filter((link) => link.href || link.to);
+  const knownUrls = new Set(links.map((link) => link.href || link.to));
+
+  contentFileUrls(content).forEach((url) => {
+    if (knownUrls.has(url)) return;
+    links.push({ label: `Abrir link ${links.length + 1}`, href: url, to: "" });
+    knownUrls.add(url);
+  });
+
+  return links;
 }
 
 function EventCardBody({ content }) {
@@ -142,10 +151,8 @@ export default function DynamicEventosYear() {
 }
 
 function EventModal({ content, onClose }) {
-  const link = eventLink(content);
   const sessions = Array.isArray(content.metadata?.sessions) ? content.metadata.sessions : [];
   const imageUrls = uniqueUrls(contentImageUrls(content), eventGalleryUrls(content));
-  const fileUrls = contentFileUrls(content);
   const playlistUrls = contentPlaylistUrls(content);
   const details = Array.isArray(content.metadata?.details) ? content.metadata.details.filter(Boolean) : [];
   const links = eventLinks(content);
@@ -246,26 +253,15 @@ function EventModal({ content, onClose }) {
               </section>
             )}
 
-            {(link || fileUrls.length > 0 || links.length > 0) && (
+            {links.length > 0 && (
               <div className="mt-8 flex flex-wrap gap-3">
-                {link.startsWith("/") ? (
-                  <Link className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" to={link} onClick={onClose}>
-                    Abrir página <ExternalLink size={16} aria-hidden="true" />
-                  </Link>
-                ) : fileUrls.length > 0 ? (
-                  fileUrls.map((url, index) => (
-                    <a key={url} className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={url} target="_blank" rel="noreferrer">
-                      Abrir link {fileUrls.length > 1 ? index + 1 : ""} <ExternalLink size={16} aria-hidden="true" />
-                    </a>
-                  ))
-                ) : null}
                 {links.map((item) => (
                   item.to ? (
-                    <Link key={item.to} className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" to={item.to} onClick={onClose}>
+                    <Link key={`${item.label}-${item.to}`} className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" to={item.to} onClick={onClose}>
                       {item.label} <ExternalLink size={16} aria-hidden="true" />
                     </Link>
                   ) : (
-                    <a key={item.href} className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={item.href} target="_blank" rel="noreferrer">
+                    <a key={`${item.label}-${item.href}`} className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={item.href} target="_blank" rel="noreferrer">
                       {item.label} <ExternalLink size={16} aria-hidden="true" />
                     </a>
                   )

@@ -5,6 +5,7 @@ import {
   emptyEpisode,
   emptyInfo,
   emptyPerson,
+  emptyRelatedLink,
   emptyResource,
   emptySession,
   emptySessionFilm,
@@ -47,6 +48,26 @@ function viralBodyTextFromContent(content, metadata) {
   return content.type === "VIRAL_ESCAPE_LINES" && metadata.authorBio
     ? content.description || ""
     : "";
+}
+
+function eventRelatedLinksFromContent(content, metadata) {
+  const relatedLinks = (Array.isArray(metadata.links) ? metadata.links : [])
+    .map((link, index) => ({
+      name: String(link?.name || link?.label || `Link relacionado ${index + 1}`).trim(),
+      url: String(link?.url || link?.href || link?.to || "").trim(),
+    }))
+    .filter((link) => link.url);
+  const knownUrls = new Set(relatedLinks.map((link) => link.url));
+
+  ensureUrlList(metadata.fileUrls, content.fileUrl, content.externalUrl)
+    .filter(Boolean)
+    .forEach((url) => {
+      if (knownUrls.has(url)) return;
+      relatedLinks.push({ name: `Link relacionado ${relatedLinks.length + 1}`, url });
+      knownUrls.add(url);
+    });
+
+  return relatedLinks.length ? relatedLinks : [{ ...emptyRelatedLink }];
 }
 
 function formFilmsFromSession(session = {}) {
@@ -125,6 +146,9 @@ export function formFromContent(content) {
     ),
     fileUrl: content.fileUrl || "",
     fileUrls: ensureUrlList(metadata.fileUrls, content.fileUrl),
+    relatedLinks: content.type === "EVENT"
+      ? eventRelatedLinksFromContent(content, metadata)
+      : [{ ...emptyRelatedLink }],
     videoUrl: metadata.videoUrl || (content.type === "INTERVIEW" || content.type === "FILM" ? content.externalUrl : "") || "",
     podcastUrl: metadata.podcastUrl || (content.type === "PODCAST" ? content.externalUrl : "") || "",
     pdfUrl: metadata.pdfUrl || (content.type === "ARTICLE" ? content.fileUrl || content.externalUrl : "") || "",
@@ -312,11 +336,22 @@ export function buildContentPayload(form, existingMetadata = {}) {
 
     case "EVENT": {
       const year = selectedEventYear(form);
+      const relatedLinks = form.relatedLinks
+        .map((link) => ({ name: link.name.trim(), url: link.url.trim() }))
+        .filter((link) => link.name || link.url);
+      const externalUrls = relatedLinks
+        .map((link) => link.url)
+        .filter((url) => !url.startsWith("/"));
       metadata.eventYear = year;
       metadata.year = year;
       metadata.eventPath = year ? `/eventos/${year}` : null;
       metadata.detailMode = "MODAL";
-      metadata.fileUrls = cleanUrlList(form.fileUrls);
+      metadata.links = relatedLinks.map((link) => (
+        link.url.startsWith("/")
+          ? { label: link.name, to: link.url }
+          : { label: link.name, href: link.url }
+      ));
+      metadata.fileUrls = cleanUrlList(externalUrls);
       payload.fileUrl = metadata.fileUrls[0] || "";
       payload.externalUrl = metadata.fileUrls[0] || "";
       break;

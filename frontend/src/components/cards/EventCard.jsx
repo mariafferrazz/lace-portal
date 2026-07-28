@@ -1,5 +1,17 @@
 import { Link } from "react-router-dom";
 
+const titleCharacterLimit = 90;
+const descriptionCharacterLimit = 180;
+
+function limitCharacters(value, limit) {
+  const text = String(value || "").replace(/\s+/g, " ").trim();
+  if (text.length <= limit) return text;
+
+  const shortened = text.slice(0, limit - 1);
+  const lastSpace = shortened.lastIndexOf(" ");
+  return `${shortened.slice(0, lastSpace > limit * 0.7 ? lastSpace : limit - 1).trim()}…`;
+}
+
 export default function EventCard({
   image,
   imageAlt = "",
@@ -10,6 +22,9 @@ export default function EventCard({
   actionLabel = "Ver detalhes",
   featured = false,
 }) {
+  const displayedTitle = limitCharacters(title, titleCharacterLimit);
+  const displayedDescription = limitCharacters(description, descriptionCharacterLimit);
+
   return (
     <Link
       to={to}
@@ -38,8 +53,8 @@ export default function EventCard({
       </div>
       <div className={`flex flex-1 flex-col space-y-4 ${featured ? "justify-center p-8 lg:p-14" : "p-6"}`}>
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">{year}</p>
-        <h3 className={`font-title ${featured ? "text-4xl lg:text-5xl" : "text-3xl"}`}>{title}</h3>
-        {description && <p className={`leading-7 text-muted ${featured ? "" : "flex-1"}`}>{description}</p>}
+        <h3 className={`font-title ${featured ? "text-4xl lg:text-5xl" : "text-3xl"}`} title={displayedTitle !== title ? title : undefined}>{displayedTitle}</h3>
+        {displayedDescription && <p className={`leading-7 text-muted ${featured ? "" : "flex-1"}`} title={displayedDescription !== description ? description : undefined}>{displayedDescription}</p>}
         <div className="pt-4">
           <span className="inline-flex rounded-xl border border-primary px-6 py-3 font-semibold text-primary transition group-hover:bg-primary-fill group-hover:text-on-primary">
             {actionLabel}
