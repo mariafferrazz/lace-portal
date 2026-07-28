@@ -16,6 +16,7 @@ const {
 } = require("../services/content.service");
 const { enrichCinemaShows } = require("../services/cinemaShow.service");
 const { loadYoutubePlaylist } = require("../services/youtubePlaylist.service");
+const { loadInstagramImage } = require("../services/instagramImage.service");
 const { normalizeSlug } = require("../utils/content.utils");
 const { parseContent } = require("../validators/content.validator");
 const { notifyCoordinatorContentChange } = require("../../../services/notifications");
@@ -54,6 +55,18 @@ async function getYoutubePlaylist(req, res) {
   } catch (error) {
     const invalidUrl = String(error.message || "").includes("URL válida");
     return res.status(invalidUrl ? 400 : 502).json({ error: error.message });
+  }
+}
+
+async function getInstagramImage(req, res) {
+  try {
+    const image = await loadInstagramImage(req.query.url);
+    res.set("Content-Type", image.contentType);
+    res.set("Content-Length", String(image.buffer.length));
+    res.set("Cache-Control", "public, max-age=3600, stale-while-revalidate=86400");
+    return res.send(image.buffer);
+  } catch (error) {
+    return res.status(error.statusCode || 502).json({ error: error.message });
   }
 }
 
@@ -179,6 +192,7 @@ module.exports = {
   listNavigation,
   listHighlightContents,
   getYoutubePlaylist,
+  getInstagramImage,
   getCinemaShow,
   listEventsByYear,
   listManage,

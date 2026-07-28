@@ -8,6 +8,7 @@ router.get("/", contentController.listPublished);
 router.get("/navigation", contentController.listNavigation);
 router.get("/highlights", contentController.listHighlightContents);
 router.get("/youtube-playlist", contentController.getYoutubePlaylist);
+router.get("/instagram-image", contentController.getInstagramImage);
 router.get("/cinema-shows/:showSlug", contentController.getCinemaShow);
 router.get("/events/year/:year", contentController.listEventsByYear);
 router.get("/manage", requireAuth, contentController.listManage);

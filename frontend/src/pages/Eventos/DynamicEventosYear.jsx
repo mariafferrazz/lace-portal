@@ -7,6 +7,10 @@ import SocialShare from "../../components/ui/SocialShare";
 import { loadEventsByYear } from "../../features/content/public/navigation";
 import { contentFileUrls, contentImage, contentImageUrls, contentPlaylistUrls, sessionArchiveUrls, sessionWatchUrls, uniqueUrls } from "../../utils/contentMetadata";
 import { eventYear, showPath } from "../../utils/contentRoutes";
+import { limitCharacters } from "../../utils/text";
+
+const titleCharacterLimit = 90;
+const descriptionCharacterLimit = 180;
 
 function eventImage(content) {
   return contentImage(content, "");
@@ -51,16 +55,20 @@ function eventLinks(content) {
 
 function EventCardBody({ content }) {
   const image = eventImage(content);
+  const [failedImage, setFailedImage] = useState("");
+  const displayedTitle = limitCharacters(content.title, titleCharacterLimit);
+  const displayedDescription = limitCharacters(content.description, descriptionCharacterLimit);
+
   return <>
-    {image ? (
-      <img className="aspect-[4/3] w-full object-cover" src={image} alt="" loading="lazy" decoding="async" />
+    {image && failedImage !== image ? (
+      <img className="aspect-[4/3] w-full object-cover" src={image} alt="" loading="lazy" decoding="async" onError={() => setFailedImage(image)} />
     ) : (
       <span className="grid aspect-[4/3] w-full place-items-center bg-primary/10 font-title text-4xl text-primary" aria-label="Imagem ainda não cadastrada">LACE</span>
     )}
     <span className="flex flex-1 flex-col p-6">
       <span className="text-xs font-semibold uppercase tracking-widest text-primary">{eventPeriod(content)}</span>
-      <span className="mt-3 block font-title text-3xl">{content.title}</span>
-      {content.description && <span className="mt-4 flex-1 leading-7 text-muted">{content.description}</span>}
+      <span className="mt-3 block font-title text-3xl" title={displayedTitle !== content.title ? content.title : undefined}>{displayedTitle}</span>
+      {displayedDescription && <span className="mt-4 flex-1 leading-7 text-muted" title={displayedDescription !== content.description ? content.description : undefined}>{displayedDescription}</span>}
       <span className="mt-6 inline-flex items-center gap-2 self-start font-semibold text-primary">
         <span className="animated-underline">{content.type === "CINEMA_SHOW" ? "Abrir página da mostra" : "Ver detalhes"}</span>
         <Images size={16} aria-hidden="true" />
@@ -151,9 +159,10 @@ export default function DynamicEventosYear() {
 }
 
 function EventModal({ content, onClose }) {
+  const [imageFailed, setImageFailed] = useState(false);
   const sessions = Array.isArray(content.metadata?.sessions) ? content.metadata.sessions : [];
   const imageUrls = uniqueUrls(contentImageUrls(content), eventGalleryUrls(content));
-  const playlistUrls = contentPlaylistUrls(content);
+  const playlistUrls = content.type === "CINEMA_SHOW" ? contentPlaylistUrls(content) : [];
   const details = Array.isArray(content.metadata?.details) ? content.metadata.details.filter(Boolean) : [];
   const links = eventLinks(content);
   const displayImage = imageUrls[0] || eventImage(content);
@@ -180,7 +189,11 @@ function EventModal({ content, onClose }) {
 
         <section className="grid gap-8 pr-0 lg:grid-cols-[0.9fr_1.1fr] lg:pr-8">
           <div className="space-y-4">
-            <img className="max-h-[620px] w-full rounded-2xl border border-border object-contain" src={displayImage} alt={content.title} decoding="async" />
+            {displayImage && !imageFailed ? (
+              <img className="max-h-[620px] w-full rounded-2xl border border-border object-contain" src={displayImage} alt={content.title} decoding="async" onError={() => setImageFailed(true)} />
+            ) : (
+              <div className="grid aspect-[4/3] w-full place-items-center rounded-2xl border border-border bg-primary/10 font-title text-5xl text-primary" aria-label="Imagem ainda não cadastrada">LACE</div>
+            )}
             {imageUrls.length > 1 && (
               <div className="grid grid-cols-3 gap-3">
                 {imageUrls.slice(1).map((imageUrl) => (

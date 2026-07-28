@@ -1,3 +1,5 @@
+import { apiUrl } from "../services/api";
+
 export function uniqueUrls(...values) {
   return [
     ...new Set(
@@ -17,7 +19,7 @@ export function instagramImageUrl(value) {
 
   const shortcode = url.pathname.match(/^\/(?:p|reel|reels|tv)\/([^/?#]+)/i)?.[1];
   return shortcode
-    ? `https://www.instagram.com/p/${shortcode}/media/?size=l`
+    ? apiUrl("/contents/instagram-image", { url: originalUrl })
     : originalUrl;
 }
 
@@ -52,6 +54,7 @@ export function contentImageUrls(content) {
 }
 
 export function contentPlaylistUrls(content) {
+  if (content?.type !== "CINEMA_SHOW") return [];
   return uniqueUrls(content?.metadata?.playlistUrls, content?.metadata?.playlistUrl, content?.externalUrl);
 }
 

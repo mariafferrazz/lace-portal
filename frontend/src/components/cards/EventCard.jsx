@@ -1,16 +1,9 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { limitCharacters } from "../../utils/text";
 
 const titleCharacterLimit = 90;
 const descriptionCharacterLimit = 180;
-
-function limitCharacters(value, limit) {
-  const text = String(value || "").replace(/\s+/g, " ").trim();
-  if (text.length <= limit) return text;
-
-  const shortened = text.slice(0, limit - 1);
-  const lastSpace = shortened.lastIndexOf(" ");
-  return `${shortened.slice(0, lastSpace > limit * 0.7 ? lastSpace : limit - 1).trim()}…`;
-}
 
 export default function EventCard({
   image,
@@ -22,6 +15,7 @@ export default function EventCard({
   actionLabel = "Ver detalhes",
   featured = false,
 }) {
+  const [failedImage, setFailedImage] = useState("");
   const displayedTitle = limitCharacters(title, titleCharacterLimit);
   const displayedDescription = limitCharacters(description, descriptionCharacterLimit);
 
@@ -33,7 +27,7 @@ export default function EventCard({
       }`}
     >
       <div className="overflow-hidden">
-        {image ? (
+        {image && failedImage !== image ? (
           <img
             src={image}
             alt={imageAlt || title}
@@ -44,6 +38,7 @@ export default function EventCard({
             decoding="async"
             width="800"
             height="600"
+            onError={() => setFailedImage(image)}
           />
         ) : (
           <div className={`grid place-items-center bg-primary/10 font-title text-4xl text-primary ${featured ? "h-full min-h-80" : "h-60"}`} aria-label="Imagem ainda não cadastrada">

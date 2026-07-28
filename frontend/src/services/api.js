@@ -1,10 +1,13 @@
-const API_BASE_URL = (import.meta.env.VITE_API_URL || `http://${window.location.hostname}:3000/api`)
+const runtimeHostname = typeof window !== "undefined" ? window.location.hostname : "localhost";
+const runtimeOrigin = typeof window !== "undefined" ? window.location.origin : "http://localhost";
+
+export const API_BASE_URL = (import.meta.env.VITE_API_URL || `http://${runtimeHostname}:3000/api`)
   .replace(/\/+$/, "");
 const REQUEST_TIMEOUT_MS = 15000;
 
-function requestUrl(path, params) {
+export function apiUrl(path, params) {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const url = new URL(`${API_BASE_URL}${normalizedPath}`, window.location.origin);
+  const url = new URL(`${API_BASE_URL}${normalizedPath}`, runtimeOrigin);
 
   Object.entries(params || {}).forEach(([name, value]) => {
     if (value === undefined || value === null || value === "") return;
@@ -32,7 +35,7 @@ async function request(method, path, data, config = {}) {
   const isFormData = typeof FormData !== "undefined" && data instanceof FormData;
 
   try {
-    const response = await fetch(requestUrl(path, config.params), {
+    const response = await fetch(apiUrl(path, config.params), {
       method,
       credentials: "include",
       signal: controller.signal,

@@ -179,6 +179,8 @@ function normalizeContentData(data) {
     metadata.eventYear = String(metadata.eventYear || metadata.year || "").trim();
     metadata.year = metadata.eventYear;
     metadata.eventPath = metadata.eventYear ? `/eventos/${metadata.eventYear}` : null;
+    delete metadata.playlistUrl;
+    delete metadata.playlistUrls;
     metadata.links = links;
     metadata.fileUrls = uniqueValues(namedExternalUrls, metadata.fileUrls, data.fileUrl, data.externalUrl);
     data.fileUrl = metadata.fileUrls[0] || null;

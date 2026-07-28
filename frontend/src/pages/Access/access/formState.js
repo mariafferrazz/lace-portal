@@ -346,6 +346,8 @@ export function buildContentPayload(form, existingMetadata = {}) {
       metadata.year = year;
       metadata.eventPath = year ? `/eventos/${year}` : null;
       metadata.detailMode = "MODAL";
+      delete metadata.playlistUrl;
+      delete metadata.playlistUrls;
       metadata.links = relatedLinks.map((link) => (
         link.url.startsWith("/")
           ? { label: link.name, to: link.url }
