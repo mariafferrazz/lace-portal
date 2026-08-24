@@ -132,37 +132,38 @@ async function main() {
   const legacyArticleLibrary = await prisma.seedState.findUnique({
     where: { key: legacyArticleSeedKey },
   });
+  const initialContentSeedKey = "initial-static-content-v1";
+  const initialContentSeed = await prisma.seedState.findUnique({
+    where: { key: initialContentSeedKey },
+  });
+  const existingContentCount = await prisma.content.count();
   let created = 0;
-  let updated = 0;
-  for (const seed of contentSeeds) {
-    if (seed.type === "ARTICLE" && legacyArticleLibrary) continue;
+  let preserved = existingContentCount;
 
-    const existing = await prisma.content.findFirst({
-      where: {
+  if (!initialContentSeed && existingContentCount === 0) {
+    for (const seed of contentSeeds) {
+      if (seed.type === "ARTICLE" && legacyArticleLibrary) continue;
+
+      const data = {
         title: seed.title,
+        description: seed.description || null,
         type: seed.type,
         researcherName: seed.researcherName || "LACE",
-      },
-    });
-    const data = {
-      title: seed.title,
-      description: seed.description || null,
-      type: seed.type,
-      researcherName: seed.researcherName || "LACE",
-      externalUrl: seed.externalUrl || null,
-      fileUrl: seed.fileUrl || null,
-      metadata: seed.metadata || {},
-      published: seed.published !== false,
-      createdById: existing?.createdById || seedUser.id,
-    };
+        externalUrl: seed.externalUrl || null,
+        fileUrl: seed.fileUrl || null,
+        metadata: seed.metadata || {},
+        published: seed.published !== false,
+        createdById: seedUser.id,
+      };
 
-    if (existing) {
-      await prisma.content.update({ where: { id: existing.id }, data });
-      updated += 1;
-    } else {
       await prisma.content.create({ data });
       created += 1;
     }
+    preserved = 0;
+  }
+
+  if (!initialContentSeed) {
+    await prisma.seedState.create({ data: { key: initialContentSeedKey } });
   }
 
   let configuredAuthors = 0;
@@ -228,7 +229,7 @@ async function main() {
     });
   }
 
-  console.log(`Conteúdos iniciais configurados. Criados: ${created}. Atualizados: ${updated}.`);
+  console.log(`Conteúdos iniciais configurados. Criados: ${created}. Preservados: ${preserved}.`);
   if (configuredAuthors > 0) {
     console.log(`Autores de artigos configurados: ${configuredAuthors}. Artigos vinculados: ${linkedArticles}.`);
   }
