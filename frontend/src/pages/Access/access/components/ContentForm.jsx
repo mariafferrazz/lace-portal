@@ -4,7 +4,7 @@ import { contentAreas, contentTypes, fieldClass } from "../constants";
 import useContentForm from "../hooks/useContentForm";
 import ContentTypeFields from "./typeFields/ContentTypeFields";
 
-export default function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, onClose, content = null, teamMembers = [], referenceOptions = {}, onReferenceCreated, canManageAuthors = false }) {
+export default function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA", initialType, onClose, content = null, teamMembers = [], referenceOptions = {}, onReferenceCreated, canManageAuthors = false, canPublish = false }) {
   const actions = useContentForm({ content, initialArea, initialType, onCreated, onClose, teamMembers, onReferenceCreated });
   const { form, status, loading, isEditing, submit } = actions;
 
@@ -22,9 +22,9 @@ export default function ContentForm({ onCreated, initialArea = "CINEMA_DITADURA"
 
         <ContentTypeFields form={form} actions={actions} referenceOptions={referenceOptions} canManageAuthors={canManageAuthors} />
 
-        <label className="font-semibold md:col-span-2">Responsável pelo cadastro<select className={fieldClass} value={form.researcherMemberId} onChange={actions.updateResearcher}><option value="">Equipe LACE / não informar</option>{teamMembers.map((member) => <option key={member.id} value={member.id}>{member.name}</option>)}{form.researcherMemberId.startsWith("name:") && <option value={form.researcherMemberId}>{form.researcherName}</option>}</select></label>
+        <label className="font-semibold md:col-span-2">Responsável pelo cadastro *<select className={fieldClass} required value={form.researcherMemberId} onChange={actions.updateResearcher}><option value="" disabled>Selecione um responsável</option>{teamMembers.map((member) => <option key={member.id} value={member.id}>{member.name}</option>)}{form.researcherMemberId.startsWith("name:") && <option value={form.researcherMemberId}>{form.researcherName}</option>}</select></label>
 
-        <div className="flex flex-col gap-4 md:col-span-2 md:flex-row md:items-center"><Button type="submit" disabled={loading} className="disabled:cursor-wait disabled:opacity-60">{loading ? "Salvando..." : isEditing ? "Salvar alterações" : "Enviar para revisão"}</Button>{status && <p className={status.ok ? "text-sm font-semibold text-green-700 dark:text-green-300" : "text-sm font-semibold text-red-700 dark:text-red-300"} role="status">{status.message}</p>}</div>
+        <div className="flex flex-col gap-4 md:col-span-2 md:flex-row md:items-center"><Button type="submit" disabled={loading} className="disabled:cursor-wait disabled:opacity-60">{loading ? "Salvando..." : isEditing ? "Salvar alterações" : canPublish ? "Publicar conteúdo" : "Enviar para revisão"}</Button>{status && <p className={status.ok ? "text-sm font-semibold text-green-700 dark:text-green-300" : "text-sm font-semibold text-red-700 dark:text-red-300"} role="status">{status.message}</p>}</div>
       </form>
     </section>
   );

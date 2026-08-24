@@ -130,6 +130,7 @@ export default function EditorialDashboard({ user, contents, refresh, refreshTea
             referenceOptions={referenceOptions}
             onReferenceCreated={onReferenceCreated}
             canManageAuthors={user.role === "COORDINATOR"}
+            canPublish={user.role === "COORDINATOR"}
           />
         </Modal>
       )}
@@ -144,6 +145,7 @@ export default function EditorialDashboard({ user, contents, refresh, refreshTea
             referenceOptions={referenceOptions}
             onReferenceCreated={onReferenceCreated}
             canManageAuthors={user.role === "COORDINATOR"}
+            canPublish={user.role === "COORDINATOR"}
           />
         </Modal>
       )}
