@@ -28,6 +28,12 @@ const adapter = new PrismaMariaDb({
   password: decodeURIComponent(databaseUrl.password),
   database: databaseUrl.pathname.slice(1),
   allowPublicKeyRetrieval,
+  connectTimeout: 10_000,
+  acquireTimeout: 15_000,
+  keepAliveDelay: 30_000,
+  minDelayValidation: 1_000,
+  minimumIdle: 1,
+  idleTimeout: 300,
   connectionLimit: 5,
 });
 const prisma = new PrismaClient({ adapter });

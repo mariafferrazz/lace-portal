@@ -93,6 +93,14 @@ Depois do primeiro deploy, rode o seed uma vez no Railway:
 npm run seed
 ```
 
+### Disponibilidade continua
+
+- Mantenha `Serverless` desativado nos servicos Node.js e MySQL.
+- Use um plano pago: a politica `Always` de reinicio nao esta disponivel no plano gratuito.
+- Configure o limite de uso do workspace acima do consumo esperado; o Railway desliga os servicos quando o limite rigido e atingido.
+- Ative backups diarios do volume do MySQL na aba `Backups`.
+- O backend verifica o banco a cada minuto e encerra com erro apos tres falhas consecutivas, permitindo que a politica `Always` reinicie o processo.
+
 ## 4. DNS
 
 Na Vercel, ao adicionar `lablace.com.br` e `www.lablace.com.br`, copie os registros DNS que ela indicar e coloque no Registro.br.
