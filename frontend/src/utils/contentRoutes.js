@@ -41,6 +41,24 @@ export function contentEventPath(content) {
   return content?.metadata?.eventPath || (year ? eventYearPath(year) : "");
 }
 
+export function researchSlug(content) {
+  return normalizeSlug(
+    content?.metadata?.researchSlug
+      || content?.metadata?.slug
+      || content?.title,
+  );
+}
+
+export function researchPath(content) {
+  if (content?.metadata?.researchPath) return content.metadata.researchPath;
+  const slug = researchSlug(content);
+  return slug ? `/producao-academica/pesquisas/${slug}` : "";
+}
+
+export function researchLabel(content) {
+  return content?.metadata?.shortTitle || content?.title || "Pesquisa";
+}
+
 export function isKnownShowSlug(slug) {
   return knownShowSlugs.has(slug);
 }

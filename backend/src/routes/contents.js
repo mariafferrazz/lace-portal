@@ -10,6 +10,7 @@ router.get("/highlights", contentController.listHighlightContents);
 router.get("/youtube-playlist", contentController.getYoutubePlaylist);
 router.get("/instagram-image", contentController.getInstagramImage);
 router.get("/cinema-shows/:showSlug", contentController.getCinemaShow);
+router.get("/researches/:researchSlug", contentController.getResearch);
 router.get("/events/year/:year", contentController.listEventsByYear);
 router.get("/manage", requireAuth, contentController.listManage);
 router.get("/manage/options", requireAuth, contentController.listManageOptions);

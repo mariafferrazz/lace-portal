@@ -86,6 +86,10 @@ function eventSummaryMetadata(value) {
     imageUrl: metadata.imageUrl,
     imageUrls: metadata.imageUrls,
     fileUrls: metadata.fileUrls,
+    shortTitle: metadata.shortTitle,
+    slug: metadata.slug,
+    researchSlug: metadata.researchSlug,
+    researchPath: metadata.researchPath,
   };
 }
 
@@ -191,7 +195,7 @@ async function listPublishedContents(type) {
 
 async function listNavigationContents() {
   const contents = await prisma.content.findMany({
-    where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW", "ARTICLE_AUTHOR"] } },
+    where: { published: true, type: { in: ["EVENT", "CINEMA_SHOW", "ARTICLE_AUTHOR", "RESEARCH"] } },
     select: { id: true, title: true, type: true, metadata: true, createdAt: true },
   });
   return sortNewestFirst(contents.map((content) => ({

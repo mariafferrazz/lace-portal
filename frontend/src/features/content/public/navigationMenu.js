@@ -5,6 +5,8 @@ import {
   isKnownEventYear,
   isKnownShowSlug,
   normalizeSlug,
+  researchLabel,
+  researchPath,
   showLabel,
   showPath,
 } from "../../../utils/contentRoutes.js";
@@ -36,6 +38,7 @@ export function mergeDynamicMenu(contents = []) {
   const eventMenu = nextMenu.find((item) => item.title === "Eventos e Atividades");
   const academicMenu = nextMenu.find((item) => item.title === "Produção Acadêmica");
   const articlesMenu = academicMenu?.children?.find((item) => item.title === "Artigos");
+  const researchesMenu = academicMenu?.children?.find((item) => item.title === "Pesquisas");
   const dynamicShows = contents
     .filter((content) => (
       content.type === "CINEMA_SHOW"
@@ -61,6 +64,13 @@ export function mergeDynamicMenu(contents = []) {
       title: content.title,
       path: `/producao-academica/artigos#${normalizeSlug(content.title)}`,
     }));
+  const dynamicResearches = contents
+    .filter((content) => content.type === "RESEARCH" && content.title)
+    .map((content) => ({
+      title: researchLabel(content),
+      path: researchPath(content),
+    }))
+    .filter((item) => item.path);
 
   if (cinemaMenu?.children && dynamicShows.length) {
     const [films, glossaries, ...shows] = cinemaMenu.children;
@@ -71,6 +81,9 @@ export function mergeDynamicMenu(contents = []) {
   }
   if (articlesMenu && dynamicArticleAuthors.length) {
     articlesMenu.children = mergeUniqueMenuItems(articlesMenu.children, dynamicArticleAuthors);
+  }
+  if (researchesMenu && dynamicResearches.length) {
+    researchesMenu.children = mergeUniqueMenuItems(researchesMenu.children, dynamicResearches);
   }
 
   return nextMenu;

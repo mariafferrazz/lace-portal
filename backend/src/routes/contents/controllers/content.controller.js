@@ -89,6 +89,23 @@ async function getCinemaShow(req, res) {
   return res.json({ content });
 }
 
+async function getResearch(req, res) {
+  disablePublicCache(res);
+  const requestedSlug = normalizeSlug(req.params.researchSlug);
+  const contents = await listPublishedContents("RESEARCH");
+  const content = contents.find((item) => {
+    const metadata = item.metadata || {};
+    const slug = normalizeSlug(metadata.researchSlug || metadata.slug || item.title);
+    const pathSlug = normalizeSlug(
+      String(metadata.researchPath || "").split("/").filter(Boolean).pop() || "",
+    );
+    return slug === requestedSlug || pathSlug === requestedSlug;
+  });
+
+  if (!content) return res.status(404).json({ error: "Pesquisa não encontrada." });
+  return res.json({ content });
+}
+
 async function listEventsByYear(req, res) {
   disablePublicCache(res);
   const requestedYear = String(req.params.year || "").trim();
@@ -194,6 +211,7 @@ module.exports = {
   getYoutubePlaylist,
   getInstagramImage,
   getCinemaShow,
+  getResearch,
   listEventsByYear,
   listManage,
   listManageOptions,

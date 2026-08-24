@@ -14,3 +14,8 @@ export async function loadCinemaShow(slug) {
   const { data } = await api.get(`/contents/cinema-shows/${slug}`);
   return data.content;
 }
+
+export async function loadResearch(slug) {
+  const { data } = await api.get(`/contents/researches/${slug}`);
+  return data.content;
+}

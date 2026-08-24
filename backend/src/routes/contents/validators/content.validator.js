@@ -1,6 +1,7 @@
 const { cinemaShowAreas, contentTypes } = require("../constants");
 const {
   extractShowNumber,
+  normalizeSlug,
   showSlug,
   uniqueValues,
 } = require("../utils/content.utils");
@@ -131,9 +132,15 @@ function normalizeEditorialMetadata(data, metadata) {
     data.fileUrl = pdfUrl || null;
     data.externalUrl = pdfUrl || null;
   } else if (data.type === "RESEARCH") {
+    const slug = normalizeSlug(metadata.researchSlug || metadata.slug || data.title);
     metadata.team = objectList(metadata.team);
     metadata.additionalInfo = objectList(metadata.additionalInfo);
     metadata.resources = objectList(metadata.resources);
+    metadata.researchSlug = slug || null;
+    metadata.slug = slug || null;
+    metadata.researchPath = slug ? `/producao-academica/pesquisas/${slug}` : null;
+    metadata.detailMode = "PAGE";
+    metadata.detailPath = metadata.researchPath;
   }
 }
 

@@ -192,7 +192,7 @@ export default function Pesquisas() {
   }, []);
 
   function setResearchAndHash(research) {
-    navigate(`${location.pathname}${location.search}#${research.slug}`, { replace: true });
+    navigate(`/producao-academica/pesquisas/${research.slug}`);
   }
 
   function closeResearch() {
@@ -415,7 +415,7 @@ function ResearchModal({ research, researchPosition, researchCount, onClose, onN
             </a>
           ))}
         </div>
-        <SocialShare title={research.title} url={`/producao-academica/pesquisas#${research.slug}`} className="mt-8" />
+        <SocialShare title={research.title} url={`/producao-academica/pesquisas/${research.slug}`} className="mt-8" />
       </div>
     </div>,
     document.body,

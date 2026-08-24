@@ -13,6 +13,7 @@ const Podcasts = lazy(() => import("../pages/ProducaoAudiovisual/Podcasts"));
 const LinhasDeFugasVirais = lazy(() => import("../pages/ProducaoAcademica/LinhasDeFugasVirais"));
 const Artigos = lazy(() => import("../pages/ProducaoAcademica/Artigos"));
 const Pesquisas = lazy(() => import("../pages/ProducaoAcademica/Pesquisas"));
+const DynamicPesquisa = lazy(() => import("../pages/ProducaoAcademica/DynamicPesquisa"));
 const DynamicEventosYear = lazy(() => import("../pages/Eventos/DynamicEventosYear"));
 
 const withSuspense = (element) => <Suspense fallback={null}>{element}</Suspense>;
@@ -54,6 +55,10 @@ export default function AppRoutes() {
           <Route
             path="/producao-academica/pesquisas"
             element={withSuspense(<Pesquisas />)}
+          />
+          <Route
+            path="/producao-academica/pesquisas/:researchSlug"
+            element={withSuspense(<DynamicPesquisa />)}
           />
 
           {/* Eventos */}
