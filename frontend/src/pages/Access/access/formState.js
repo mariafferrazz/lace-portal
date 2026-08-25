@@ -172,7 +172,14 @@ export function formFromContent(content) {
       : [{ ...emptyCredit }],
     researchTeam: Array.isArray(metadata.team) && metadata.team.length
       ? metadata.team.map((item) => ({ ...emptyPerson, ...item }))
-      : [{ ...emptyPerson }],
+      : Array.isArray(metadata.researchers) && metadata.researchers.length
+        ? metadata.researchers.map((item) => ({
+          ...emptyPerson,
+          ...item,
+          lattesUrl: item.lattesUrl || item.lattes || "",
+        }))
+        : [{ ...emptyPerson }],
+    researchCommission: metadata.commission || "",
     additionalInfo: Array.isArray(metadata.additionalInfo) && metadata.additionalInfo.length
       ? metadata.additionalInfo.map((item) => ({ ...emptyInfo, ...item }))
       : [{ ...emptyInfo }],
@@ -260,8 +267,11 @@ export function buildContentPayload(form, existingMetadata = {}) {
 
     case "RESEARCH":
       metadata.team = nonEmptyObjects(form.researchTeam, ["name", "role", "description", "lattesUrl"]);
+      metadata.commission = form.researchCommission.trim() || null;
       metadata.additionalInfo = nonEmptyObjects(form.additionalInfo, ["title", "description"]);
       metadata.resources = nonEmptyObjects(form.resources, ["title", "kind", "url"]);
+      delete metadata.researchers;
+      delete metadata.shortTitle;
       break;
 
     case "FILM":

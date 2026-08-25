@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, ExternalLink, Library } from "lucide-react";
 import Container from "../../components/ui/Container";
 import SocialShare from "../../components/ui/SocialShare";
+import { CONTENT_UPDATED_EVENT } from "../../features/content/contentEvents";
 import { loadResearch } from "../../features/content/public/navigation";
 import { contentFileUrls, contentImage } from "../../utils/contentMetadata";
 
@@ -31,9 +32,11 @@ function researchForPage(content, requestedSlug) {
 }
 
 function ResearchLinks({ research }) {
+  const hidePrimaryLinks = research.slug === "aracruz-celulose";
+
   return (
     <div className="mt-10 flex flex-wrap gap-3">
-      {research.publicReportUrl && (
+      {!hidePrimaryLinks && research.publicReportUrl && (
         <a className="inline-flex items-center gap-2 rounded-xl border border-primary px-4 py-3 font-semibold text-primary transition hover:bg-primary-fill hover:text-on-primary" href={research.publicReportUrl} target="_blank" rel="noreferrer">
           Informe Público <ExternalLink size={16} aria-hidden="true" />
         </a>
@@ -43,7 +46,7 @@ function ResearchLinks({ research }) {
           {resource.title || "Abrir recurso"} <ExternalLink size={16} aria-hidden="true" />
         </a>
       ))}
-      {research.url && (
+      {!hidePrimaryLinks && research.url && (
         <a className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-3 font-semibold text-text transition hover:border-primary hover:text-primary" href={research.url} target="_blank" rel="noreferrer">
           Fonte original <ExternalLink size={16} aria-hidden="true" />
         </a>
@@ -60,8 +63,7 @@ export default function DynamicPesquisa() {
 
   useEffect(() => {
     let active = true;
-
-    loadResearch(researchSlug)
+    const refreshResearch = () => loadResearch(researchSlug)
       .then((content) => {
         if (active) {
           setPage({
@@ -74,8 +76,14 @@ export default function DynamicPesquisa() {
         if (active) setPage({ slug: researchSlug, research: null });
       });
 
+    refreshResearch();
+    window.addEventListener("focus", refreshResearch);
+    window.addEventListener(CONTENT_UPDATED_EVENT, refreshResearch);
+
     return () => {
       active = false;
+      window.removeEventListener("focus", refreshResearch);
+      window.removeEventListener(CONTENT_UPDATED_EVENT, refreshResearch);
     };
   }, [researchSlug]);
 

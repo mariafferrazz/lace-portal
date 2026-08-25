@@ -14,9 +14,12 @@ function normalizeRawContent(content) {
 }
 
 function normalizeContentMetadata(content) {
+  const metadata = { ...parseMetadata(content.metadata) };
+  if (content.type === "RESEARCH") delete metadata.shortTitle;
+
   return {
     ...content,
-    metadata: parseMetadata(content.metadata),
+    metadata,
   };
 }
 
@@ -200,7 +203,12 @@ async function listNavigationContents() {
   });
   return sortNewestFirst(contents.map((content) => ({
     ...content,
-    metadata: content.type === "ARTICLE_AUTHOR" ? {} : eventSummaryMetadata(content.metadata),
+    metadata: content.type === "ARTICLE_AUTHOR"
+      ? {}
+      : {
+        ...eventSummaryMetadata(content.metadata),
+        ...(content.type === "RESEARCH" ? { shortTitle: undefined } : {}),
+      },
   })));
 }
 

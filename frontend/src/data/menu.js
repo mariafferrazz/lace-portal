@@ -38,10 +38,7 @@ export const menu = [
       {
         title: "Pesquisas",
         path: "/producao-academica/pesquisas",
-        children: [
-          { title: "Aracruz Celulose S/A", path: "/producao-academica/pesquisas/aracruz-celulose" },
-          { title: "Ditadura na UFF", path: "/producao-academica/pesquisas/ditadura-na-uff" },
-        ],
+        children: [],
       },
     ],
   },

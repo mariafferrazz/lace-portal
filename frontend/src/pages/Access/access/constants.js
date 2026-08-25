@@ -77,6 +77,7 @@ export const initialForm = {
   people: [{ ...emptyPerson }],
   credits: [{ ...emptyCredit }],
   researchTeam: [{ ...emptyPerson }],
+  researchCommission: "",
   additionalInfo: [{ ...emptyInfo }],
   resources: [{ ...emptyResource }],
   showNumber: "",

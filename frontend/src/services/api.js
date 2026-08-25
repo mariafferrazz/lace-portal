@@ -1,3 +1,5 @@
+import { notifyContentUpdated } from "../features/content/contentEvents";
+
 const runtimeHostname = typeof window !== "undefined" ? window.location.hostname : "localhost";
 const runtimeOrigin = typeof window !== "undefined" ? window.location.origin : "http://localhost";
 
@@ -51,6 +53,10 @@ async function request(method, path, data, config = {}) {
       const error = new Error(responseData?.error || `Falha na requisiÃ§Ã£o (${response.status}).`);
       error.response = { data: responseData, status: response.status, headers: response.headers };
       throw error;
+    }
+
+    if (["POST", "PATCH", "DELETE"].includes(method) && /^\/contents(?:\/|$)/.test(path)) {
+      notifyContentUpdated();
     }
 
     return { data: responseData, status: response.status, headers: response.headers };

@@ -56,7 +56,7 @@ export function researchPath(content) {
 }
 
 export function researchLabel(content) {
-  return content?.metadata?.shortTitle || content?.title || "Pesquisa";
+  return content?.title || "Pesquisa";
 }
 
 export function isKnownShowSlug(slug) {

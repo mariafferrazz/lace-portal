@@ -141,6 +141,7 @@ function normalizeEditorialMetadata(data, metadata) {
     metadata.researchPath = slug ? `/producao-academica/pesquisas/${slug}` : null;
     metadata.detailMode = "PAGE";
     metadata.detailPath = metadata.researchPath;
+    delete metadata.shortTitle;
   }
 }
 
