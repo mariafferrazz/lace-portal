@@ -96,6 +96,40 @@ function eventSummaryMetadata(value) {
   };
 }
 
+function navigationMetadata(value, type) {
+  const metadata = parseMetadata(value);
+
+  if (type === "CINEMA_SHOW") {
+    return {
+      eventYear: metadata.eventYear,
+      year: metadata.year,
+      showYear: metadata.showYear,
+      showNumber: metadata.showNumber,
+      showSlug: metadata.showSlug,
+      createCinemaPage: metadata.createCinemaPage,
+      cinemaPath: metadata.cinemaPath,
+    };
+  }
+
+  if (type === "EVENT") {
+    return {
+      eventYear: metadata.eventYear,
+      year: metadata.year,
+      showYear: metadata.showYear,
+    };
+  }
+
+  if (type === "RESEARCH") {
+    return {
+      slug: metadata.slug,
+      researchSlug: metadata.researchSlug,
+      researchPath: metadata.researchPath,
+    };
+  }
+
+  return {};
+}
+
 function manageSummaryMetadata(value) {
   const metadata = parseMetadata(value);
   return {
@@ -203,12 +237,7 @@ async function listNavigationContents() {
   });
   return sortNewestFirst(contents.map((content) => ({
     ...content,
-    metadata: content.type === "ARTICLE_AUTHOR"
-      ? {}
-      : {
-        ...eventSummaryMetadata(content.metadata),
-        ...(content.type === "RESEARCH" ? { shortTitle: undefined } : {}),
-      },
+    metadata: navigationMetadata(content.metadata, content.type),
   })));
 }
 
