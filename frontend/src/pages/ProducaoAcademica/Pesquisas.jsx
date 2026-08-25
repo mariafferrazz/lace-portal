@@ -269,7 +269,7 @@ function ResearchModal({ research, researchPosition, researchCount, onClose, onN
         )}
 
         {research.additionalInfo?.length > 0 && (
-          <section className="mt-10 grid gap-4 md:grid-cols-2">
+          <section className="mt-10 grid grid-cols-1 gap-4">
             {research.additionalInfo.map((info, index) => (
               <article key={`${info.title || "informacao"}-${index}`} className="rounded-2xl border border-border bg-card p-5">
                 <h3 className="font-title text-2xl text-text">{info.title || "Informação adicional"}</h3>

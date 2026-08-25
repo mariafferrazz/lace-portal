@@ -4006,8 +4006,8 @@
     "fileUrl": null,
     "published": true,
     "metadata": {
+      "additionalInfoLayout": "ONE_COLUMN",
       "editorialArea": "PRODUCAO_ACADEMICA",
-      "shortTitle": "Aracruz Celulose S/A",
       "slug": "aracruz-celulose",
       "imageUrl": "https://3554c7d1fd.cbaul-cdnwnd.com/22850089b1df8dc406ce77d80e531242/200000151-cbc8ccbc8e/unnamed.webp?ph=3554c7d1fd",
       "researchers": [
@@ -4077,8 +4077,8 @@
     "fileUrl": null,
     "published": true,
     "metadata": {
+      "additionalInfoLayout": "ONE_COLUMN",
       "editorialArea": "PRODUCAO_ACADEMICA",
-      "shortTitle": "Ditadura na UFF",
       "slug": "ditadura-na-uff",
       "researchSlug": "ditadura-na-uff",
       "researchPath": "/producao-academica/pesquisas/ditadura-na-uff",
@@ -5010,6 +5010,7 @@
     "fileUrl": null,
     "published": true,
     "metadata": {
+      "additionalInfoLayout": "ONE_COLUMN",
       "slug": "a-uff-sob-a-ditadura-empresarial-militar-trajetorias-de-estudantes-docentes-e-funcionarios",
       "team": [
         {
@@ -5052,6 +5053,7 @@
     "fileUrl": null,
     "published": true,
     "metadata": {
+      "additionalInfoLayout": "ONE_COLUMN",
       "slug": "aprofundamento-da-pesquisa-sobre-as-violacoes-de-direitos-trabalhistas-do-grupo-aracruz-celulose-no-contexto-da-justica-de-transicao-e-seus-reflexos-contemporaneos",
       "team": [
         {
@@ -5126,6 +5128,7 @@
           "title": ""
         }
       ],
+      "commission": null,
       "detailMode": "PAGE",
       "detailPath": "/producao-academica/pesquisas/aprofundamento-da-pesquisa-sobre-as-violacoes-de-direitos-trabalhistas-do-grupo-aracruz-celulose-no-contexto-da-justica-de-transicao-e-seus-reflexos-contemporaneos",
       "researchPath": "/producao-academica/pesquisas/aprofundamento-da-pesquisa-sobre-as-violacoes-de-direitos-trabalhistas-do-grupo-aracruz-celulose-no-contexto-da-justica-de-transicao-e-seus-reflexos-contemporaneos",
@@ -5144,6 +5147,7 @@
     "fileUrl": null,
     "published": true,
     "metadata": {
+      "additionalInfoLayout": "ONE_COLUMN",
       "slug": "cumplicidade-economica-e-responsabilidade-de-empresas-nas-violacoes-de-direitos-humanos-na-amazonia-legal-durante-a-ditadura-civil-militar-brasileira-1964-1988",
       "team": [
         {
@@ -5192,6 +5196,7 @@
           "title": ""
         }
       ],
+      "commission": null,
       "detailMode": "PAGE",
       "detailPath": "/producao-academica/pesquisas/cumplicidade-economica-e-responsabilidade-de-empresas-nas-violacoes-de-direitos-humanos-na-amazonia-legal-durante-a-ditadura-civil-militar-brasileira-1964-1988",
       "researchPath": "/producao-academica/pesquisas/cumplicidade-economica-e-responsabilidade-de-empresas-nas-violacoes-de-direitos-humanos-na-amazonia-legal-durante-a-ditadura-civil-militar-brasileira-1964-1988",

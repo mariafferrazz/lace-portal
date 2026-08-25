@@ -134,6 +134,7 @@ function normalizeEditorialMetadata(data, metadata) {
   } else if (data.type === "RESEARCH") {
     const slug = normalizeSlug(metadata.researchSlug || metadata.slug || data.title);
     metadata.team = objectList(metadata.team);
+    metadata.additionalInfoLayout = "ONE_COLUMN";
     metadata.additionalInfo = objectList(metadata.additionalInfo);
     metadata.resources = objectList(metadata.resources);
     metadata.researchSlug = slug || null;

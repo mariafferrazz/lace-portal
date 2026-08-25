@@ -12,6 +12,9 @@ export default function ResearchFields({ form, actions }) {
         <label className="font-semibold">Resumo da pesquisa<textarea className={`${fieldClass} min-h-40 resize-y`} value={form.description} onChange={actions.update("description")} /></label>
         <PeopleFields title="Equipe" description="Nome, função, descrição e Lattes. Todos os campos são opcionais." items={form.researchTeam} onAdd={() => actions.addObject("researchTeam", actions.emptyPerson)} onRemove={(index) => actions.removeObject("researchTeam", index, actions.emptyPerson)} onChange={(index, field, value) => actions.updateObject("researchTeam", index, field, value)} />
         <label className="font-semibold">Comissão científica<textarea className={`${fieldClass} min-h-32 resize-y`} value={form.researchCommission} onChange={actions.update("researchCommission")} /></label>
+        <p className="text-sm leading-6 text-muted">
+          As informações adicionais são exibidas automaticamente em uma única coluna, com os blocos um abaixo do outro.
+        </p>
         <InfoFields items={form.additionalInfo} onAdd={() => actions.addObject("additionalInfo", actions.emptyInfo)} onRemove={(index) => actions.removeObject("additionalInfo", index, actions.emptyInfo)} onChange={(index, field, value) => actions.updateObject("additionalInfo", index, field, value)} />
         <ResourceFields items={form.resources} onAdd={() => actions.addObject("resources", actions.emptyResource)} onRemove={(index) => actions.removeObject("resources", index, actions.emptyResource)} onChange={(index, field, value) => actions.updateObject("resources", index, field, value)} />
       </div>

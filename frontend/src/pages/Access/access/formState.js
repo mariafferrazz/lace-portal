@@ -268,6 +268,7 @@ export function buildContentPayload(form, existingMetadata = {}) {
     case "RESEARCH":
       metadata.team = nonEmptyObjects(form.researchTeam, ["name", "role", "description", "lattesUrl"]);
       metadata.commission = form.researchCommission.trim() || null;
+      metadata.additionalInfoLayout = "ONE_COLUMN";
       metadata.additionalInfo = nonEmptyObjects(form.additionalInfo, ["title", "description"]);
       metadata.resources = nonEmptyObjects(form.resources, ["title", "kind", "url"]);
       delete metadata.researchers;

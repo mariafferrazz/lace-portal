@@ -167,7 +167,7 @@ export default function DynamicPesquisa() {
         )}
 
         {research.additionalInfo?.length > 0 && (
-          <section className="mt-12 grid gap-4 md:grid-cols-2">
+          <section className="mt-12 grid grid-cols-1 gap-4">
             {research.additionalInfo.map((info, index) => (
               <article key={`${info.title || "informacao"}-${index}`} className="rounded-2xl border border-border bg-card p-5">
                 <h2 className="font-title text-3xl text-text">{info.title || "Informação adicional"}</h2>
