@@ -55,23 +55,37 @@ async function main() {
     const password = process.env[`${prefix}_PASSWORD`];
 
     if (!required && !configuredName && !email && !password) continue;
-    if (!name || !email || !password) {
-      throw new Error(`Configure ${prefix}_NAME, ${prefix}_EMAIL e ${prefix}_PASSWORD.`);
+    if (!name || !email) {
+      throw new Error(`Configure ${prefix}_NAME e ${prefix}_EMAIL.`);
     }
-    if (password.length < 8) {
+    if (password && password.length < 8) {
       throw new Error(`${prefix}_PASSWORD deve ter pelo menos 8 caracteres.`);
     }
 
-    const passwordHash = await bcrypt.hash(password, 12);
-    await prisma.user.upsert({
-      where: { email },
-      update: { name, passwordHash, role, active: true },
-      create: { name, email, passwordHash, role },
-    });
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (!existingUser && !password) {
+      throw new Error(
+        `Configure ${prefix}_PASSWORD para criar a conta; remova a variavel depois do primeiro seed.`,
+      );
+    }
+
+    const accountData = { name, role, active: true };
+    if (password) accountData.passwordHash = await bcrypt.hash(password, 12);
+
+    if (existingUser) {
+      await prisma.user.update({
+        where: { id: existingUser.id },
+        data: accountData,
+      });
+    } else {
+      await prisma.user.create({
+        data: { ...accountData, email },
+      });
+    }
     if (!seedUserEmail && role === "COORDINATOR") seedUserEmail = email;
   }
 
-  console.log("Contas iniciais configuradas.");
+  console.log("Contas verificadas; senhas so foram atualizadas quando informadas no ambiente.");
 
   let teamCount = 0;
   const initialTeamSeedKey = "initial-team-members-v1";

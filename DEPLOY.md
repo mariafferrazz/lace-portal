@@ -87,11 +87,24 @@ CONTRIBUTOR_EMAIL=
 CONTRIBUTOR_PASSWORD=
 ```
 
-Depois do primeiro deploy, rode o seed uma vez no Railway:
+As variaveis `*_PASSWORD` sao entradas temporarias para criar ou rotacionar essas contas. Depois do primeiro deploy, rode o seed uma vez no Railway:
 
 ```bash
 npm run seed
 ```
+
+Confirme que as contas conseguem entrar no dashboard e, em seguida, remova todas as variaveis `*_PASSWORD` do Railway. Em novos deploys, o seed preserva os hashes existentes no banco quando essas variaveis nao estiverem definidas. Para trocar uma senha, defina temporariamente a variavel correspondente, execute o seed, valide o acesso e remova a variavel novamente.
+
+### Rotacao de credenciais apos incidente
+
+1. Gere novos valores para `JWT_SECRET` e para cada `*_PASSWORD` em uso. Nao reutilize valores antigos.
+2. No servico MySQL, use **Config > Connection > Regenerate** para rotacionar a credencial gerenciada; nao edite `MYSQLPASSWORD` manualmente.
+3. Confirme que `DATABASE_URL` continua referenciando `${{MySQL.MYSQL_URL}}` e redeploy o backend depois da regeneracao.
+4. Execute `npm run seed`, teste o login das contas e remova as variaveis `*_PASSWORD`.
+5. Rotacione tambem URLs com segredo embutido, tokens de integracao e credenciais de registro privado, caso existam.
+6. Revise os logs de deploy, aplicacao, autenticacao e MySQL antes de descartar as credenciais antigas.
+
+A regeneracao do MySQL reinicia o banco e encerra conexoes abertas. Faca um backup antes da rotacao e programe uma janela curta de manutencao.
 
 ### Disponibilidade continua
 
