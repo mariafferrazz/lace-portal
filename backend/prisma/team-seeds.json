@@ -4,177 +4,328 @@
     "role": "Equipe LACE",
     "bio": "Possui graduação em Psicologia pela Universidade Federal Fluminense, mestrado em Psicologia pela UFF, doutorado em Memória Social pela UNIRIO e estágio de pós-doutoramento em Psicologia Social na UERJ. Pesquisa modos de subjetivação, resistência, memória, psicologia social, direitos humanos e niilismo.",
     "profileUrl": null,
+    "links": [],
     "group": "TEAM",
-    "sortOrder": 0
+    "sortOrder": 0,
+    "active": true
   },
   {
     "name": "Amanda Lacerda Jorge",
     "role": "Equipe LACE",
     "bio": "Possui graduação em Ciências Sociais pela Universidade Estadual de Montes Claros, mestrado em Desenvolvimento Social pela Unimontes e doutorado em Política Social pela Universidade Federal Fluminense. Atua em temas como quilombolas, povos e comunidades tradicionais, direitos sociais, conflitos territoriais e desigualdades raciais.",
     "profileUrl": null,
+    "links": [],
     "group": "TEAM",
-    "sortOrder": 1
+    "sortOrder": 1,
+    "active": true
   },
   {
     "name": "Augusto Torres Perillo",
     "role": "Equipe LACE",
     "bio": "Graduando em Ciências Sociais pela Universidade Federal Fluminense.",
     "profileUrl": null,
+    "links": [],
     "group": "TEAM",
-    "sortOrder": 2
+    "sortOrder": 2,
+    "active": true
   },
   {
     "name": "Bernardo Sobrinho Milhazes",
     "role": "Equipe LACE",
-    "bio": "Sociólogo, mestre e doutorando em Sociologia pelo Programa de Pós-Graduação em Sociologia da Universidade Federal Fluminense (PPGS/UFF). Integra o LACE e pesquisa a formação da identidade travesti e as operações institucionais de repressão durante a ditadura civil-empresarial-militar.",
+    "bio": "Bernardo Sobrinho Milhazes é sociólogo, mestre e doutorando em Sociologia pelo Programa de Pós-Graduação em Sociologia da Universidade Federal Fluminense (PPGS/UFF). Integra o (LACE/UFF), desenvolvendo pesquisas sobre a formação da identidade travesti e as operações institucionais de repressão durante a ditadura empresarial-militar. Atua nas áreas de gênero e sexualidade, sistema prisional brasileiro, relações entre linguagens de direitos e controle social, relações raciais e territorialidade urbana.\nTambém é Bolsista de Pesquisa acerca das violações aos direitos humanos e trabalhistas perpetradas pela empresa Aracruz Celulose S.A. durante a ditadura empresarial-militar.",
     "profileUrl": "http://lattes.cnpq.br/4384208952204751",
+    "links": [
+      {
+        "url": "http://lattes.cnpq.br/4384208952204751",
+        "name": "Lattes"
+      }
+    ],
     "group": "TEAM",
-    "sortOrder": 3
+    "sortOrder": 3,
+    "active": true
   },
   {
     "name": "Caio Mattos Santos",
     "role": "Equipe LACE",
-    "bio": "Doutorando e mestre em Antropologia Social pelo PPGAS/UFRJ. Atua em pesquisa sobre as violações cometidas pela ditadura empresarial-militar e a empresa Aracruz Celulose contra comunidades indígenas e quilombolas. Em sua pesquisa de doutorado, estuda as relações entre pessoas e espíritos em religiões de matriz africana nos quilombos do Sapê do Norte (ES).",
+    "bio": "Doutorando e mestre em Antropologia Social pelo PPGAS/UFRJ. Integra pesquisa sobre as violações de direitos trabalhistas cometidas pela ditadura empresarial-militar e a empresa Aracruz Celulose em projeto realizado pela UFF junto ao Ministério Público do Trabalho, também integra o projeto \"Grandes Empresas e Ditadura no campo\", no caso Brascan, coordenado pelo prof. Fabricio Teló; e o Projeto Universal (CNPq): Cumplicidade econômica e responsabilidade de empresas nas violações de direitos humanos na Amazônia Legal durante a Ditadura civil-empresarial-militar brasileira (1964-1988), coordenado pela professora Monica Piccolo. Em sua pesquisa de doutorado, estuda as relações entre pessoas e espíritos em religiões de matriz africana nos quilombos do Sapê do Norte (ES).",
     "profileUrl": "http://lattes.cnpq.br/3596827374316338",
+    "links": [
+      {
+        "url": "http://lattes.cnpq.br/3596827374316338",
+        "name": "Lattes"
+      }
+    ],
     "group": "TEAM",
-    "sortOrder": 4
+    "sortOrder": 4,
+    "active": true
   },
   {
     "name": "Carlos Contente",
     "role": "Equipe LACE",
-    "bio": "Artista plástico com um voo institucional no circuito de arte contemporânea carioca, um grande amor pela comunicação popular no Rio de Janeiro e fã das charges (political cartoons), participou da organização de cursos pré-vestibulares populares, aulas de arte, ilustrou para a Revista de História da Biblioteca Nacional e para os jornais comunitários O Cidadão (Maré), A Folha do Bairro (Méier) e A Voz do Jacarezinho. Em paralelo, expôs em lugares como Paço Imperial/RJ, CCBB (RJ & SP), Paço das Artes (SP) e em eventos e feiras de arte internacionais, como a Art Rio, SP Arte, Frieze Art Fair (NY), SIART (La Paz, Bolívia), Zona Maco (Mex-DF), Drawing Now (Carrousel du Louvre-Paris), PhICA (Phoenix, Arizona), Darling Foundry (Montréal), etc. Concluiu o seu bacharelado em Artes em um curso tradicional na mais antiga escola de artes do Brasil (EBA/UFRJ, 2005) e logo ingressou em espaços legitimados do circuito de arte contemporânea. Contente jamais abandonou a prática de desenhar histórias em quadrinhos e, dessa maneira, quebra hierarquias entre diferentes manifestações artísticas. Seus trabalhos frequentemente se utilizam de personagens repetidos e espalhados como rizoma pelos espaços expositivos, a partir dos quais o artista desenvolve narrativas absurdas que questionam diferentes papéis e representações de poder em arte contemporânea ou idiossincrasias sócio-políticas. Mestre em Artes pelo PPGArtes da UERJ (2019), com uma dissertação que articula arte urbana carioca do início do século XXI com referências na Pop Art e no minimalismo estadunidense dos anos sessenta e setenta. Atualmente é doutorando em Sociologia pelo PPGS/UFF, com uma pesquisa debruçada sobre texto e imagem, arte e movimentos sociais e a produção de artivistas cariocas a partir dos levantes da década passada.",
+    "bio": "Artista plástico com um voo institucional no circuito de arte contemporânea carioca, um grande amor pela comunicação popular no Rio de Janeiro e fã das charges (political cartoons), participou da organização de cursos pré-vestibulares populares, aulas de arte, ilustrou para a Revista de História da Biblioteca Nacional e para os jornais comunitários O Cidadão (Maré), A Folha do Bairro (Méier) e A Voz do Jacarezinho. Em paralelo, expôs em lugares como Paço Imperial/RJ, CCBB (RJ & SP), Paço das Artes (SP) e em eventos e feiras de arte internacionais, como a Art Rio, SP Arte, Frieze Art Fair (NY), SIART (La Paz, Bolívia), Zona Maco (Mex-DF), Drawing Now (Carrousel du Louvre-Paris), PhICA (Phoenix, Arizona), Darling Foundry (Montréal), etc.\n\nConcluiu o seu bacharelado em Artes em um curso tradicional na mais antiga escola de artes do Brasil (EBA/UFRJ, 2005) logo ingressou em espaços legitimados do circuito de arte contemporânea. Contente jamais abandonou a prática de desenhar histórias em quadrinhos e, dessa maneira, quebra hierarquias entre diferentes manifestações artísticas. Seus trabalhos frequentemente se utilizam de personagens repetidos e espalhados como rizoma pelos espaços expositivos, a partir dos quais o artista desenvolve narrativas absurdas que questionam diferentes papéis e representações de poder em arte contemporânea ou idiossincrasias sócio-políticas. \n\nMestre em Artes pelo PPGArtes da UERJ (2019) com uma dissertação que articula arte urbana carioca do início do século XXI com referências na Pop Art e minimalismo estadunidense dos anos sessenta e setenta. \n\nAtualmente é doutorando em sociologia pelo PPGS/UFF com uma pesquisa debruçada sobre texto e imagem, arte e movimentos sociais produção de artivistas cariocas a partir dos levantes da década passada.",
     "profileUrl": "http://lattes.cnpq.br/6512769777132919",
     "links": [
       {
-        "name": "Lattes",
-        "url": "http://lattes.cnpq.br/6512769777132919"
+        "url": "http://lattes.cnpq.br/6512769777132919",
+        "name": "Lattes"
       },
       {
-        "name": "Site",
-        "url": "https://www.carloscontente.com.br/arquivoscontente"
+        "url": "https://www.carloscontente.com.br/arquivoscontente",
+        "name": "Site"
       }
     ],
     "group": "TEAM",
-    "sortOrder": 5
+    "sortOrder": 5,
+    "active": true
   },
   {
     "name": "Cecília Maria Bouças Coimbra",
     "role": "Equipe LACE",
     "bio": "Professora do Programa de Pós-Graduação em Psicologia da UFF e professora aposentada do Departamento de Psicologia da UFF. É membro da diretoria colegiada do Grupo Tortura Nunca Mais Rio de Janeiro e atua historicamente na defesa dos direitos humanos.",
     "profileUrl": null,
+    "links": [],
     "group": "TEAM",
-    "sortOrder": 6
+    "sortOrder": 6,
+    "active": true
   },
   {
     "name": "Eduarda Barbosa",
     "role": "Equipe LACE",
-    "bio": "Mestra em Cinema e Audiovisual pelo PPGCine/UFF, com pesquisa sobre videoclipes latino-americanos sob perspectivas de(s)coloniais, e bacharela em Direito pela Uerj. Cursa licenciatura em Cinema e Audiovisual também pela UFF, atuando em frentes de pesquisa, docência e produção cultural. Integra, como bolsista, o projeto “Entremeios da Formação Docente - Histórias e Memórias do Pibid/UFF” e a pesquisa sobre violações de direitos trabalhistas perpetradas pelo Grupo Aracruz Celulose e pelo Estado no contexto da ditadura empresarial-militar, realizada pela UFF junto ao Ministério Público do Trabalho.",
+    "bio": "Mestra em Cinema e Audiovisual pelo PPGCine/UFF, com pesquisa sobre videoclipes latino-americanos sob perspectivas de(s)coloniais, e bacharela em Direito pela Uerj. Cursa licenciatura em Cinema e Audiovisual também pela UFF, atuando em frentes de pesquisa, docência e produção cultural. Integra, como bolsista, o projeto \"Entremeios da Formação Docente - Histórias e Memórias do Pibid/UFF\" e a pesquisa sobre violações de direitos trabalhistas perpetradas pelo Grupo Aracruz Celulose e pelo Estado no contexto da ditadura empresarial-militar, realizada pela UFF junto ao Ministério Público do Trabalho.",
     "profileUrl": "http://lattes.cnpq.br/7892790085973703",
+    "links": [
+      {
+        "url": "http://lattes.cnpq.br/7892790085973703",
+        "name": "Lattes"
+      }
+    ],
     "group": "TEAM",
-    "sortOrder": 7
+    "sortOrder": 7,
+    "active": true
   },
   {
     "name": "Fabricio Teló",
     "role": "Equipe LACE",
     "bio": "Professor de Sociologia na Universidade Politécnica Kwantlen, no Canadá. Doutor pelo Programa de Pós-Graduação de Ciências Sociais em Desenvolvimento, Agricultura e Sociedade da Universidade Federal Rural do Rio de Janeiro (CPDA/UFRRJ), onde também cursou seu mestrado. Graduado em Ciências Sociais pela Universidade Federal de Santa Maria. Atuou, entre 2016 e 2017, como professor substituto no Departamento de Sociologia e Metodologia das Ciências Sociais da Universidade Federal Fluminense. Membro da Comissão Camponesa da Verdade. Atua principalmente nos seguintes temas: sociologia rural, movimentos sociais, responsabilidade empresarial, violência política e justiça de transição.",
     "profileUrl": "http://lattes.cnpq.br/2556212624317350",
+    "links": [
+      {
+        "url": "http://lattes.cnpq.br/2556212624317350",
+        "name": "Lattes"
+      }
+    ],
     "group": "TEAM",
-    "sortOrder": 8
+    "sortOrder": 8,
+    "active": true
   },
   {
     "name": "Gabriel da Silva Rivas",
     "role": "Equipe LACE",
     "bio": "Mestrando em Sociologia pelo Programa de Pós-Graduação em Sociologia da Universidade Federal Fluminense (PPGS/UFF) e licenciado em História pela mesma instituição. É membro do Laboratório de Agenciamentos Cotidianos e Experiências (LACE/UFF) e vinculado ao grupo de pesquisa “Subjetividade, Memória e Violência de Estado”. Atualmente, é bolsista de Iniciação Científica no projeto “Mecanismos de repressão e vigilância da ditadura empresarial-militar no âmbito da UFF e o perfil dos atingidos” e também integra a equipe de pesquisa do projeto “Aprofundamento da investigação sobre as violações de direitos trabalhistas do Grupo Aracruz Celulose, no contexto da justiça de transição e seus reflexos contemporâneos”, ambos sob orientação da Prof.ª Dr.ª Joana D’Arc Fernandes Ferraz. Tem interesse no campo de discussão sobre Teoria da Memória, com ênfase nos seguintes temas: ditadura empresarial-militar brasileira, memória e trauma, lugares de memória, direitos humanos, ensino de História e temas sensíveis.",
     "profileUrl": "http://lattes.cnpq.br/3302537497811650",
+    "links": [
+      {
+        "url": "http://lattes.cnpq.br/3302537497811650",
+        "name": "Lattes"
+      }
+    ],
     "group": "TEAM",
-    "sortOrder": 9
+    "sortOrder": 9,
+    "active": true
   },
   {
     "name": "Joana D’Arc Fernandes Ferraz",
     "role": "Equipe LACE",
     "bio": "Professora do Departamento de Sociologia e Metodologia das Ciências Sociais (GSO) e do Programa de Pós-Graduação em Sociologia da Universidade Federal Fluminense (PPGS/UFF). Lidera o Grupo de Pesquisa certificado no CNPq “Subjetividade, Memória e Violência do Estado”.",
     "profileUrl": null,
+    "links": [],
     "group": "TEAM",
-    "sortOrder": 10
+    "sortOrder": 10,
+    "active": true
   },
   {
     "name": "Joice Pinto de Andrade",
     "role": "Equipe LACE",
     "bio": "Graduada em Ciências Contábeis pela Fundação Visconde de Cairu (FVC) e Assistente em Administração da Universidade Federal do Rio de Janeiro (UFRJ). Atua na gestão acadêmica da pós-graduação, com experiência em processos seletivos, regulação acadêmica, gestão administrativa e apoio às atividades de ensino e pesquisa, especialmente no âmbito do Programa de Pós-Graduação em Mídias Criativas. Integra uma pesquisa desenvolvida pela Universidade Federal Fluminense (UFF), em parceria com o Ministério Público do Trabalho (MPT), sobre as violações de direitos trabalhistas cometidas durante a ditadura empresarial-militar pela empresa Aracruz Celulose.",
     "profileUrl": "http://lattes.cnpq.br/3557133233777990",
+    "links": [
+      {
+        "url": "http://lattes.cnpq.br/3557133233777990",
+        "name": "Lattes"
+      }
+    ],
     "group": "TEAM",
-    "sortOrder": 11
+    "sortOrder": 11,
+    "active": true
   },
   {
     "name": "João Pedro Cavalcanti de Carvalho",
     "role": "Equipe LACE",
-    "bio": "Bacharel em Sociologia pela UFF. Integra o LACE/UFF e realiza pesquisa na área de memória sobre as ditaduras empresarial-militares do Brasil, da Argentina, do Uruguai e do Chile. Fez parte da pesquisa, desenvolvida pela UFF junto ao Ministério Público do Trabalho, sobre as violações de direitos humanos empreendidas pela ditadura empresarial-militar (1964-1988) e pela empresa Aracruz Celulose. Atualmente, desenvolve, por conta própria, investigação sobre vítimas das ditaduras empresarial-militares na América Latina e os mecanismos e as estratégias de repressão pelo Estado. Atua nas áreas de violência de Estado, responsabilidade empresarial e reparação, memória social e movimentos sociais.",
+    "bio": "Bacharel em Sociologia pela UFF. Integra o LACE/UFF e realiza pesquisa na área de memória sobre as ditaduras empresarial-militares do Brasil, da Argentina, do Uruguai e do Chile. Fez parte da pesquisa, desenvolvido pela UFF junto ao Ministério Público do Trabalho, sobre as violações de direitos humanos empreendidas pela ditadura empresarial-militar (1964-1988) e pela empresa Aracruz Celulose. Atualmente, desenvolve, por conta própria, investigação sobre vítimas das ditaduras empresarial-militares na América Latina e os mecanismos e as estratégias de repressão pelo Estado. Atua nas áreas de violência de Estado, responsabilidade empresarial e reparação, memória social e movimentos sociais.",
     "profileUrl": "https://lattes.cnpq.br/0115053069778572",
+    "links": [
+      {
+        "url": "https://lattes.cnpq.br/0115053069778572",
+        "name": "Lattes"
+      }
+    ],
     "group": "TEAM",
-    "sortOrder": 12
+    "sortOrder": 12,
+    "active": true
   },
   {
     "name": "João Vitor Rodrigues Martins da Silva",
     "role": "Equipe LACE",
     "bio": "Bacharel em Sociologia pela UFF e mestrando, como bolsista CAPES, no Programa de Pós-Graduação em Sociologia e Direito (PPGSD/UFF). Integra o LACE/UFF e o LAJA/UFF. Desenvolve, atualmente, pesquisa sobre os navios-prisões empregados pela ditadura empresarial-militar. Atua também no projeto de pesquisa Universal (CNPq): Cumplicidade econômica e responsabilidade de empresas nas violações de direitos humanos na Amazônia Legal durante a Ditadura civil-empresarial-militar brasileira (1964-1988), coordenado pela professora Mônica Piccolo (UEMA). Atua nas áreas de memória social, responsabilidade empresarial, conflitos socioambientais, movimentos sociais e justiça de transição.",
     "profileUrl": "http://lattes.cnpq.br/1393190421712751",
+    "links": [
+      {
+        "url": "http://lattes.cnpq.br/1393190421712751",
+        "name": "Lattes"
+      }
+    ],
     "group": "TEAM",
-    "sortOrder": 13
+    "sortOrder": 13,
+    "active": true
   },
   {
     "name": "Liza Franco Busse Reis dos Santos",
     "role": "Equipe LACE",
     "bio": "Professora e pesquisadora. Doutora em Sociologia pelo Programa de Pós-Graduação em Sociologia da Universidade Federal de Goiás - UFG (2022). Pesquisadora associada do Laboratório de Agenciamentos Cotidianos e Experiências (LACE/UFF). Atua nas áreas de Direitos Humanos, violência institucional, história da sociologia e sociologia da diferença.",
     "profileUrl": "http://lattes.cnpq.br/2161831978090854",
+    "links": [
+      {
+        "url": "http://lattes.cnpq.br/2161831978090854",
+        "name": "Lattes"
+      }
+    ],
     "group": "TEAM",
-    "sortOrder": 14
+    "sortOrder": 14,
+    "active": true
   },
   {
     "name": "Lívia de Barros Salgado",
     "role": "Equipe LACE",
     "bio": "Doutora em História pela Universidade Federal Rural do Rio de Janeiro e mestre em Ciências Sociais pela mesma instituição. Atua em temas como memória, narrativa, gênero, ditadura civil-militar no Brasil e sofrimento social.",
     "profileUrl": null,
+    "links": [],
     "group": "TEAM",
-    "sortOrder": 15
+    "sortOrder": 15,
+    "active": true
   },
   {
     "name": "Maria Gabriella Ferraz Marques",
     "role": "Equipe LACE",
     "bio": "Estudante da Graduação de Computação na Universidade Federal Fluminense (UFF) e desenvolvedora web full stack, formada pela Digital House em 2022. Atualmente, atua no desenvolvimento frontend e backend do site LACE, aplicando seus conhecimentos na criação de soluções completas para a web.",
     "profileUrl": "https://www.linkedin.com/in/maria-gabriella-ferraz-6aa7b914a/",
+    "links": [
+      {
+        "url": "https://www.linkedin.com/in/maria-gabriella-ferraz-6aa7b914a/",
+        "name": "LinkedIn"
+      }
+    ],
     "group": "TEAM",
-    "sortOrder": 16
+    "sortOrder": 16,
+    "active": true
   },
   {
     "name": "Nathália Couto Margalho",
     "role": "Equipe LACE",
     "bio": "Graduanda no curso de bacharelado em Cinema e Audiovisual pela Universidade Federal Fluminense (UFF) e integra, como bolsista, o Núcleo de Criação de Vídeo Ensaios do NEX-Labex, vinculado ao INCT - PreRes, onde realiza pesquisas sobre a prática do vídeo-ensaio a partir de imagens de arquivo e seu caráter pedagógico. Atua também no projeto de pesquisa Cumplicidade econômica e responsabilidade de empresas nas violações de direitos humanos na Amazônia Legal durante a ditadura empresarial-militar brasileira (1964-1988) e na organização da VIII Mostra de Cinema e Ditadura, junto ao grupo LACE/UFF.",
     "profileUrl": "https://lattes.cnpq.br/7061314346412060",
+    "links": [
+      {
+        "url": "https://lattes.cnpq.br/7061314346412060",
+        "name": "Lattes"
+      }
+    ],
     "group": "TEAM",
-    "sortOrder": 17
+    "sortOrder": 17,
+    "active": true
   },
   {
     "name": "Rafael Maul de Carvalho Costa",
     "role": "Equipe LACE",
     "bio": "Professor da área de História, Cultura Política e Educação do Campo do curso de Licenciatura em Educação do Campo da Universidade Federal Rural do Rio de Janeiro. Lidera o Grupo de Pesquisa certificado no CNPq “Experiências de Trabalhadoras e Trabalhadores no Estado do Rio de Janeiro”.",
     "profileUrl": null,
+    "links": [],
     "group": "TEAM",
-    "sortOrder": 18
+    "sortOrder": 18,
+    "active": true
   },
   {
     "name": "Samuel Farias da Silva",
     "role": "Equipe LACE",
-    "bio": "Licenciado em História (UFF) e em Letras - Português (Unilasalle). Atualmente, é mestrando no Programa de Pós-Graduação em Sociologia (PPGS/UFF), como bolsista CAPES. Integra os grupos LACE/UFF e NEGRA/UFF, desenvolvendo estudos sobre sociologia da literatura, memória, relações raciais e pensamento social. Em sua pesquisa de mestrado, dedica-se a pensar as relações entre memória e reflexividade na obra de Jeferson Tenório.",
+    "bio": "Licenciado em História (UFF) e em Letras – Português (Unilasalle). Atualmente, é mestrando no Programa de Pós-Graduação em Sociologia (PPGS/UFF), como bolsista CAPES.\nIntegra os grupos LACE/UFF e NEGRA/UFF, desenvolvendo estudos sobre sociologia da literatura, memória, relações raciais e pensamento social. Em sua pesquisa de mestrado, dedica-se a pensar as relações entre memória e reflexividade na obra de Jeferson Tenório.",
     "profileUrl": "http://lattes.cnpq.br/8348880173451556",
+    "links": [
+      {
+        "url": "http://lattes.cnpq.br/8348880173451556",
+        "name": "Lattes"
+      }
+    ],
     "group": "TEAM",
-    "sortOrder": 19
+    "sortOrder": 19,
+    "active": true
   },
   {
     "name": "Stella Friederichs Roia Moreira",
     "role": "Equipe LACE",
-    "bio": "Graduada em licenciatura e bacharelado em História pela Universidade Federal Fluminense (2025). Atualmente, mestranda em História pelo Programa de Pós-Graduação em História (PPGH) da Universidade Federal Fluminense (UFF), bolsista Nota 10 pela FAPERJ, e pesquisadora associada do Laboratório de História Oral e Imagem (LABHOI/UFF) e do Laboratório de Agenciamentos Cotidianos e Experiências (LACE/UFF). Tem experiência na área de História Contemporânea, com ênfase nos seguintes temas: história do Brasil, ditadura e redemocratização, história do tempo presente, lugares de memória e políticas de reparação. Durante a graduação, estagiou por dois anos na Secretaria Municipal de Educação do Rio de Janeiro como mediadora na Educação Especial.",
+    "bio": "Graduada em licenciatura e bacharel em História pela Universidade Federal Fluminense (2025). Atualmente, mestranda em História pelo Programa de Pós-graduação em História (PPGH) da Universidade Federal Fluminense (UFF), bolsista Nota 10 pela FAPERJ, e pesquisadora associada do Laboratório de História Oral e Imagem (LABHOI/UFF) e do Laboratório de Agenciamentos Cotidianos e Experiências (LACE/UFF). Tem experiência na área de História Contemporânea, com ênfase nos seguintes temas: história do Brasil, ditadura e redemocratização, história do tempo presente, lugares de memória e políticas de reparação. Durante a graduação, estagiou por dois anos na Secretaria Municipal de Educação do Rio de Janeiro como mediadora na Educação Especial.",
     "profileUrl": "http://lattes.cnpq.br/7072646374970547",
+    "links": [
+      {
+        "url": "http://lattes.cnpq.br/7072646374970547",
+        "name": "Lattes"
+      }
+    ],
     "group": "TEAM",
-    "sortOrder": 20
+    "sortOrder": 20,
+    "active": true
+  },
+  {
+    "name": "Adriana Rosa Cruz Santos",
+    "role": "Equipe LACE",
+    "bio": "Professora Associada de Psicologia da UFF, Campus Niterói. \nDoutora em Psicologia Social (Uerj).\nPesquisadora integrante do Laboratório de Subjetividade e Corporeidade (CoeporeiLabs)/UFF e do LACE.\nRealiza Estágio Pós-doutoral no Programa de Pós-Graduação em Sociologia sob supervisão da Professora Joana D'Arc Fernandes Ferraz.\nPesquisa as relações entre corporeidade, subjetividade, memória e cosmopolíticas afro indígenas numa perspectiva contracolonial.",
+    "profileUrl": "http://lattes.cnpq.br/2585803190864984",
+    "links": [
+      {
+        "url": "http://lattes.cnpq.br/2585803190864984",
+        "name": "Lattes"
+      }
+    ],
+    "group": "TEAM",
+    "sortOrder": 21,
+    "active": true
+  },
+  {
+    "name": "Fernanda Cristina de Andrade Santos",
+    "role": "Equipe LACE",
+    "bio": "Bacharela em Ciências Sociais (UFF) e mestranda no Programa de Pós-Graduação em Sociologia (PPGS/UFF). Integra o grupo de pesquisa LACE/UFF e também integra o Projeto Universal (CNPq): Cumplicidade econômica e responsabilidade de empresas nas violações de direitos humanos na Amazônia Legal durante a Ditadura civil-empresarial-militar brasileira (1964-1988), coordenado pela professora Mônica Piccolo (UEMA). Desenvolve pesquisa na interface entre memória, exílio e cinema, com foco na questão palestina.",
+    "profileUrl": "http://lattes.cnpq.br/3304826991588549",
+    "links": [
+      {
+        "url": "http://lattes.cnpq.br/3304826991588549",
+        "name": "Lattes"
+      }
+    ],
+    "group": "TEAM",
+    "sortOrder": 22,
+    "active": true
+  },
+  {
+    "name": "Deyvid Rezende da Silva",
+    "role": "Equipe LACE",
+    "bio": "Bacharel em Sociologia pela Universidade Federal Fluminense e Licenciado em Ciências Sociais. Mestrando pelo Programa de Pós-Graduação em Sociologia da Universidade Federal Fluminense (PPGS-UFF) e bolsista CNPq. Integra o grupo LACE/UFF e desenvolve pesquisa nas  áreas de Teoria Sociológica e Memória, onde busca investigar os impactos da condição pós-moderna sobre as formas de experiência, representação e valorização da memória cultural na contemporaneidade.",
+    "profileUrl": "http://lattes.cnpq.br/1410666106197961",
+    "links": [
+      {
+        "url": "http://lattes.cnpq.br/1410666106197961",
+        "name": "Lattes"
+      }
+    ],
+    "group": "TEAM",
+    "sortOrder": 23,
+    "active": true
   }
 ]

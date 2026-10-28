@@ -111,7 +111,7 @@ async function main() {
           links: memberLinks(member),
           group: member.group,
           sortOrder: member.sortOrder,
-          active: true,
+          active: member.active !== false,
         },
         create: {
           name: member.name,
@@ -121,6 +121,7 @@ async function main() {
           links: memberLinks(member),
           group: member.group,
           sortOrder: member.sortOrder,
+          active: member.active !== false,
         },
       });
       teamCount += 1;
@@ -158,6 +159,10 @@ async function main() {
     for (const seed of contentSeeds) {
       if (seed.type === "ARTICLE" && legacyArticleLibrary) continue;
 
+      const researcherMember = seed.researcherMemberName
+        ? await prisma.teamMember.findUnique({ where: { name: seed.researcherMemberName } })
+        : null;
+
       const data = {
         title: seed.title,
         description: seed.description || null,
@@ -167,6 +172,7 @@ async function main() {
         fileUrl: seed.fileUrl || null,
         metadata: seed.metadata || {},
         published: seed.published !== false,
+        researcherMemberId: researcherMember?.id || null,
         createdById: seedUser.id,
       };
 
